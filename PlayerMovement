@@ -7,9 +7,31 @@ public class PlayerMovement : MonoBehaviour
 {
     private PlayerControls controls;
 
+    public Vector2 moveInput;
+    public Vector2 aimInput;
+
     //the awake function is used to fill up the script with information since the controls are empty.
     private void Awake()
     {
         controls = new PlayerControls();
+
+        //gives access to the controls to the action map to the actions.
+        //add context because it gives information to the input, ex, button was pressed, held, or released.
+        controls.Character.Movement.performed += context => moveInput = context.ReadValue<Vector2>();
+        controls.Character.Movement.canceled += context => moveInput = Vector2.zero;
+
+        controls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
+        controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
+    }
+
+
+    private void OnEnable()
+    {
+        controls.Enable(); 
+    }
+
+    private void OnDisable()
+    {
+        controls.Disable();
     }
 }
