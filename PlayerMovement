@@ -1,0 +1,15 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+//below is put here since we are setting up the input systems for the movement.
+using UnityEngine.InputSystem;
+public class PlayerMovement : MonoBehaviour
+{
+    private PlayerControls controls;
+
+    //the awake function is used to fill up the script with information since the controls are empty.
+    private void Awake()
+    {
+        controls = new PlayerControls();
+    }
+}
