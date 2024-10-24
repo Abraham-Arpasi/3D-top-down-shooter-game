@@ -17,12 +17,13 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 movementDirection;
     //this is for setting up the speed of the characters movement.
     //SerializeField lets you see the variable in the script component when it is made private.
-    [SerializeField]private float walkSpeed;
+    [SerializeField] private float walkSpeed;
 
     //This is the variable for setting up for gravity.
     private float verticalVelocity;
 
     [Header("Aim info")]
+    [SerializeField] private Transform aim;
     //This mask is for the aim physics detection.
     [SerializeField] private LayerMask aimLayerMask;
     //For the looking direction.
@@ -57,10 +58,15 @@ public class PlayerMovement : MonoBehaviour
     {
         ApplyMovement();
 
+        AimTowardsMouse();
+    }
+
+    private void AimTowardsMouse()
+    {
         //This is for setting up the character aim.
         Ray ray = Camera.main.ScreenPointToRay(aimInput);
         //We are going to check if ray hits something.
-        if(Physics.Raycast(ray,out var hitInfo, Mathf.Infinity, aimLayerMask))
+        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
         {
             // this is for looking direction.
             lookingDirection = hitInfo.point - transform.position;
@@ -69,6 +75,8 @@ public class PlayerMovement : MonoBehaviour
             lookingDirection.Normalize();
 
             transform.forward = lookingDirection;
+
+            aim.position = new Vector3 (hitInfo.point.x, transform.position.y, hitInfo.point.z);
         }
     }
 
