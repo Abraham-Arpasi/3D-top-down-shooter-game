@@ -77,8 +77,9 @@ public class PlayerMovement : MonoBehaviour
         //this is the code for the vertical movement for the animator.
         float zVelocity = Vector3.Dot(movementDirection.normalized, transform.forward);
         //this is the code of how we pass the information above to the animator.
-        animator.SetFloat("xVelocity", xVelocity);
-        animator.SetFloat("zVelocity", zVelocity);
+        //add .1f,Time.deltaTime to damp the animation transition and make it more smooth.
+        animator.SetFloat("xVelocity", xVelocity,.1f,Time.deltaTime);
+        animator.SetFloat("zVelocity", zVelocity,.1f,Time.deltaTime);
 
     }
 
