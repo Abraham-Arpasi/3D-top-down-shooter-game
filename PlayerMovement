@@ -22,6 +22,13 @@ public class PlayerMovement : MonoBehaviour
     //This is the variable for setting up for gravity.
     private float verticalVelocity;
 
+    [Header("Aim info")]
+    //This mask is for the aim physics detection.
+    [SerializeField] private LayerMask aimLayerMask;
+    //For the looking direction.
+    private Vector3 lookingDirection;
+
+
     private Vector2 moveInput;
     private Vector2 aimInput;
 
@@ -49,6 +56,20 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         ApplyMovement();
+
+        //This is for setting up the character aim.
+        Ray ray = Camera.main.ScreenPointToRay(aimInput);
+        //We are going to check if ray hits something.
+        if(Physics.Raycast(ray,out var hitInfo, Mathf.Infinity, aimLayerMask))
+        {
+            // this is for looking direction.
+            lookingDirection = hitInfo.point - transform.position;
+            lookingDirection.y = 0f;
+            //normalize is used like a vector except it doesnt have or need a length. (its similar to being a bubble that is around your character).
+            lookingDirection.Normalize();
+
+            transform.forward = lookingDirection;
+        }
     }
 
     //this function is for player movement which is called in the update function.
