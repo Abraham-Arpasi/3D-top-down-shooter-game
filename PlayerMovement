@@ -11,6 +11,9 @@ public class PlayerMovement : MonoBehaviour
     //This allows us control over the character controller component on the player object.
     private CharacterController characterController;
 
+    //This give us access to the animator.
+    private Animator animator;
+
     //Header is used to help organize the information shown on the script component.
     [Header("movement info")]
     //before we move the character we need to know which direction we are moving the character.
@@ -51,6 +54,10 @@ public class PlayerMovement : MonoBehaviour
     {
         // since we made characterController private, we can assign the character Controller component to the player movement script by using a start function.
         characterController = GetComponent<CharacterController>();
+
+        //assign the animator to the start function.
+        //you want to use GetComponent(InChildren) because we are using the animator as a child object currently.
+        animator = GetComponentInChildren<Animator>();
     }
 
     //Update is used for player movements.
@@ -59,6 +66,20 @@ public class PlayerMovement : MonoBehaviour
         ApplyMovement();
 
         AimTowardsMouse();
+
+        AnimatorControllers();
+    }
+
+    private void AnimatorControllers()
+    {
+        //this is the code for horizontal movement for the animator.
+        float xVelocity = Vector3.Dot(movementDirection.normalized, transform.right);
+        //this is the code for the vertical movement for the animator.
+        float zVelocity = Vector3.Dot(movementDirection.normalized, transform.forward);
+        //this is the code of how we pass the information above to the animator.
+        animator.SetFloat("xVelocity", xVelocity);
+        animator.SetFloat("zVelocity", zVelocity);
+
     }
 
     private void AimTowardsMouse()
