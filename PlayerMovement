@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,9 @@ public class PlayerMovement : MonoBehaviour
     //this is for setting up the speed of the characters movement.
     //SerializeField lets you see the variable in the script component when it is made private.
     [SerializeField]private float walkSpeed;
+
+    //This is the variable for setting up for gravity.
+    private float verticalVelocity;
 
     private Vector2 moveInput;
     private Vector2 aimInput;
@@ -52,6 +56,8 @@ public class PlayerMovement : MonoBehaviour
     {
         //sets the movement direction for the x and y axis.
         movementDirection = new Vector3(moveInput.x, 0, moveInput.y);
+        //applying gravity so that the character falls down to the ground.
+        ApplyGravity();
 
         //lets the character actual move based of players movement inputs.
         if (movementDirection.magnitude > 0)
@@ -61,6 +67,20 @@ public class PlayerMovement : MonoBehaviour
             // multiply Time.deltaTime and walkSpeed to get the movement speed you want for the character.
             characterController.Move(movementDirection * Time.deltaTime * walkSpeed);
         }
+    }
+    //This is where we define gravity.
+    private void ApplyGravity()
+    {
+        //we are checking if the character is grounded(touching the floor or not).
+        if (characterController.isGrounded == false)
+        {
+            //Character falls if not touching ground.
+            verticalVelocity = verticalVelocity - 9.81f * Time.deltaTime;
+            movementDirection.y = verticalVelocity;
+        }
+        //if the character is grounded.
+        else
+            verticalVelocity = -.5f;
     }
 
     private void OnEnable()
