@@ -7,8 +7,16 @@ public class PlayerMovement : MonoBehaviour
 {
     private PlayerControls controls;
 
-    public Vector2 moveInput;
-    public Vector2 aimInput;
+    //This allows us control over the character controller component on the player object.
+    private CharacterController characterController;
+
+    //before we move the character we need to know which direction we are moving the character.
+    public Vector3 movementDirection;
+    //this is for setting up the speed of the characters movement.
+    public float walkSpeed;
+
+    private Vector2 moveInput;
+    private Vector2 aimInput;
 
     //the awake function is used to fill up the script with information since the controls are empty.
     private void Awake()
@@ -24,6 +32,27 @@ public class PlayerMovement : MonoBehaviour
         controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
     }
 
+    private void Start()
+    {
+        // since we made characterController private, we can assign the character Controller component to the player movement script by using a start function.
+        characterController = GetComponent<CharacterController>();
+    }
+
+    //Update is used for player movements.
+    private void Update()
+    {
+        //sets the movement direction for the x and y axis.
+        movementDirection = new Vector3(moveInput.x, 0, moveInput.y);
+
+        //lets the character actual move based of players movement inputs.
+        if(movementDirection.magnitude > 0)
+        {
+            //its important to add time.deltaTime because without it, it will register the input once every millisecond the button is pressed (making the character fly off screen).
+            //Time.deltaTime is measured by frames and counts per second.(helps keep the speed in check).
+            // multiply Time.deltaTime and walkSpeed to get the movement speed you want for the character.
+            characterController.Move(movementDirection * Time.deltaTime * walkSpeed);
+        }
+    }
 
     private void OnEnable()
     {
