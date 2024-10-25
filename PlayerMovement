@@ -49,6 +49,9 @@ public class PlayerMovement : MonoBehaviour
     {
         controls = new PlayerControls();
 
+        //this is for the shooting controls and animation.
+        controls.Character.Fire.performed += context => Shoot();
+
         //gives access to the controls to the action map to the actions.
         //add context because it gives information to the input, ex, button was pressed, held, or released.
         controls.Character.Movement.performed += context => moveInput = context.ReadValue<Vector2>();
@@ -92,6 +95,11 @@ public class PlayerMovement : MonoBehaviour
         AimTowardsMouse();
 
         AnimatorControllers();
+    }
+
+    private void Shoot()
+    {
+        animator.SetTrigger("Fire");
     }
 
     private void AnimatorControllers()
