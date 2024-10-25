@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
     //the awake function is used to fill up the script with information since the controls are empty.
     private void Awake()
     {
-        AssignInputEvents();
+        //this is empty because we have a Player script now
     }
 
     private void AssignInputEvents()
@@ -92,6 +92,9 @@ public class PlayerMovement : MonoBehaviour
 
         // this is needed since if you dont cancel the input it will be 0.
         speed = walkSpeed;
+       
+        //moved this from awake to the start function since we now have a Player script.
+        AssignInputEvents();
     }
 
     //Update is used for player movements.
