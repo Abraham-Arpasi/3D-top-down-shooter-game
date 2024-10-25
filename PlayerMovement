@@ -60,12 +60,8 @@ public class PlayerMovement : MonoBehaviour
         //what this does is when we enter the run action it returns the running speed.
         controls.Character.Run.performed += context =>
         {
-            //This prevents the character from running while he is standing still.
-            if (movementDirection.magnitude > 0)
-            {
                 speed = runSpeed;
                 isRunning = true;
-            }
         };
         //this will return back to the walk speed when the character is no longer running.
         controls.Character.Run.canceled += context =>
@@ -111,6 +107,7 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat("zVelocity", zVelocity,.1f,Time.deltaTime);
 
         //this will fix the bug from preventing the character doing the running animation if the player stops running but doesnt stop holding shift.
+        //This prevents the character from running while he is standing still.
         bool playRunAnimation = isRunning && movementDirection.magnitude > 0;
         animator.SetBool("isRunning", playRunAnimation);
 
