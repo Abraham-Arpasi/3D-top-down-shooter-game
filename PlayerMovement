@@ -42,6 +42,11 @@ public class PlayerMovement : MonoBehaviour
     //the awake function is used to fill up the script with information since the controls are empty.
     private void Awake()
     {
+        AssignInputEvents();
+    }
+
+    private void AssignInputEvents()
+    {
         controls = new PlayerControls();
 
         //gives access to the controls to the action map to the actions.
