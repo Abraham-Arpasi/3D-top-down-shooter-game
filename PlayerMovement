@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
+    //getting reference from the player script so we dont need a new instance.
+    private Player player;
+
     private PlayerControls controls;
 
     //This allows us control over the character controller component on the player object.
@@ -47,7 +50,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void AssignInputEvents()
     {
-        controls = new PlayerControls();
+        //now controls equals to the controls from the Player script.
+        controls = player.controls;
 
         //this is for the shooting controls and animation.
         controls.Character.Fire.performed += context => Shoot();
@@ -76,6 +80,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        //getting reference from the player script so we dont need a new instance.
+        player = GetComponent<Player>();
+
         // since we made characterController private, we can assign the character Controller component to the player movement script by using a start function.
         characterController = GetComponent<CharacterController>();
 
