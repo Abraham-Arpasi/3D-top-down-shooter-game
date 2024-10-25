@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class PlayerWeaponController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Player player;
+
+    //We will be calling functions here for shooting the weapons.
+    private void Start()
     {
-        
+        player = GetComponent<Player>();
+
+        //calling the Fire action here
+        player.controls.Character.Fire.performed += context => Shoot();
     }
 
-    // Update is called once per frame
-    void Update()
+
+    //This is the function that will control the shooting animation.
+    private void Shoot()
     {
-        
+        //setting up the player animation for shooting weapons.
+        GetComponentInChildren<Animator>().SetTrigger("Fire");
     }
 }
