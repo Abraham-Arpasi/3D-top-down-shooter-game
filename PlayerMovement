@@ -21,6 +21,8 @@ public class PlayerMovement : MonoBehaviour
     //this is for setting up the speed of the characters movement.
     //SerializeField lets you see the variable in the script component when it is made private.
     [SerializeField] private float walkSpeed;
+    [SerializeField] private float runSpeed;
+    private float speed;
     private bool isRunning;
 
     //This is the variable for setting up for gravity.
@@ -50,8 +52,18 @@ public class PlayerMovement : MonoBehaviour
         controls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
         controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
 
-        controls.Character.Run.performed += context => isRunning = true;
-        controls.Character.Run.canceled += context => isRunning = false;
+        //what this does is when we enter the run action it returns the running speed.
+        controls.Character.Run.performed += context =>
+        {
+            speed = runSpeed;
+            isRunning = true;
+        };
+        //this will return back to the walk speed when the character is no longer running.
+        controls.Character.Run.canceled += context =>
+        {
+            speed = walkSpeed;
+            isRunning = false;
+        };
     }
 
     private void Start()
@@ -62,6 +74,9 @@ public class PlayerMovement : MonoBehaviour
         //assign the animator to the start function.
         //you want to use GetComponent(InChildren) because we are using the animator as a child object currently.
         animator = GetComponentInChildren<Animator>();
+
+        // this is needed since if you dont cancel the input it will be 0.
+        speed = walkSpeed;
     }
 
     //Update is used for player movements.
@@ -122,7 +137,7 @@ public class PlayerMovement : MonoBehaviour
             //its important to add time.deltaTime because without it, it will register the input once every millisecond the button is pressed (making the character fly off screen).
             //Time.deltaTime is measured by frames and counts per second.(helps keep the speed in check).
             // multiply Time.deltaTime and walkSpeed to get the movement speed you want for the character.
-            characterController.Move(movementDirection * Time.deltaTime * walkSpeed);
+            characterController.Move(movementDirection * Time.deltaTime * speed);
         }
     }
     //This is where we define gravity.
