@@ -55,8 +55,12 @@ public class PlayerMovement : MonoBehaviour
         //what this does is when we enter the run action it returns the running speed.
         controls.Character.Run.performed += context =>
         {
-            speed = runSpeed;
-            isRunning = true;
+            //This prevents the character from running while he is standing still.
+            if (movementDirection.magnitude > 0)
+            {
+                speed = runSpeed;
+                isRunning = true;
+            }
         };
         //this will return back to the walk speed when the character is no longer running.
         controls.Character.Run.canceled += context =>
