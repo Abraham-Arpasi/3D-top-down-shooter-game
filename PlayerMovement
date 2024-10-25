@@ -172,13 +172,5 @@ public class PlayerMovement : MonoBehaviour
             verticalVelocity = -.5f;
     }
 
-    private void OnEnable()
-    {
-        controls.Enable(); 
-    }
-
-    private void OnDisable()
-    {
-        controls.Disable();
-    }
+   
 }
