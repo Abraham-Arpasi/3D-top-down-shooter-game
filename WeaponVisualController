@@ -1,0 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class WeaponVisualController : MonoBehaviour
+{
+    //this will witch them on or off by using an array of the variables.
+    [SerializeField] private Transform[] gunTransfroms;
+
+    //this will be the reference to the transfrom to each gun.
+    [SerializeField] private Transform pistol;
+    [SerializeField] private Transform revolover;
+    [SerializeField] private Transform rifle; //autoRifle
+    [SerializeField] private Transform shotgun;
+    [SerializeField] private Transform sniper; //rifle
+}
