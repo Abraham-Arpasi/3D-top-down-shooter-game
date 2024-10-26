@@ -9,7 +9,7 @@ public class WeaponVisualController : MonoBehaviour
 
     //this will be the reference to the transfrom to each gun.
     [SerializeField] private Transform pistol;
-    [SerializeField] private Transform revolover;
+    [SerializeField] private Transform revolver;
     [SerializeField] private Transform rifle; //autoRifle
     [SerializeField] private Transform shotgun;
     [SerializeField] private Transform sniper; //rifle
@@ -18,11 +18,27 @@ public class WeaponVisualController : MonoBehaviour
     private void Update()
     {
         //when pressing 1 on the keyboared, this will turn off all the guns except the pistol.
+        // did the same thing for number 2, 3, 4, 5.
         if (Input.GetKeyDown(KeyCode.Alpha1))
-        { 
-            SwitchOffGuns();
-            pistol.gameObject.SetActive(true);
-        }
+            SwitchOn(pistol);
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            SwitchOn(revolver);
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+            SwitchOn(rifle);
+
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+            SwitchOn(shotgun);
+
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+            SwitchOn(sniper);
+    }
+
+    private void SwitchOn(Transform gunTransform)
+    {
+        SwitchOffGuns();
+        gunTransform.gameObject.SetActive(true);
     }
 
     //this will switch all the guns we aren't using off.
