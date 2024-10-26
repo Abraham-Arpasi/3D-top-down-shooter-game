@@ -139,7 +139,8 @@ public class PlayerMovement : MonoBehaviour
 
             transform.forward = lookingDirection;
 
-            aim.position = new Vector3 (hitInfo.point.x, aim.position.y, hitInfo.point.z);
+            //The aim will always stay at the same level as the character.
+            aim.position = new Vector3 (hitInfo.point.x, transform.position.y + 1, hitInfo.point.z);
         }
     }
 
