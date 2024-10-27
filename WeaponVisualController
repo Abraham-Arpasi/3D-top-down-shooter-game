@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class WeaponVisualController : MonoBehaviour
 {
+    //set up so we can call animator.
+    private Animator anim;
+
     //this will witch them on or off by using an array of the variables.
     [SerializeField] private Transform[] gunTransfroms;
 
@@ -23,26 +26,44 @@ public class WeaponVisualController : MonoBehaviour
     {
         //this makes sure we have a pistol equiped on the character when the character doesn't have a weapon.
         SwitchOn(pistol);
+
+        anim = GetComponentInParent<Animator>();
     }
 
     private void Update()
     {
         //when pressing 1 on the keyboared, this will turn off all the guns except the pistol.
         // did the same thing for number 2, 3, 4, 5.
+        //which each animation between weapons for common weapons(1), shotguns(2), and snipers(3).
         if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
             SwitchOn(pistol);
+            SwitchAnimationLayer(1);
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
             SwitchOn(revolver);
+            SwitchAnimationLayer(1);
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
             SwitchOn(rifle);
+            SwitchAnimationLayer(1);
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
             SwitchOn(shotgun);
+            SwitchAnimationLayer(2);
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
             SwitchOn(sniper);
+            SwitchAnimationLayer(3);
+        }
     }
 
     private void SwitchOn(Transform gunTransform)
@@ -71,6 +92,18 @@ public class WeaponVisualController : MonoBehaviour
         
         leftHand.localPosition = targetTransform.localPosition; 
         leftHand.localRotation = targetTransform.localRotation;
+    }
+
+    //This will switch the animation layer between common weapons, shotguns, and snipers.
+    //We use the parameter so we can let it know which animation layer we want to switch on.
+    private void SwitchAnimationLayer(int layerIndex)
+    {
+        for (int i = 1; i < anim.layerCount; i++)
+        {
+            anim.SetLayerWeight(i, 0);
+        }
+
+        anim.SetLayerWeight(layerIndex, 1);
     }
 
 }
