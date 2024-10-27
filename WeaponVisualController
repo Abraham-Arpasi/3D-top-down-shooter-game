@@ -14,6 +14,16 @@ public class WeaponVisualController : MonoBehaviour
     [SerializeField] private Transform shotgun;
     [SerializeField] private Transform sniper; //rifle
 
+    //This code will be used for switching the left hands position when switching weapons.
+    private Transform currentGun;
+    [Header("Left Hand IK")]
+    [SerializeField] private Transform leftHand;
+
+    private void Start()
+    {
+        //this makes sure we have a pistol equiped on the character when the character doesn't have a weapon.
+        SwitchOn(pistol);
+    }
 
     private void Update()
     {
@@ -39,6 +49,9 @@ public class WeaponVisualController : MonoBehaviour
     {
         SwitchOffGuns();
         gunTransform.gameObject.SetActive(true);
+        currentGun = gunTransform;
+
+        AttachLeftHand();
     }
 
     //this will switch all the guns we aren't using off.
@@ -49,6 +62,15 @@ public class WeaponVisualController : MonoBehaviour
         {
             gunTransfroms[i].gameObject.SetActive(false);
         }
+    }
+
+    //This function here is what will be used when switching the left hands position when switching weapons.
+    private void AttachLeftHand()
+    {
+        Transform targetTransform = currentGun.GetComponentInChildren<LeftHandTargetTransform>().transform;
+        
+        leftHand.localPosition = targetTransform.localPosition; 
+        leftHand.localRotation = targetTransform.localRotation;
     }
 
 }
