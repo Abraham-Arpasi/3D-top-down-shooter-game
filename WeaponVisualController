@@ -27,7 +27,7 @@ public class WeaponVisualController : MonoBehaviour
         //this makes sure we have a pistol equiped on the character when the character doesn't have a weapon.
         SwitchOn(pistol);
 
-        anim = GetComponentInParent<Animator>();
+        anim = GetComponentInChildren<Animator>();
     }
 
     private void Update()
