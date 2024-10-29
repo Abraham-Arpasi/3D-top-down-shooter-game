@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class WeaponVisualController : MonoBehaviour
 {
@@ -17,10 +18,19 @@ public class WeaponVisualController : MonoBehaviour
     [SerializeField] private Transform shotgun;
     [SerializeField] private Transform sniper; //rifle
 
+    [Header("Rig info")]
+    [SerializeField] private float rigIncreaseStep;
+    private bool rigShouldBeIncreased;
+
+
     //This code will be used for switching the left hands position when switching weapons.
     private Transform currentGun;
     [Header("Left Hand IK")]
     [SerializeField] private Transform leftHand;
+
+
+    //This is what gives weight to certain animations, we need this turned on or off for the reload animation.
+    private Rig rig;
 
     private void Start()
     {
@@ -28,6 +38,7 @@ public class WeaponVisualController : MonoBehaviour
         SwitchOn(pistol);
 
         anim = GetComponentInChildren<Animator>();
+        rig = GetComponentInChildren<Rig>();
     }
 
     private void Update()
@@ -37,6 +48,22 @@ public class WeaponVisualController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             anim.SetTrigger("Reload");
+            rig.weight = 0;
+        }
+        if (Input.GetKey(KeyCode.K))
+        {
+            rigShouldBeIncreased = true;
+        }
+
+        //This will change the rig weight for the animation of reloading.
+        if (rigShouldBeIncreased)
+        {
+            rig.weight += rigIncreaseStep * Time.deltaTime;
+
+            if(rig.weight >= 1)
+            {
+                rigShouldBeIncreased = false;
+            }
         }
     }
 
