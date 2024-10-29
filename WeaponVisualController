@@ -50,10 +50,6 @@ public class WeaponVisualController : MonoBehaviour
             anim.SetTrigger("Reload");
             rig.weight = 0;
         }
-        if (Input.GetKey(KeyCode.K))
-        {
-            rigShouldBeIncreased = true;
-        }
 
         //This will change the rig weight for the animation of reloading.
         if (rigShouldBeIncreased)
@@ -66,6 +62,9 @@ public class WeaponVisualController : MonoBehaviour
             }
         }
     }
+
+    //This will make the rig weight change when reloading animation is finished.
+    public void ReturnRigWeightToOne() => rigShouldBeIncreased = true;
 
     private void CheckWeaponSwitch()
     {
