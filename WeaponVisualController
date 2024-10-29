@@ -32,6 +32,16 @@ public class WeaponVisualController : MonoBehaviour
 
     private void Update()
     {
+        CheckWeaponSwitch();
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            anim.SetTrigger("Reload");
+        }
+    }
+
+    private void CheckWeaponSwitch()
+    {
         //when pressing 1 on the keyboared, this will turn off all the guns except the pistol.
         // did the same thing for number 2, 3, 4, 5.
         //which each animation between weapons for common weapons(1), shotguns(2), and snipers(3).
