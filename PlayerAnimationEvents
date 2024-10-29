@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class PlayerAnimationEvents : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private WeaponVisualController visualController;
+
+    private void Start()
     {
-        
+        visualController = GetComponentInParent<WeaponVisualController>();  
     }
 
-    // Update is called once per frame
-    void Update()
+    //This will Return the rig weight for the other script when animation is over.
+    public void ReloadIsOver()
     {
-        
+        visualController.ReturnRigWeightToOne();
+
+
     }
 }
