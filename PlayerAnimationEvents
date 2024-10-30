@@ -16,6 +16,11 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         visualController.ReturnRigWeightToOne();
 
+    }
 
+    //this will return the rif weight for the other script when the animation is over.
+    public void WeaponGrabIsOver()
+    {
+        visualController.ReturnRigWeightToOne();
     }
 }
