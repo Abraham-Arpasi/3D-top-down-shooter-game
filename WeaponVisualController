@@ -1,206 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
-public class WeaponVisualController : MonoBehaviour
+public class PlayerAnimationEvents : MonoBehaviour
 {
-    //set up so we can call animator.
-    private Animator anim;
-
-    //this will witch them on or off by using an array of the variables.
-    [SerializeField] private Transform[] gunTransfroms;
-
-    //this will be the reference to the transfrom to each gun.
-    [SerializeField] private Transform pistol;
-    [SerializeField] private Transform revolver;
-    [SerializeField] private Transform rifle; //autoRifle
-    [SerializeField] private Transform shotgun;
-    [SerializeField] private Transform sniper; //rifle
-
-    [Header("Rig info")]
-    [SerializeField] private float rigIncreaseStep;
-    private bool rigShouldBeIncreased;
-
-
-    //This code will be used for switching the left hands position when switching weapons.
-    private Transform currentGun;
-    [Header("Left Hand IK")]
-    [SerializeField] private Transform leftHandIK_Target;
-    //This will help keep the left hand undercontrol when switching weapons.
-    [SerializeField] private TwoBoneIKConstraint leftHandIK;
-    [SerializeField] private float leftHandIK_InceaseStep;
-    private bool shouldIncreaseLeftHandIKWeight;
-
-    //This is what gives weight to certain animations, we need this turned on or off for the reload animation.
-    private Rig rig;
-
-    //this will prevent the weapon from being reloaded when grabbing the weapon.
-    private bool busyGrabbingWeapon;
+    private WeaponVisualController visualController;
 
     private void Start()
     {
-        //this makes sure we have a pistol equiped on the character when the character doesn't have a weapon.
-        SwitchOn(pistol);
-
-        anim = GetComponentInChildren<Animator>();
-        rig = GetComponentInChildren<Rig>();
+        visualController = GetComponentInParent<WeaponVisualController>();  
     }
 
-    private void Update()
+    //This will Return the rig weight for the other script when animation is over.
+    public void ReloadIsOver()
     {
-        CheckWeaponSwitch();
+        visualController.ReturnRigWeightToOne();
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            anim.SetTrigger("Reload");
-            PauseRig();
-        }
-
-        UpdateRigWeight();
-        UpdateLeftHandIKWeight();
     }
 
-    private void UpdateLeftHandIKWeight()
+    //this will return the rif weight for the other script when the animation is over.
+    public void WeaponGrabIsOver()
     {
-        //just like with reloading, this will change the rig weight for the animation of grab.
-        if (shouldIncreaseLeftHandIKWeight)
-        {
-            leftHandIK.weight += leftHandIK_InceaseStep * Time.deltaTime;
-
-            if (leftHandIK.weight >= 1)
-                shouldIncreaseLeftHandIKWeight = false;
-        }
+        visualController.ReturnRigWeightToOne();
+        visualController.ReturnWeightToLeftHandIK();
+        visualController.SetBusyGrabbingWeaponTo(false);
     }
-
-    private void UpdateRigWeight()
-    {
-        //This will change the rig weight for the animation of reloading.
-        if (rigShouldBeIncreased)
-        {
-            rig.weight += rigIncreaseStep * Time.deltaTime;
-
-            if (rig.weight >= 1)
-            {
-                rigShouldBeIncreased = false;
-            }
-        }
-    }
-
-    private void PauseRig()
-    {
-        rig.weight = 0.15f;
-    }
-
-    private void PlayWeaponGrabAnimation(GrabType grabType)
-    {
-        leftHandIK.weight = 0;
-        //the pauseRig function is used to adjust the left hand like it did with reload.
-        PauseRig();
-        //setting up different types of weapon grabs like, side grab and back grab.
-        anim.SetFloat("WeaponGrabType", ((float)grabType));
-        anim.SetTrigger("WeaponGrab");
-        SetBusyGrabbingWeaponTo(true);
-    }
-
-    public void SetBusyGrabbingWeaponTo(bool busy)
-    {
-        //this will prevent the character reloading when its grabbing the weapon.
-        busyGrabbingWeapon = busy;
-        anim.SetBool("BusyGrabbingWeapon", busyGrabbingWeapon);
-    }
-
-
-    //This will make the rig weight change when reloading animation is finished.
-    public void ReturnRigWeightToOne() => rigShouldBeIncreased = true;
-
-    // this will make the rif weight change when grabbing animation is finished.
-    public void ReturnWeightToLeftHandIK() => shouldIncreaseLeftHandIKWeight = true;
-
-    private void CheckWeaponSwitch()
-    {
-        //when pressing 1 on the keyboared, this will turn off all the guns except the pistol.
-        // did the same thing for number 2, 3, 4, 5.
-        //which each animation between weapons for common weapons(1), shotguns(2), and snipers(3).
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SwitchOn(pistol);
-            SwitchAnimationLayer(1);
-            PlayWeaponGrabAnimation(GrabType.SideGrab);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SwitchOn(revolver);
-            SwitchAnimationLayer(1);
-            PlayWeaponGrabAnimation(GrabType.SideGrab);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SwitchOn(rifle);
-            SwitchAnimationLayer(1);
-            PlayWeaponGrabAnimation(GrabType.BackGrab);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SwitchOn(shotgun);
-            SwitchAnimationLayer(2);
-            PlayWeaponGrabAnimation(GrabType.BackGrab);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            SwitchOn(sniper);
-            SwitchAnimationLayer(3);
-            PlayWeaponGrabAnimation(GrabType.BackGrab);
-        }
-    }
-
-    private void SwitchOn(Transform gunTransform)
-    {
-        SwitchOffGuns();
-        gunTransform.gameObject.SetActive(true);
-        currentGun = gunTransform;
-
-        AttachLeftHand();
-    }
-
-    //this will switch all the guns we aren't using off.
-    private void SwitchOffGuns()
-    {
-        //this will switch off all of the guns from the characters hands.
-        for (int i = 0; i < gunTransfroms.Length; i++)
-        {
-            gunTransfroms[i].gameObject.SetActive(false);
-        }
-    }
-
-    //This function here is what will be used when switching the left hands position when switching weapons.
-    private void AttachLeftHand()
-    {
-        Transform targetTransform = currentGun.GetComponentInChildren<LeftHandTargetTransform>().transform;
-        
-        leftHandIK_Target.localPosition = targetTransform.localPosition; 
-        leftHandIK_Target.localRotation = targetTransform.localRotation;
-    }
-
-    //This will switch the animation layer between common weapons, shotguns, and snipers.
-    //We use the parameter so we can let it know which animation layer we want to switch on.
-    private void SwitchAnimationLayer(int layerIndex)
-    {
-        for (int i = 1; i < anim.layerCount; i++)
-        {
-            anim.SetLayerWeight(i, 0);
-        }
-
-        anim.SetLayerWeight(layerIndex, 1);
-    }
-
-    //enum lets you create states and they have an index.
-    //like this side grab has a value of 0 and backgrab has a value of 1 which will make the setup of animator easier.
-    public enum GrabType { SideGrab, BackGrab };
-
-
 }
+
