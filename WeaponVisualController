@@ -63,6 +63,13 @@ public class WeaponVisualController : MonoBehaviour
         }
     }
 
+    private void PlayWeaponGrabAnimation(GrabType grabType)
+    {
+        anim.SetFloat("WeaponGrabType", ((float)grabType));
+        anim.SetTrigger("WeaponGrab");
+    }
+
+
     //This will make the rig weight change when reloading animation is finished.
     public void ReturnRigWeightToOne() => rigShouldBeIncreased = true;
 
@@ -75,30 +82,35 @@ public class WeaponVisualController : MonoBehaviour
         {
             SwitchOn(pistol);
             SwitchAnimationLayer(1);
+            PlayWeaponGrabAnimation(GrabType.SideGrab);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             SwitchOn(revolver);
             SwitchAnimationLayer(1);
+            PlayWeaponGrabAnimation(GrabType.SideGrab);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             SwitchOn(rifle);
             SwitchAnimationLayer(1);
+            PlayWeaponGrabAnimation(GrabType.BackGrab);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             SwitchOn(shotgun);
             SwitchAnimationLayer(2);
+            PlayWeaponGrabAnimation(GrabType.BackGrab);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             SwitchOn(sniper);
             SwitchAnimationLayer(3);
+            PlayWeaponGrabAnimation(GrabType.BackGrab);
         }
     }
 
@@ -141,5 +153,9 @@ public class WeaponVisualController : MonoBehaviour
 
         anim.SetLayerWeight(layerIndex, 1);
     }
+
+    //enum lets you create states and they have an index.
+    //like this side grab has a value of 0 and backgrab has a value of 1 which will make the setup of animator easier.
+    public enum GrabType { SideGrab, BackGrab };
 
 }
