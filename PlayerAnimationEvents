@@ -23,5 +23,7 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         visualController.ReturnRigWeightToOne();
         visualController.ReturnWeightToLeftHandIK();
+        visualController.SetBusyGrabbingWeaponTo(false);
     }
 }
+
