@@ -35,6 +35,9 @@ public class WeaponVisualController : MonoBehaviour
     //This is what gives weight to certain animations, we need this turned on or off for the reload animation.
     private Rig rig;
 
+    //this will prevent the weapon from being reloaded when grabbing the weapon.
+    private bool busyGrabbingWeapon;
+
     private void Start()
     {
         //this makes sure we have a pistol equiped on the character when the character doesn't have a weapon.
@@ -97,6 +100,14 @@ public class WeaponVisualController : MonoBehaviour
         //setting up different types of weapon grabs like, side grab and back grab.
         anim.SetFloat("WeaponGrabType", ((float)grabType));
         anim.SetTrigger("WeaponGrab");
+        SetBusyGrabbingWeaponTo(true);
+    }
+
+    public void SetBusyGrabbingWeaponTo(bool busy)
+    {
+        //this will prevent the character reloading when its grabbing the weapon.
+        busyGrabbingWeapon = busy;
+        anim.SetBool("BusyGrabbingWeapon", busyGrabbingWeapon);
     }
 
 
