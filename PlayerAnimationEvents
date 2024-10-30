@@ -17,13 +17,19 @@ public class PlayerAnimationEvents : MonoBehaviour
         visualController.ReturnRigWeightToOne();
 
     }
-
-    //this will return the rif weight for the other script when the animation is over.
-    public void WeaponGrabIsOver()
+    //this will make the character only be able to shoot once animation is done
+    public void ReturnRig()
     {
         visualController.ReturnRigWeightToOne();
         visualController.ReturnWeightToLeftHandIK();
+    }
+
+
+    //this will return the rig weight for the other script when the animation is over.
+    public void WeaponGrabIsOver()
+    {
         visualController.SetBusyGrabbingWeaponTo(false);
     }
 }
+
 
