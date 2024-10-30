@@ -26,8 +26,11 @@ public class WeaponVisualController : MonoBehaviour
     //This code will be used for switching the left hands position when switching weapons.
     private Transform currentGun;
     [Header("Left Hand IK")]
-    [SerializeField] private Transform leftHand;
-
+    [SerializeField] private Transform leftHandIK_Target;
+    //This will help keep the left hand undercontrol when switching weapons.
+    [SerializeField] private TwoBoneIKConstraint leftHandIK;
+    [SerializeField] private float leftHandIK_InceaseStep;
+    private bool shouldIncreaseLeftHandIKWeight;
 
     //This is what gives weight to certain animations, we need this turned on or off for the reload animation.
     private Rig rig;
@@ -51,12 +54,30 @@ public class WeaponVisualController : MonoBehaviour
             PauseRig();
         }
 
+        UpdateRigWeight();
+        UpdateLeftHandIKWeight();
+    }
+
+    private void UpdateLeftHandIKWeight()
+    {
+        //just like with reloading, this will change the rig weight for the animation of grab.
+        if (shouldIncreaseLeftHandIKWeight)
+        {
+            leftHandIK.weight += leftHandIK_InceaseStep * Time.deltaTime;
+
+            if (leftHandIK.weight >= 1)
+                shouldIncreaseLeftHandIKWeight = false;
+        }
+    }
+
+    private void UpdateRigWeight()
+    {
         //This will change the rig weight for the animation of reloading.
         if (rigShouldBeIncreased)
         {
             rig.weight += rigIncreaseStep * Time.deltaTime;
 
-            if(rig.weight >= 1)
+            if (rig.weight >= 1)
             {
                 rigShouldBeIncreased = false;
             }
@@ -70,6 +91,7 @@ public class WeaponVisualController : MonoBehaviour
 
     private void PlayWeaponGrabAnimation(GrabType grabType)
     {
+        leftHandIK.weight = 0;
         //the pauseRig function is used to adjust the left hand like it did with reload.
         PauseRig();
         //setting up different types of weapon grabs like, side grab and back grab.
@@ -80,6 +102,9 @@ public class WeaponVisualController : MonoBehaviour
 
     //This will make the rig weight change when reloading animation is finished.
     public void ReturnRigWeightToOne() => rigShouldBeIncreased = true;
+
+    // this will make the rif weight change when grabbing animation is finished.
+    public void ReturnWeightToLeftHandIK() => shouldIncreaseLeftHandIKWeight = true;
 
     private void CheckWeaponSwitch()
     {
@@ -146,8 +171,8 @@ public class WeaponVisualController : MonoBehaviour
     {
         Transform targetTransform = currentGun.GetComponentInChildren<LeftHandTargetTransform>().transform;
         
-        leftHand.localPosition = targetTransform.localPosition; 
-        leftHand.localRotation = targetTransform.localRotation;
+        leftHandIK_Target.localPosition = targetTransform.localPosition; 
+        leftHandIK_Target.localRotation = targetTransform.localRotation;
     }
 
     //This will switch the animation layer between common weapons, shotguns, and snipers.
@@ -165,5 +190,6 @@ public class WeaponVisualController : MonoBehaviour
     //enum lets you create states and they have an index.
     //like this side grab has a value of 0 and backgrab has a value of 1 which will make the setup of animator easier.
     public enum GrabType { SideGrab, BackGrab };
+
 
 }
