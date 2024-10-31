@@ -6,9 +6,13 @@ public class Player : MonoBehaviour
 {
     public PlayerControls controls;
 
+    // player can read from playerAim script but cant make any changes
+    public PlayerAim aim {  get; private set; } 
+
     private void Awake()
     {
         controls = new PlayerControls();
+        aim = GetComponent<PlayerAim>();
     }
 
     private void OnEnable()
