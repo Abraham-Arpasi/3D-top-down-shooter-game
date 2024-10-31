@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 //below is put here since we are setting up the input systems for the movement.
-using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     //getting reference from the player script so we dont need a new instance.
@@ -21,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("movement info")]
     //before we move the character we need to know which direction we are moving the character.
     private Vector3 movementDirection;
+    private Vector2 moveInput;
     //this is for setting up the speed of the characters movement.
     //SerializeField lets you see the variable in the script component when it is made private.
     [SerializeField] private float walkSpeed;
@@ -30,17 +27,6 @@ public class PlayerMovement : MonoBehaviour
 
     //This is the variable for setting up for gravity.
     private float verticalVelocity;
-
-    [Header("Aim info")]
-    [SerializeField] private Transform aim;
-    //This mask is for the aim physics detection.
-    [SerializeField] private LayerMask aimLayerMask;
-    //For the looking direction.
-    private Vector3 lookingDirection;
-
-
-    private Vector2 moveInput;
-    private Vector2 aimInput;
 
     //the awake function is used to fill up the script with information since the controls are empty.
     private void Awake()
@@ -61,8 +47,8 @@ public class PlayerMovement : MonoBehaviour
         //what this does is when we enter the run action it returns the running speed.
         controls.Character.Run.performed += context =>
         {
-                speed = runSpeed;
-                isRunning = true;
+            speed = runSpeed;
+            isRunning = true;
         };
         //this will return back to the walk speed when the character is no longer running.
         controls.Character.Run.canceled += context =>
@@ -86,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
 
         // this is needed since if you dont cancel the input it will be 0.
         speed = walkSpeed;
-       
+
         //moved this from awake to the start function since we now have a Player script.
         AssignInputEvents();
     }
@@ -96,7 +82,7 @@ public class PlayerMovement : MonoBehaviour
     {
         ApplyMovement();
 
-        AimTowardsMouse();
+        ApplyRotation();
 
         AnimatorControllers();
     }
@@ -111,8 +97,8 @@ public class PlayerMovement : MonoBehaviour
         float zVelocity = Vector3.Dot(movementDirection.normalized, transform.forward);
         //this is the code of how we pass the information above to the animator.
         //add .1f,Time.deltaTime to damp the animation transition and make it more smooth.
-        animator.SetFloat("xVelocity", xVelocity,.1f,Time.deltaTime);
-        animator.SetFloat("zVelocity", zVelocity,.1f,Time.deltaTime);
+        animator.SetFloat("xVelocity", xVelocity, .1f, Time.deltaTime);
+        animator.SetFloat("zVelocity", zVelocity, .1f, Time.deltaTime);
 
         //this will fix the bug from preventing the character doing the running animation if the player stops running but doesnt stop holding shift.
         //This prevents the character from running while he is standing still.
@@ -121,24 +107,17 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void AimTowardsMouse()
+    private void ApplyRotation()
     {
-        //This is for setting up the character aim.
-        Ray ray = Camera.main.ScreenPointToRay(aimInput);
-        //We are going to check if ray hits something.
-        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
-        {
-            // this is for looking direction.
-            lookingDirection = hitInfo.point - transform.position;
-            lookingDirection.y = 0f;
-            //normalize is used like a vector except it doesnt have or need a length. (its similar to being a bubble that is around your character).
-            lookingDirection.Normalize();
+        // this is for looking direction.
+        Vector3 lookingDirection = player.aim.GetMousePosition() - transform.position;
+        lookingDirection.y = 0f;
+        //normalize is used like a vector except it doesnt have or need a length. (its similar to being a bubble that is around your character).
+        lookingDirection.Normalize();
 
-            transform.forward = lookingDirection;
-            //The aim will always stay at the same level as the character.
-            // change the 'transform.position.y + 1' to 'aim.position.y' if you want to have the character aim down when he is standing in a higher position.
-            aim.position = new Vector3 (hitInfo.point.x, transform.position.y + 1, hitInfo.point.z);
-        }
+        transform.forward = lookingDirection;
+
+
     }
 
     //this function is for player movement which is called in the update function.
@@ -173,5 +152,5 @@ public class PlayerMovement : MonoBehaviour
             verticalVelocity = -.5f;
     }
 
-   
+
 }
