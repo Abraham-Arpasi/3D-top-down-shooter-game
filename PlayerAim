@@ -8,6 +8,12 @@ public class PlayerAim : MonoBehaviour
     private Player player;
     private PlayerControls controls;
 
+    [Header("Aim info")]
+    [SerializeField] private Transform aim;
+    //This mask is for the aim physics detection.
+    [SerializeField] private LayerMask aimLayerMask;
+    //For the looking direction.
+    private Vector3 lookingDirection;
     private Vector2 aimInput;
 
     private void Start()
@@ -16,6 +22,19 @@ public class PlayerAim : MonoBehaviour
        
         AssignInputEvents();
 
+    }
+
+    public Vector3 GetMousePosition()
+    {
+        //This is for setting up the character aim.
+        Ray ray = Camera.main.ScreenPointToRay(aimInput);
+        //We are going to check if ray hits something.
+        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
+        {
+            return hitInfo.point;
+        }
+
+            return Vector3.zero;
     }
 
     private void AssignInputEvents()
