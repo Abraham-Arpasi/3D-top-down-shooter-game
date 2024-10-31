@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public PlayerControls controls;
+    public PlayerControls controls { get; private set; }
 
     // player can read from playerAim script but cant make any changes
     public PlayerAim aim {  get; private set; } 
