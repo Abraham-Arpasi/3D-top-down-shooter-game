@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     //SerializeField lets you see the variable in the script component when it is made private.
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
+    [SerializeField] private float turnSpeed;
     private float speed;
     private bool isRunning;
 
@@ -115,8 +116,12 @@ public class PlayerMovement : MonoBehaviour
         //normalize is used like a vector except it doesnt have or need a length. (its similar to being a bubble that is around your character).
         lookingDirection.Normalize();
 
-        transform.forward = lookingDirection;
+        //Quaternion is a complex mathmatical representation of rotation.
+        Quaternion desiredRotaion = Quaternion.LookRotation(lookingDirection);
 
+        //This is let the gun rotate before the player giving it an animation of moving the gun before the body.
+        //Slerp allows to to smooth a transformation from one value to another.
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotaion, turnSpeed * Time.deltaTime);
 
     }
 
