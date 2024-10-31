@@ -24,6 +24,12 @@ public class PlayerAim : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        //this will make it so that the  player aims at a leveled position no matter the height.
+        aim.position = new Vector3(GetMousePosition().x, transform.position.y + 1, GetMousePosition().z);
+    }
+
     public Vector3 GetMousePosition()
     {
         //This is for setting up the character aim.
