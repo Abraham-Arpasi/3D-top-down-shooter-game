@@ -1,0 +1,28 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerAim : MonoBehaviour
+{
+    // set up references to other scripts.
+    private Player player;
+    private PlayerControls controls;
+
+    private Vector2 aimInput;
+
+    private void Start()
+    {
+        player = GetComponent<Player>();
+       
+        AssignInputEvents();
+
+    }
+
+    private void AssignInputEvents()
+    {
+        controls = GetComponent<PlayerControls>();
+
+        controls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
+        controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
+    }
+}
