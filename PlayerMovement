@@ -58,9 +58,6 @@ public class PlayerMovement : MonoBehaviour
         controls.Character.Movement.performed += context => moveInput = context.ReadValue<Vector2>();
         controls.Character.Movement.canceled += context => moveInput = Vector2.zero;
 
-        controls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
-        controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
-
         //what this does is when we enter the run action it returns the running speed.
         controls.Character.Run.performed += context =>
         {
@@ -138,8 +135,8 @@ public class PlayerMovement : MonoBehaviour
             lookingDirection.Normalize();
 
             transform.forward = lookingDirection;
-
             //The aim will always stay at the same level as the character.
+            // change the 'transform.position.y + 1' to 'aim.position.y' if you want to have the character aim down when he is standing in a higher position.
             aim.position = new Vector3 (hitInfo.point.x, transform.position.y + 1, hitInfo.point.z);
         }
     }
