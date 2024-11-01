@@ -10,8 +10,12 @@ public class PlayerAim : MonoBehaviour
 
     [Header("Aim info")]
     //This will be change the camera view to pan towards where the character is aiming.
+    [Range(.5f,1)]
     [SerializeField] private float minCameraDistance = 1.5f;
+    [Range(1,1.5f)]
     [SerializeField] private float maxCameraDistance = 4f;
+
+    [Range(3f, 5f)]
     [SerializeField] private float aimSensitivity = 5f;
 
     [SerializeField] private Transform aim;
@@ -43,14 +47,9 @@ public class PlayerAim : MonoBehaviour
         //this will check what the distance between the character and aim transform.
         float distanceToDesiredPosition = Vector3.Distance(transform.position, desiredAimPosition);
         //check if it is out of the circle.
-        if(distanceToDesiredPosition > maxCameraDistance)
-        {
-            desiredAimPosition = transform.position + aimDirection * maxCameraDistance;
-        }
-        else if(distanceToDesiredPosition < minCameraDistance)
-        {
-            desiredAimPosition = transform.position + aimDirection * minCameraDistance;
-        }
+        //clamp makes sure to have the camera stay in the circle.
+        float clampDistance = Mathf.Clamp(distanceToDesiredPosition, minCameraDistance, maxCameraDistance);
+        desiredAimPosition = transform.position + aimDirection * clampDistance;
         desiredAimPosition.y = transform.position.y + 1;
 
 
