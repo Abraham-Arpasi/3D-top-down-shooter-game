@@ -8,7 +8,11 @@ public class PlayerAim : MonoBehaviour
     private Player player;
     private PlayerControls controls;
 
-    [Header("Aim info")]
+    [Header("Aim Info")]
+    [SerializeField] private Transform aim;
+
+    [Header("Camera info")]
+    [SerializeField] private Transform cameraTarget;
     //This will be change the camera view to pan towards where the character is aiming.
     [Range(.5f,1)]
     [SerializeField] private float minCameraDistance = 1.5f;
@@ -16,9 +20,8 @@ public class PlayerAim : MonoBehaviour
     [SerializeField] private float maxCameraDistance = 4f;
 
     [Range(3f, 5f)]
-    [SerializeField] private float aimSensitivity = 5f;
+    [SerializeField] private float cameraSensitivity = 5f;
 
-    [SerializeField] private Transform aim;
     //This mask is for the aim physics detection.
     [SerializeField] private LayerMask aimLayerMask;
    
@@ -36,11 +39,15 @@ public class PlayerAim : MonoBehaviour
     private void Update()
     {
         //this will make it so that the  player aims at a leveled position no matter the height.
-        aim.position = Vector3.Lerp(aim.position, DesiredAimPosition(), aimSensitivity * Time.deltaTime);
+        cameraTarget.position = Vector3.Lerp(cameraTarget.position, DesiredCameraPosition(), cameraSensitivity * Time.deltaTime);
+
+        //this will make the aim position be where the mouse is pointing at.
+        aim.position = GetMouseHitInfo().point;
+        aim.position = new Vector3(aim.position.x, transform.position.y - 1, aim.position.z);
     }
     
     //This will have the camera position it self where the character is aiming.
-    private Vector3 DesiredAimPosition()
+    private Vector3 DesiredCameraPosition()
     {
         //this should help prevent the character from going off the screen
        float actualMaxCameraDistance = player.movement.moveInput.y < -.5f ? minCameraDistance : maxCameraDistance;
@@ -57,19 +64,19 @@ public class PlayerAim : MonoBehaviour
 
 
 
-        Vector3 desiredAimPosition = GetMouseHitInfo().point;
-        Vector3 aimDirection = (desiredAimPosition - transform.position).normalized;
+        Vector3 desiredCameraPosition = GetMouseHitInfo().point;
+        Vector3 aimDirection = (desiredCameraPosition - transform.position).normalized;
 
         //this will check what the distance between the character and aim transform.
-        float distanceToDesiredPosition = Vector3.Distance(transform.position, desiredAimPosition);
+        float distanceToDesiredPosition = Vector3.Distance(transform.position, desiredCameraPosition);
         //check if it is out of the circle.
         //clamp makes sure to have the camera stay in the circle.
         float clampDistance = Mathf.Clamp(distanceToDesiredPosition, minCameraDistance, actualMaxCameraDistance);
-        desiredAimPosition = transform.position + aimDirection * clampDistance;
-        desiredAimPosition.y = transform.position.y + 1;
+        desiredCameraPosition = transform.position + aimDirection * clampDistance;
+        desiredCameraPosition.y = transform.position.y + 1;
 
 
-        return desiredAimPosition;
+        return desiredCameraPosition;
     }
 
     public RaycastHit GetMouseHitInfo()
