@@ -9,11 +9,15 @@ public class PlayerAim : MonoBehaviour
     private PlayerControls controls;
 
     [Header("Aim info")]
+    //This will be change the camera view to pan towards where the character is aiming.
+    [SerializeField] private float minCameraDistance = 1.5f;
+    [SerializeField] private float maxCameraDistance = 4f;
+    [SerializeField] private float aimSensitivity = 5f;
+
     [SerializeField] private Transform aim;
     //This mask is for the aim physics detection.
     [SerializeField] private LayerMask aimLayerMask;
-    //For the looking direction.
-    private Vector3 lookingDirection;
+   
     private Vector2 aimInput;
 
     private void Start()
@@ -28,6 +32,29 @@ public class PlayerAim : MonoBehaviour
     {
         //this will make it so that the  player aims at a leveled position no matter the height.
         aim.position = new Vector3(GetMousePosition().x, transform.position.y + 1, GetMousePosition().z);
+    }
+    
+    //This will have the camera position it self where the character is aiming.
+    private Vector3 DesiredAimPosition()
+    {
+        Vector3 desiredAimPosition = GetMousePosition();
+        Vector3 aimDirection = (desiredAimPosition - transform.position).normalized;
+
+        //this will check what the distance between the character and aim transform.
+        float distanceToDesiredPosition = Vector3.Distance(transform.position, desiredAimPosition);
+        //check if it is out of the circle.
+        if(distanceToDesiredPosition > maxCameraDistance)
+        {
+            desiredAimPosition = transform.position + aimDirection * maxCameraDistance;
+        }
+        else if(distanceToDesiredPosition < minCameraDistance)
+        {
+            desiredAimPosition = transform.position + aimDirection * minCameraDistance;
+        }
+        desiredAimPosition.y = transform.position.y + 1;
+
+
+        return desiredAimPosition;
     }
 
     public Vector3 GetMousePosition()
@@ -45,7 +72,7 @@ public class PlayerAim : MonoBehaviour
 
     private void AssignInputEvents()
     {
-        controls = GetComponent<PlayerControls>();
+        controls = player.controls;
 
         controls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
         controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
