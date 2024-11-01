@@ -111,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyRotation()
     {
         // this is for looking direction.
-        Vector3 lookingDirection = player.aim.GetMousePosition() - transform.position;
+        Vector3 lookingDirection = player.aim.GetMouseHitInfo().point - transform.position;
         lookingDirection.y = 0f;
         //normalize is used like a vector except it doesnt have or need a length. (its similar to being a bubble that is around your character).
         lookingDirection.Normalize();
