@@ -56,7 +56,7 @@ public class PlayerAim : MonoBehaviour
 
 
 
-        Vector3 desiredAimPosition = GetMousePosition();
+        Vector3 desiredAimPosition = GetMouseHitInfo();
         Vector3 aimDirection = (desiredAimPosition - transform.position).normalized;
 
         //this will check what the distance between the character and aim transform.
@@ -71,17 +71,17 @@ public class PlayerAim : MonoBehaviour
         return desiredAimPosition;
     }
 
-    public Vector3 GetMousePosition()
+    public RaycastHit GetMouseHitInfo()
     {
         //This is for setting up the character aim.
         Ray ray = Camera.main.ScreenPointToRay(aimInput);
         //We are going to check if ray hits something.
         if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
         {
-            return hitInfo.point;
+            return hitInfo;
         }
 
-            return Vector3.zero;
+            return default;
     }
 
     private void AssignInputEvents()
