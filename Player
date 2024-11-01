@@ -8,11 +8,13 @@ public class Player : MonoBehaviour
 
     // player can read from playerAim script but cant make any changes
     public PlayerAim aim {  get; private set; } 
+    public PlayerMovement movement { get; private set; }
 
     private void Awake()
     {
         controls = new PlayerControls();
         aim = GetComponent<PlayerAim>();
+        movement = GetComponent<PlayerMovement>();
     }
 
     private void OnEnable()
