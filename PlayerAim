@@ -12,7 +12,7 @@ public class PlayerAim : MonoBehaviour
     //This will be change the camera view to pan towards where the character is aiming.
     [Range(.5f,1)]
     [SerializeField] private float minCameraDistance = 1.5f;
-    [Range(1,1.5f)]
+    [Range(1,3f)]
     [SerializeField] private float maxCameraDistance = 4f;
 
     [Range(3f, 5f)]
@@ -41,6 +41,19 @@ public class PlayerAim : MonoBehaviour
     //This will have the camera position it self where the character is aiming.
     private Vector3 DesiredAimPosition()
     {
+        //this should help prevent the character from going off the screen
+        float actualMaxCameraDistance;
+        bool movingDownwards = player.movement.moveInput.y < -.5f;
+
+        if (movingDownwards)
+        {
+            actualMaxCameraDistance = minCameraDistance;
+        }
+        else
+            actualMaxCameraDistance = maxCameraDistance;
+
+
+
         Vector3 desiredAimPosition = GetMousePosition();
         Vector3 aimDirection = (desiredAimPosition - transform.position).normalized;
 
@@ -48,7 +61,7 @@ public class PlayerAim : MonoBehaviour
         float distanceToDesiredPosition = Vector3.Distance(transform.position, desiredAimPosition);
         //check if it is out of the circle.
         //clamp makes sure to have the camera stay in the circle.
-        float clampDistance = Mathf.Clamp(distanceToDesiredPosition, minCameraDistance, maxCameraDistance);
+        float clampDistance = Mathf.Clamp(distanceToDesiredPosition, minCameraDistance, actualMaxCameraDistance);
         desiredAimPosition = transform.position + aimDirection * clampDistance;
         desiredAimPosition.y = transform.position.y + 1;
 
