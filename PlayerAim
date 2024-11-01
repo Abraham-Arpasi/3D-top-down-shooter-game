@@ -42,15 +42,17 @@ public class PlayerAim : MonoBehaviour
     private Vector3 DesiredAimPosition()
     {
         //this should help prevent the character from going off the screen
-        float actualMaxCameraDistance;
-        bool movingDownwards = player.movement.moveInput.y < -.5f;
+       float actualMaxCameraDistance = player.movement.moveInput.y < -.5f ? minCameraDistance : maxCameraDistance;
+        
+        //float actualMaxCameraDistance;
+        //bool movingDownwards = player.movement.moveInput.y < -.5f;
 
-        if (movingDownwards)
-        {
-            actualMaxCameraDistance = minCameraDistance;
-        }
-        else
-            actualMaxCameraDistance = maxCameraDistance;
+        //if (movingDownwards)
+        //{
+        //    actualMaxCameraDistance = minCameraDistance;
+        //}
+        //else
+        //    actualMaxCameraDistance = maxCameraDistance;
 
 
 
