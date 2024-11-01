@@ -23,6 +23,7 @@ public class PlayerAim : MonoBehaviour
     [SerializeField] private LayerMask aimLayerMask;
    
     private Vector2 aimInput;
+    private RaycastHit lastKnownMouseHit; 
 
     private void Start()
     {
@@ -56,7 +57,7 @@ public class PlayerAim : MonoBehaviour
 
 
 
-        Vector3 desiredAimPosition = GetMouseHitInfo();
+        Vector3 desiredAimPosition = GetMouseHitInfo().point;
         Vector3 aimDirection = (desiredAimPosition - transform.position).normalized;
 
         //this will check what the distance between the character and aim transform.
@@ -78,10 +79,12 @@ public class PlayerAim : MonoBehaviour
         //We are going to check if ray hits something.
         if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
         {
+            //lastKnownMouseHit will make sure that the aim doesn't get messed up if not aiming at the ground or obstacle.
+            lastKnownMouseHit = hitInfo;
             return hitInfo;
         }
 
-            return default;
+            return lastKnownMouseHit;
     }
 
     private void AssignInputEvents()
