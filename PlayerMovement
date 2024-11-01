@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("movement info")]
     //before we move the character we need to know which direction we are moving the character.
     private Vector3 movementDirection;
-    private Vector2 moveInput;
+    public Vector2 moveInput {get; private set;}
     //this is for setting up the speed of the characters movement.
     //SerializeField lets you see the variable in the script component when it is made private.
     [SerializeField] private float walkSpeed;
