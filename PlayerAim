@@ -11,6 +11,9 @@ public class PlayerAim : MonoBehaviour
     [Header("Aim Info")]
     [SerializeField] private Transform aim;
 
+    //this will be for the precise aim of the gun.
+    [SerializeField] bool isAimingPrecisly;
+
     [Header("Camera info")]
     [SerializeField] private Transform cameraTarget;
     //This will be change the camera view to pan towards where the character is aiming.
@@ -38,12 +41,24 @@ public class PlayerAim : MonoBehaviour
 
     private void Update()
     {
+        aim.position = GetMouseHitInfo().point;
+
+        //this will set aim position to the level of the character if aim is not precise.
+        if (!isAimingPrecisly) { 
+        //this will make the aim position be where the mouse is pointing at.
+        aim.position = new Vector3(aim.position.x, transform.position.y + 1, aim.position.z);
+         }
+
         //this will make it so that the  player aims at a leveled position no matter the height.
         cameraTarget.position = Vector3.Lerp(cameraTarget.position, DesiredCameraPosition(), cameraSensitivity * Time.deltaTime);
+    }
 
-        //this will make the aim position be where the mouse is pointing at.
-        aim.position = GetMouseHitInfo().point;
-        aim.position = new Vector3(aim.position.x, transform.position.y + 1, aim.position.z);
+    public bool CanAimPrecisly()
+    {
+        if (isAimingPrecisly)
+            return true;
+
+        return false;
     }
     
     //This will have the camera position it self where the character is aiming.
@@ -102,4 +117,3 @@ public class PlayerAim : MonoBehaviour
         controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
     }
 }
-
