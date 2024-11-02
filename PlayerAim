@@ -43,7 +43,7 @@ public class PlayerAim : MonoBehaviour
 
         //this will make the aim position be where the mouse is pointing at.
         aim.position = GetMouseHitInfo().point;
-        aim.position = new Vector3(aim.position.x, transform.position.y - 1, aim.position.z);
+        aim.position = new Vector3(aim.position.x, transform.position.y + 1, aim.position.z);
     }
     
     //This will have the camera position it self where the character is aiming.
@@ -102,3 +102,4 @@ public class PlayerAim : MonoBehaviour
         controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
     }
 }
+
