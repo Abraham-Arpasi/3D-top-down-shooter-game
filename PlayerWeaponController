@@ -6,6 +6,11 @@ public class PlayerWeaponController : MonoBehaviour
 {
     private Player player;
 
+    //this is for creating the bullet.
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private float bulletSpeed;
+    [SerializeField] private Transform gunPoint;
+
     //We will be calling functions here for shooting the weapons.
     private void Start()
     {
@@ -19,6 +24,9 @@ public class PlayerWeaponController : MonoBehaviour
     //This is the function that will control the shooting animation.
     private void Shoot()
     {
+        //create local variable for bullet.
+        GameObject newBullet = Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
+
         //setting up the player animation for shooting weapons.
         GetComponentInChildren<Animator>().SetTrigger("Fire");
     }
