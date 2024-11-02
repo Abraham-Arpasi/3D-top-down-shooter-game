@@ -1,0 +1,15 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Bullet : MonoBehaviour
+{
+    private Rigidbody rb => GetComponent<Rigidbody>();
+
+    //creating a collider for the bullet.
+    private void OnCollisionEnter(Collision collision)
+    {
+        //this will stick to objects that it collides with.
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+    }
+}
