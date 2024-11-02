@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerWeaponController : MonoBehaviour
@@ -10,6 +11,9 @@ public class PlayerWeaponController : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed;
     [SerializeField] private Transform gunPoint;
+
+    [SerializeField] private Transform weaponHolder;
+    [SerializeField] private Transform aim;
 
     //We will be calling functions here for shooting the weapons.
     private void Start()
@@ -24,9 +28,10 @@ public class PlayerWeaponController : MonoBehaviour
     //This is the function that will control the shooting animation.
     private void Shoot()
     {
+
         //create local variable for bullet.
         GameObject newBullet = Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
-        newBullet.GetComponent<Rigidbody>().velocity = gunPoint.forward * bulletSpeed;
+        newBullet.GetComponent<Rigidbody>().velocity = BulletDirection() * bulletSpeed;
 
         //this is going to destroy the bullet after a duration.
         Destroy(newBullet, 10);
@@ -34,5 +39,24 @@ public class PlayerWeaponController : MonoBehaviour
 
         //setting up the player animation for shooting weapons.
         GetComponentInChildren<Animator>().SetTrigger("Fire");
+    }
+
+    private Vector3 BulletDirection()
+    {
+        Vector3 direction = (aim.position - gunPoint.position).normalized;
+        direction.y = 0;
+
+        //this updates the weapon rotation while aiming.
+        weaponHolder.LookAt(aim);
+        gunPoint.LookAt(aim);
+
+        return direction;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(weaponHolder.position, weaponHolder.position + weaponHolder.forward * 25);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(gunPoint.position, gunPoint.position + BulletDirection() * 25);
     }
 }
