@@ -26,6 +26,11 @@ public class PlayerWeaponController : MonoBehaviour
     {
         //create local variable for bullet.
         GameObject newBullet = Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
+        newBullet.GetComponent<Rigidbody>().velocity = gunPoint.forward * bulletSpeed;
+
+        //this is going to destroy the bullet after a duration.
+        Destroy(newBullet, 10);
+
 
         //setting up the player animation for shooting weapons.
         GetComponentInChildren<Animator>().SetTrigger("Fire");
