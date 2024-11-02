@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Transactions;
 using UnityEngine;
 
 public class PlayerAim : MonoBehaviour
@@ -41,16 +42,31 @@ public class PlayerAim : MonoBehaviour
 
     private void Update()
     {
-        aim.position = GetMouseHitInfo().point;
+        //simple input to switch on precise aim or switch off.
+        if(Input.GetKeyDown(KeyCode.P))
+            isAimingPrecisly = !isAimingPrecisly;
 
         //this will set aim position to the level of the character if aim is not precise.
-        if (!isAimingPrecisly) { 
-        //this will make the aim position be where the mouse is pointing at.
-        aim.position = new Vector3(aim.position.x, transform.position.y + 1, aim.position.z);
-         }
+        UpdateAimPosition();
 
+        UpdateCameraPosition();
+    }
+
+    private void UpdateCameraPosition()
+    {
         //this will make it so that the  player aims at a leveled position no matter the height.
         cameraTarget.position = Vector3.Lerp(cameraTarget.position, DesiredCameraPosition(), cameraSensitivity * Time.deltaTime);
+    }
+
+    private void UpdateAimPosition()
+    {
+        aim.position = GetMouseHitInfo().point;
+
+        if (!isAimingPrecisly)
+        {
+            //this will make the aim position be where the mouse is pointing at.
+            aim.position = new Vector3(aim.position.x, transform.position.y + 1, aim.position.z);
+        }
     }
 
     public bool CanAimPrecisly()
