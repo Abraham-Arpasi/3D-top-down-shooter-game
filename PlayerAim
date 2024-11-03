@@ -36,7 +36,7 @@ public class PlayerAim : MonoBehaviour
     //This mask is for the aim physics detection.
     [SerializeField] private LayerMask aimLayerMask;
    
-    private Vector2 aimInput;
+    private Vector2 mouseInput;
     private RaycastHit lastKnownMouseHit; 
 
     private void Start()
@@ -62,10 +62,10 @@ public class PlayerAim : MonoBehaviour
 
         UpdateCameraPosition();
 
-        UpdateAimLaser();
+        UpdateAimVisuals();
     }
 
-    private void UpdateAimLaser()
+    private void UpdateAimVisuals()
     {
         //make the length value a local variable instead of global.
         float laserTipLength = 0.5f;
@@ -127,13 +127,10 @@ public class PlayerAim : MonoBehaviour
         }
     }
 
-    public bool CanAimPrecisly()
-    {
-        if (isAimingPrecisly)
-            return true;
+    public Transform Aim() => aim;
 
-        return false;
-    }
+    public bool CanAimPrecisly() => isAimingPrecisly;
+    
     
     //This will have the camera position it self where the character is aiming.
     private Vector3 DesiredCameraPosition()
@@ -171,7 +168,7 @@ public class PlayerAim : MonoBehaviour
     public RaycastHit GetMouseHitInfo()
     {
         //This is for setting up the character aim.
-        Ray ray = Camera.main.ScreenPointToRay(aimInput);
+        Ray ray = Camera.main.ScreenPointToRay(mouseInput);
         //We are going to check if ray hits something.
         if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
         {
@@ -187,7 +184,7 @@ public class PlayerAim : MonoBehaviour
     {
         controls = player.controls;
 
-        controls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
-        controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
+        controls.Character.Aim.performed += context => mouseInput = context.ReadValue<Vector2>();
+        controls.Character.Aim.canceled += context => mouseInput = Vector2.zero;
     }
 }
