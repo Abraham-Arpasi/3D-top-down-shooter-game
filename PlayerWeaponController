@@ -44,9 +44,9 @@ public class PlayerWeaponController : MonoBehaviour
     private Vector3 BulletDirection()
     {
         Vector3 direction = (aim.position - gunPoint.position).normalized;
-        
+
         //check if player can aim precisly.
-        if(player.aim.CanAimPrecisly() == false ) 
+        if (player.aim.CanAimPrecisly() == false && player.aim.Target() == null)
             direction.y = 0;
 
         //this updates the weapon rotation while aiming.
