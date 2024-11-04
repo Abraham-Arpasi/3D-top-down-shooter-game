@@ -2,7 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//this script will automatically give the object a rigidbody.
+[RequireComponent(typeof(Rigidbody))]
 public class Target : MonoBehaviour
 {
- 
+    private void Start()
+    {
+        //this will automatically change the layer of the object to "Enemy".
+        gameObject.layer = LayerMask.NameToLayer("Enemy");
+    }
 }
