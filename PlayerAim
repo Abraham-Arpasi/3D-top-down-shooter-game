@@ -114,7 +114,16 @@ public class PlayerAim : MonoBehaviour
 
         if(target != null && isLockingToTarget)
         {
-            aim.position = target.position;
+            //if the object has a renderer than have the targetlock look at the center instead of pivot point.
+            if(target.GetComponent<Renderer>() != null)
+            {
+                aim.position = target.GetComponent<Renderer>().bounds.center;
+            }
+            else
+            {
+                aim.position = target.position;
+            }
+
             return;
         }
 
