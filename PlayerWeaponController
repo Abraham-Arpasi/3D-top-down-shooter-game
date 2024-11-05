@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class PlayerWeaponController : MonoBehaviour
 {
+    //this is the default speed of the bullet for the mass of 1.
+    private const float REFERENCE_BULLET_SPEED = 20;
+
     private Player player;
 
     //this is for creating the bullet.
@@ -30,7 +33,13 @@ public class PlayerWeaponController : MonoBehaviour
 
         //create local variable for bullet.
         GameObject newBullet = Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
-        newBullet.GetComponent<Rigidbody>().velocity = BulletDirection() * bulletSpeed;
+
+        //this will assign the mass of rigidbody to the reference of the movement speed.
+        Rigidbody rbNewBullet = newBullet.GetComponent<Rigidbody>();
+
+        //this will change the mass of the bullet to be divided by the speed of the bullet.
+        rbNewBullet.mass = REFERENCE_BULLET_SPEED / bulletSpeed;
+        rbNewBullet.velocity = BulletDirection() * bulletSpeed;
 
         //this is going to destroy the bullet after a duration.
         Destroy(newBullet, 10);
