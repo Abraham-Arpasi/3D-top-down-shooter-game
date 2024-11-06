@@ -4,13 +4,31 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    //This will be for the VFX of the bullet impact.
+    [SerializeField] private GameObject bulletImpactFX;
     private Rigidbody rb => GetComponent<Rigidbody>();
 
     //creating a collider for the bullet.
     private void OnCollisionEnter(Collision collision)
     {
+        CreateImpactFx(collision);
+
+
         //this will stick to objects that it collides with.
         //rb.constraints = RigidbodyConstraints.FreezeAll;
         Destroy(gameObject);
     }
+
+    private void CreateImpactFx(Collision collision)
+    {
+        if (collision.contacts.Length > 0)
+        {
+            //this is the first contact with an object that the bullet hits.
+            ContactPoint contact = collision.contacts[0];
+
+            //this will start the visual effect of the impact effect after bullet hits object.
+            GameObject newImpactFX = Instantiate(bulletImpactFX, contact.point, Quaternion.LookRotation(contact.normal));
+        }
+    }
 }
+
