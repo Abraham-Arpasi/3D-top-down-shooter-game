@@ -28,7 +28,9 @@ public class Bullet : MonoBehaviour
 
             //this will start the visual effect of the impact effect after bullet hits object.
             GameObject newImpactFX = Instantiate(bulletImpactFX, contact.point, Quaternion.LookRotation(contact.normal));
+
+            //Destroy the VFX after it hits an object so it doesn't loop.
+            Destroy(newImpactFX, 1f);
         }
     }
 }
-
