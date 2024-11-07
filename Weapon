@@ -2,8 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//this makes the class visible in the inspector.
+[System.Serializable]
+
 //removed monobehaviour since this script wont be using start or update function.
 public class Weapon
 {
-    
+    public int ammo;
+    public int maxAmmo;
 }
+
