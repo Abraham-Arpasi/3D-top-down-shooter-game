@@ -1,0 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+//removed monobehaviour since this script wont be using start or update function.
+public class Weapon
+{
+    
+}
