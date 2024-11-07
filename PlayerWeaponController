@@ -36,6 +36,12 @@ public class PlayerWeaponController : MonoBehaviour
     //This is the function that will control the shooting animation.
     private void Shoot()
     {
+        //this will make the gun stop shooting if ran out of ammo.
+        if(currentWeapon.ammo <= 0)
+        {
+            return;
+        }
+
         //this will decrease the amount of bullet when shooting by 1.
         currentWeapon.ammo--;
 
@@ -77,4 +83,5 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => gunPoint;
 }
+
 
