@@ -10,6 +10,9 @@ public class PlayerWeaponController : MonoBehaviour
 
     private Player player;
 
+    [SerializeField] private Weapon currentWeapon;
+
+    [Header("Bullet Info")]
     //this is for creating the bullet.
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed;
@@ -24,12 +27,17 @@ public class PlayerWeaponController : MonoBehaviour
 
         //calling the Fire action here
         player.controls.Character.Fire.performed += context => Shoot();
+
+        //this is for the ammo of the weapon that is being held.
+        currentWeapon.ammo = currentWeapon.maxAmmo;
     }
 
 
     //This is the function that will control the shooting animation.
     private void Shoot()
     {
+        //this will decrease the amount of bullet when shooting by 1.
+        currentWeapon.ammo--;
 
         //create local variable for bullet.
         GameObject newBullet = Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
@@ -69,3 +77,4 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => gunPoint;
 }
+
