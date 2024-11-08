@@ -23,6 +23,8 @@ public class PlayerWeaponController : MonoBehaviour
     [Header("Inventory")]
     //This is for creating weapon slots.
     [SerializeField] private List<Weapon> weaponSlots;
+    //this will make sure that the player only picks up 2 weapons that can be equiped.
+    [SerializeField] private int maxSlots = 2;
 
     //We will be calling functions here for shooting the weapons.
     private void Start()
@@ -50,6 +52,16 @@ public class PlayerWeaponController : MonoBehaviour
     private void EquipWeapon(int i)
     {
         currentWeapon = weaponSlots[i];
+    }
+
+    public void PickupWeapon(Weapon newWeapon)
+    { 
+        if(weaponSlots.Count >= maxSlots)
+        {
+            return;
+        }
+
+        weaponSlots.Add(newWeapon);
     }
 
     private void DropWeapon()
