@@ -20,16 +20,46 @@ public class PlayerWeaponController : MonoBehaviour
 
     [SerializeField] private Transform weaponHolder;
 
+    [Header("Inventory")]
+    //This is for creating weapon slots.
+    [SerializeField] private List<Weapon> weaponSlots;
+
     //We will be calling functions here for shooting the weapons.
     private void Start()
     {
         player = GetComponent<Player>();
 
-        //calling the Fire action here
-        player.controls.Character.Fire.performed += context => Shoot();
+        AssignInputEvents();
 
         //this is for the ammo of the weapon that is being held.
         currentWeapon.ammo = currentWeapon.maxAmmo;
+    }
+
+    private void AssignInputEvents()
+    {
+        //calling the Fire action here
+        PlayerControls controls = player.controls;
+        controls.Character.Fire.performed += context => Shoot();
+
+        controls.Character.EquipSlot1.performed += context => EquipWeapon(0);
+        controls.Character.EquipSlot2.performed += context => EquipWeapon(1);
+
+        controls.Character.DropCurrentWeapon.performed += context => DropWeapon();
+    }
+
+    private void EquipWeapon(int i)
+    {
+        currentWeapon = weaponSlots[i];
+    }
+
+    private void DropWeapon()
+    {
+        if (weaponSlots.Count <= 1)
+            return;
+
+        weaponSlots.Remove(currentWeapon);
+
+        currentWeapon = weaponSlots[0];
     }
 
 
@@ -83,5 +113,3 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => gunPoint;
 }
-
-
