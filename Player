@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
         aim = GetComponent<PlayerAim>();
         movement = GetComponent<PlayerMovement>();
         weapon = GetComponent<PlayerWeaponController>();
+        weaponVisuals = GetComponent<PlayerWeaponVisuals>();
     }
 
     private void OnEnable()
@@ -32,5 +33,6 @@ public class Player : MonoBehaviour
         controls.Disable();
     }
 }
+
 
 
