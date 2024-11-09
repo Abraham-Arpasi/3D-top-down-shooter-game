@@ -51,21 +51,21 @@ public class Weapon
     }
 
     //adds bullets back into the weapon when reloaded.
-    public void ReloadBullets()
+    public void RefilledBullets()
     {
+
+        //when reloading, the bullets will be put back into the ammo reserve.
+        totalReserveAmmo += bulletsInMagazine;
+
+
         //when reloading, all bullets in the magazine will be lost.
         int bulletsToReload = magazineCapacity;
-
         if (bulletsToReload > totalReserveAmmo)
             bulletsToReload = totalReserveAmmo;
 
         totalReserveAmmo -= bulletsToReload;
         bulletsInMagazine = bulletsToReload;
-
         if (totalReserveAmmo < 0)
             totalReserveAmmo = 0;
     }
 }
-
-
-
