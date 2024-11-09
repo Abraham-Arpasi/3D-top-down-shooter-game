@@ -43,6 +43,10 @@ public class Weapon
     // this will let you reload if there is still ammo left in the weapon.
     public bool canReload()
     {
+        //check to make sure that weapon cant reload if weapon is full.
+        if (bulletsInMagazine == magazineCapacity)
+            return false;
+
         if(totalReserveAmmo > 0)
         {
             return true;
@@ -69,3 +73,4 @@ public class Weapon
             totalReserveAmmo = 0;
     }
 }
+
