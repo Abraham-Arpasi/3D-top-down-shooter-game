@@ -34,7 +34,7 @@ public class PlayerWeaponController : MonoBehaviour
         AssignInputEvents();
 
         //this is for the ammo of the weapon that is being held.
-        currentWeapon.ammo = currentWeapon.maxAmmo;
+        currentWeapon.bulletsInMagazine = currentWeapon.totalReserveAmmo;
     }
 
     private void AssignInputEvents()
@@ -51,7 +51,13 @@ public class PlayerWeaponController : MonoBehaviour
         controls.Character.DropCurrentWeapon.performed += context => DropWeapon();
 
         //calling the reload here.
-        controls.Character.Reload.performed += context => player.weaponVisuals.PlayReloadAnimation();
+        controls.Character.Reload.performed += context =>
+        {
+            if (currentWeapon.canReload())
+            {
+                player.weaponVisuals.PlayReloadAnimation();
+            }
+        };
     }
 
     private void EquipWeapon(int i)
@@ -126,4 +132,3 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => gunPoint;
 }
-
