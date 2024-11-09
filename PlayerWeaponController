@@ -39,14 +39,19 @@ public class PlayerWeaponController : MonoBehaviour
 
     private void AssignInputEvents()
     {
-        //calling the Fire action here
+        //calling the Fire action here.
         PlayerControls controls = player.controls;
         controls.Character.Fire.performed += context => Shoot();
 
+        //calling the equipslot here.
         controls.Character.EquipSlot1.performed += context => EquipWeapon(0);
         controls.Character.EquipSlot2.performed += context => EquipWeapon(1);
 
+        //calling the drop weapon here.
         controls.Character.DropCurrentWeapon.performed += context => DropWeapon();
+
+        //calling the reload here.
+        controls.Character.Reload.performed += context => player.weaponVisuals.PlayReloadAnimation();
     }
 
     private void EquipWeapon(int i)
@@ -121,3 +126,4 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => gunPoint;
 }
+
