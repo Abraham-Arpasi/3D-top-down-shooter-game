@@ -107,7 +107,7 @@ public class PlayerWeaponVisuals : MonoBehaviour
         rig.weight = 0.15f;
     }
 
-    private void PlayWeaponEquipAnimation()
+    public void PlayWeaponEquipAnimation()
     {
         GrabType grabType = CurrentWeaponModel().grabType;
 
@@ -134,9 +134,13 @@ public class PlayerWeaponVisuals : MonoBehaviour
     // this will make the rif weight change when grabbing animation is finished.
     public void MaximizeLeftHandWeight() => shouldIncrease_LeftHandIKWeight = true;
 
-    private void SwitchOn()
+    //this will switch on the weapon model that the character is holding.
+    private void SwitchOnCurrentWeaponModel()
     {
-        SwitchOffWeaponModels();
+        //this will switch animation layer
+        int animationIndex = ((int)CurrentWeaponModel().holdType);
+
+        SwitchAnimationLayer(animationIndex);
         
         //this will switch on the model you want to have.
         CurrentWeaponModel().gameObject.SetActive(true);
