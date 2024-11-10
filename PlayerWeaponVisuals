@@ -44,7 +44,6 @@ public class PlayerWeaponVisuals : MonoBehaviour
 
     private void Update()
     {
-        CheckWeaponSwitch();
         UpdateRigWeight();
         UpdateLeftHandIKWeight();
     }
@@ -132,47 +131,6 @@ public class PlayerWeaponVisuals : MonoBehaviour
 
     // this will make the rif weight change when grabbing animation is finished.
     public void MaximizeLeftHandWeight() => shouldIncrease_LeftHandIKWeight = true;
-
-    private void CheckWeaponSwitch()
-    {
-        //when pressing 1 on the keyboared, this will turn off all the guns except the pistol.
-        // did the same thing for number 2, 3, 4, 5.
-        //which each animation between weapons for common weapons(1), shotguns(2), and snipers(3).
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SwitchOn();
-            SwitchAnimationLayer(1);
-            PlayWeaponGrabAnimation(GrabType.SideGrab);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SwitchOn();
-            SwitchAnimationLayer(1);
-            PlayWeaponGrabAnimation(GrabType.SideGrab);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SwitchOn();
-            SwitchAnimationLayer(1);
-            PlayWeaponGrabAnimation(GrabType.BackGrab);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SwitchOn();
-            SwitchAnimationLayer(2);
-            PlayWeaponGrabAnimation(GrabType.BackGrab);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            SwitchOn();
-            SwitchAnimationLayer(3);
-            PlayWeaponGrabAnimation(GrabType.BackGrab);
-        }
-    }
 
     private void SwitchOn()
     {
