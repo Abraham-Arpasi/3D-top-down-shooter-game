@@ -107,8 +107,10 @@ public class PlayerWeaponVisuals : MonoBehaviour
         rig.weight = 0.15f;
     }
 
-    private void PlayWeaponGrabAnimation(GrabType grabType)
+    private void PlayWeaponEquipAnimation()
     {
+        GrabType grabType = CurrentWeaponModel().grabType;
+
         leftHandIK.weight = 0;
         //the pauseRig function is used to adjust the left hand like it did with reload.
         ReduceRigWeight();
