@@ -200,9 +200,5 @@ public class PlayerWeaponVisuals : MonoBehaviour
         anim.SetLayerWeight(layerIndex, 1);
     }
 
-    //enum lets you create states and they have an index.
-    //like this side grab has a value of 0 and backgrab has a value of 1 which will make the setup of animator easier.
-    public enum GrabType { SideGrab, BackGrab };
-
 
 }
