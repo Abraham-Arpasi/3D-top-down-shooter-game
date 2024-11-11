@@ -15,7 +15,10 @@ public class PlayerWeaponVisuals : MonoBehaviour
     //this will prevent the weapon from being reloaded when grabbing the weapon.
     private bool isGrabbingWeapon;
 
+    //creating the weapon model to appear in game.
     [SerializeField] private WeaponModel[] weaponModels;
+    //this is the weapon model that appears on the characters back.
+    [SerializeField] private BackupWeaponModel[] backupWeaponModels;
 
     [Header("Rig info")]
     //This is what gives weight to certain animations, we need this turned on or off for the reload animation.
@@ -39,6 +42,7 @@ public class PlayerWeaponVisuals : MonoBehaviour
 
         //this one is GetComponent(s) with an s since there are more than one.
         weaponModels = GetComponentsInChildren<WeaponModel>(true);
+        backupWeaponModels = GetComponentsInChildren<BackupWeaponModel>(true);
 
     }
 
@@ -181,4 +185,3 @@ public class PlayerWeaponVisuals : MonoBehaviour
 
 
 }
-
