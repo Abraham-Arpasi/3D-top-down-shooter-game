@@ -162,6 +162,27 @@ public class PlayerWeaponVisuals : MonoBehaviour
         }
     }
 
+    //this will switch off the back weapon.
+    private void SwitchOffBackupWeaponModels()
+    {
+        foreach(BackupWeaponModel backupModel in backupWeaponModels) 
+        { 
+            backupModel.gameObject.SetActive(false);
+        }
+    }
+
+    //this will switch on the back weapon.
+    private void SwitchOnBackupWeaponModel()
+    {
+        WeaponType weaponType = player.weapon.BackupWeapon().weaponType;
+
+        foreach(BackupWeaponModel backupModel in backupWeaponModels)
+        {
+            if(backupModel.weaponType == weaponType)
+                backupModel.gameObject.SetActive(true);
+        }
+    }
+
     //This function here is what will be used when switching the left hands position when switching weapons.
     private void AttachLeftHand()
     {
