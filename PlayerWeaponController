@@ -136,7 +136,18 @@ public class PlayerWeaponController : MonoBehaviour
     //this will return currentweapon.
     public Weapon CurrentWeapon() => currentWeapon;
 
+    //this will find which weapon is not current weapon.
+    public Weapon BackupWeapon()
+    {
+        foreach (Weapon weapon in weaponSlots)
+        {
+            if (weapon != currentWeapon)
+                return weapon;
+        }
+
+        return null;
+    }
+
     //Setting up the aim laser.
     public Transform GunPoint() => gunPoint;
 }
-
