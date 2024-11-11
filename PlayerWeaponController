@@ -2,214 +2,155 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
-public class PlayerWeaponVisuals : MonoBehaviour
+public class PlayerWeaponController : MonoBehaviour
 {
-    //setting up player.
+    //this is the default speed of the bullet for the mass of 1.
+    private const float REFERENCE_BULLET_SPEED = 20;
+
     private Player player;
 
-    //set up so we can call animator.
-    private Animator anim;
+    [SerializeField] private Weapon currentWeapon;
 
-    //this will prevent the weapon from being reloaded when grabbing the weapon.
-    private bool isGrabbingWeapon;
+    [Header("Bullet Info")]
+    //this is for creating the bullet.
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private float bulletSpeed;
+    [SerializeField] private Transform gunPoint;
 
-    //creating the weapon model to appear in game.
-    [SerializeField] private WeaponModel[] weaponModels;
-    //this is the weapon model that appears on the characters back.
-    [SerializeField] private BackupWeaponModel[] backupWeaponModels;
+    [SerializeField] private Transform weaponHolder;
 
-    [Header("Rig info")]
-    //This is what gives weight to certain animations, we need this turned on or off for the reload animation.
-    private Rig rig;
-    [SerializeField] private float rigWeightIncreaseRate;
-    private bool shouldIncrease_RigWeight;
+    [Header("Inventory")]
+    //This is for creating weapon slots.
+    [SerializeField] private List<Weapon> weaponSlots;
+    //this will make sure that the player only picks up 2 weapons that can be equiped.
+    [SerializeField] private int maxSlots = 2;
 
-    [Header("Left Hand IK")]
-    [SerializeField] private Transform leftHandIK_Target;
-    //This will help keep the left hand undercontrol when switching weapons.
-    [SerializeField] private TwoBoneIKConstraint leftHandIK;
-    [SerializeField] private float leftHandIKWeightIncreaseRate;
-    private bool shouldIncrease_LeftHandIKWeight;
-
-
+    //We will be calling functions here for shooting the weapons.
     private void Start()
     {
-        anim = GetComponentInChildren<Animator>();
-        rig = GetComponentInChildren<Rig>();
         player = GetComponent<Player>();
 
-        //this one is GetComponent(s) with an s since there are more than one.
-        weaponModels = GetComponentsInChildren<WeaponModel>(true);
-        backupWeaponModels = GetComponentsInChildren<BackupWeaponModel>(true);
+        AssignInputEvents();
 
+        //this is for the ammo of the weapon that is being held.
+        currentWeapon.bulletsInMagazine = currentWeapon.totalReserveAmmo;
     }
 
-    private void Update()
+    private void AssignInputEvents()
     {
-        UpdateRigWeight();
-        UpdateLeftHandIKWeight();
-    }
+        //calling the Fire action here.
+        PlayerControls controls = player.controls;
+        controls.Character.Fire.performed += context => Shoot();
 
+        //calling the equipslot here.
+        controls.Character.EquipSlot1.performed += context => EquipWeapon(0);
+        controls.Character.EquipSlot2.performed += context => EquipWeapon(1);
 
-    public WeaponModel CurrentWeaponModel()
-    {
-        //this creates local variable which is null.
-        WeaponModel weaponModel = null;
+        //calling the drop weapon here.
+        controls.Character.DropCurrentWeapon.performed += context => DropWeapon();
 
-        //checks if the weapon equipped matches with the weapon model.
-        //creates local variable of a weapontype and equals to the current weapons weapontype.
-        WeaponType weaponType = player.weapon.CurrentWeapon().weaponType;
-
-        for (int i = 0; i < weaponModels.Length; i++)
-        {
-            if (weaponModels[i].WeaponType == weaponType)
-                weaponModel = weaponModels[i];
-        }
-
-        return weaponModel;
-    }
-
-    public void PlayReloadAnimation()
-    {
-        if (isGrabbingWeapon)
-            return;
-        
-        anim.SetTrigger("Reload");
-        ReduceRigWeight();
-    }
-
-    private void UpdateLeftHandIKWeight()
-    {
-        //just like with reloading, this will change the rig weight for the animation of grab.
-        if (shouldIncrease_LeftHandIKWeight)
-        {
-            leftHandIK.weight += leftHandIKWeightIncreaseRate * Time.deltaTime;
-
-            if (leftHandIK.weight >= 1)
-                shouldIncrease_LeftHandIKWeight = false;
-        }
-    }
-
-    private void UpdateRigWeight()
-    {
-        //This will change the rig weight for the animation of reloading.
-        if (shouldIncrease_RigWeight)
-        {
-            rig.weight += rigWeightIncreaseRate * Time.deltaTime;
-
-            if (rig.weight >= 1)
+        //calling the reload here.
+        controls.Character.Reload.performed += context => {
+            if (currentWeapon != null && currentWeapon.canReload())
             {
-                shouldIncrease_RigWeight = false;
+                player.weaponVisuals.PlayReloadAnimation();
             }
-        }
+        };
+
     }
 
-    private void ReduceRigWeight()
+    private void EquipWeapon(int i)
     {
-        rig.weight = 0.15f;
+        currentWeapon = weaponSlots[i];
+
+        //this stiches off the weapon models when equipping a new weapon.
+        player.weaponVisuals.PlayWeaponEquipAnimation();
     }
 
-    public void PlayWeaponEquipAnimation()
-    {
-        GrabType grabType = CurrentWeaponModel().grabType;
-
-        leftHandIK.weight = 0;
-        //the pauseRig function is used to adjust the left hand like it did with reload.
-        ReduceRigWeight();
-        //setting up different types of weapon grabs like, side grab and back grab.
-        anim.SetFloat("WeaponGrabType", ((float)grabType));
-        anim.SetTrigger("WeaponGrab");
-        SetBusyGrabbingWeaponTo(true);
-    }
-
-    public void SetBusyGrabbingWeaponTo(bool busy)
-    {
-        //this will prevent the character reloading when its grabbing the weapon.
-        isGrabbingWeapon = busy;
-        anim.SetBool("BusyGrabbingWeapon", isGrabbingWeapon);
-    }
-
-
-    //This will make the rig weight change when reloading animation is finished.
-    public void MaximizeRigWeight() => shouldIncrease_RigWeight = true;
-
-    // this will make the rif weight change when grabbing animation is finished.
-    public void MaximizeLeftHandWeight() => shouldIncrease_LeftHandIKWeight = true;
-
-    //this will switch on the weapon model that the character is holding.
-    public void SwitchOnCurrentWeaponModel()
-    {
-        //this will switch animation layer
-        int animationIndex = ((int)CurrentWeaponModel().holdType);
-
-        SwitchOffWeaponModels();
-
-        SwitchOffBackupWeaponModels();
-
-        //switches on the weapon if character has more than one weapon
-        if(player.weapon.HasOnlyOneWeapon() == false)
-            SwitchOnBackupWeaponModel();
-
-        SwitchAnimationLayer(animationIndex);
-        
-        //this will switch on the model you want to have.
-        CurrentWeaponModel().gameObject.SetActive(true);
-
-        AttachLeftHand();
-    }
-
-    //this will switch all the guns we aren't using off.
-    public void SwitchOffWeaponModels()
-    {
-        //this will switch off all of the guns from the characters hands.
-        for (int i = 0; i < weaponModels.Length; i++)
+    public void PickupWeapon(Weapon newWeapon)
+    { 
+        if(weaponSlots.Count >= maxSlots)
         {
-            weaponModels[i].gameObject.SetActive(false);
+            return;
         }
+
+        weaponSlots.Add(newWeapon);
     }
 
-    //this will switch off the back weapon.
-    private void SwitchOffBackupWeaponModels()
+    private void DropWeapon()
     {
-        foreach(BackupWeaponModel backupModel in backupWeaponModels) 
-        { 
-            backupModel.gameObject.SetActive(false);
-        }
-    }
-    //this will switch on the back weapon.
-    private void SwitchOnBackupWeaponModel()
-    {
-        WeaponType weaponType = player.weapon.BackupWeapon().weaponType;
+        if (HasOnlyOneWeapon())
+            return;
 
-        foreach(BackupWeaponModel backupModel in backupWeaponModels)
+        weaponSlots.Remove(currentWeapon);
+
+        //this will remove the weapon model if dropping a gun.
+        EquipWeapon(0);
+    }
+
+
+    //This is the function that will control the shooting animation.
+    private void Shoot()
+    {
+        //check for current weapon.
+        if (currentWeapon.CanShoot() == false)
+            return;
+
+
+        //create local variable for bullet.
+        GameObject newBullet = Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
+
+        //this will assign the mass of rigidbody to the reference of the movement speed.
+        Rigidbody rbNewBullet = newBullet.GetComponent<Rigidbody>();
+
+        //this will change the mass of the bullet to be divided by the speed of the bullet.
+        rbNewBullet.mass = REFERENCE_BULLET_SPEED / bulletSpeed;
+        rbNewBullet.velocity = BulletDirection() * bulletSpeed;
+
+        //this is going to destroy the bullet after a duration.
+        Destroy(newBullet, 10);
+
+
+        //setting up the player animation for shooting weapons.
+        GetComponentInChildren<Animator>().SetTrigger("Fire");
+    }
+
+    public Vector3 BulletDirection()
+    {
+        Transform aim = player.aim.Aim();
+
+        Vector3 direction = (aim.position - gunPoint.position).normalized;
+
+        //check if player can aim precisly.
+        if (player.aim.CanAimPrecisly() == false && player.aim.Target() == null)
+            direction.y = 0;
+
+        //this updates the weapon rotation while aiming.
+       // weaponHolder.LookAt(aim);
+       // gunPoint.LookAt(aim); TODO: find a better place for this.
+
+        return direction;
+    }
+
+    public bool HasOnlyOneWeapon() => weaponSlots.Count <= 1;
+
+    //this will return currentweapon.
+    public Weapon CurrentWeapon() => currentWeapon;
+
+    //this will find which weapon is not current weapon.
+    public Weapon BackupWeapon()
+    {
+        foreach (Weapon weapon in weaponSlots)
         {
-            if(backupModel.weaponType == weaponType)
-                backupModel.gameObject.SetActive(true);
-        }
-    }
-
-    //This function here is what will be used when switching the left hands position when switching weapons.
-    private void AttachLeftHand()
-    {
-        Transform targetTransform = CurrentWeaponModel().holdPoint;
-        
-        leftHandIK_Target.localPosition = targetTransform.localPosition; 
-        leftHandIK_Target.localRotation = targetTransform.localRotation;
-    }
-
-    //This will switch the animation layer between common weapons, shotguns, and snipers.
-    //We use the parameter so we can let it know which animation layer we want to switch on.
-    private void SwitchAnimationLayer(int layerIndex)
-    {
-        for (int i = 1; i < anim.layerCount; i++)
-        {
-            anim.SetLayerWeight(i, 0);
+            if (weapon != currentWeapon)
+                return weapon;
         }
 
-        anim.SetLayerWeight(layerIndex, 1);
+        return null;
     }
 
-
+    //Setting up the aim laser.
+    public Transform GunPoint() => gunPoint;
 }
+
