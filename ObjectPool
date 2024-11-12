@@ -21,9 +21,12 @@ public class ObjectPool : MonoBehaviour
         else
             Destroy(gameObject);
 
+        bulletPool = new Queue<GameObject>();
+
         CreateInitialPool();
     }
 
+    //this will take the bullet out the the pool instead of creating a new bullet.
     public GameObject GetBullet()
     {
         //this will take the bullet out that is inside of the queue.
@@ -43,3 +46,4 @@ public class ObjectPool : MonoBehaviour
         }
     }
 }
+
