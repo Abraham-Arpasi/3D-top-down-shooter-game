@@ -4,14 +4,14 @@ using UnityEngine;
 
 //enum lets you create states and they have an index.
 //like this side grab has a value of 0 and backgrab has a value of 1 which will make the setup of animator easier.
-public enum GrabType { SideGrab, BackGrab };
+public enum EquipType { SideEquipAnimation, BackEquipAnimation };
 
 //this will set up layer for weapon type for holding weapon.
 public enum HoldType { Common = 1, LowHold, HighHold };
 public class WeaponModel : MonoBehaviour
 {
    public WeaponType WeaponType;
-    public GrabType grabType;
+    public EquipType equipAnimationType;
     public HoldType holdType;
 
     //this will move the gun point and left hand when grabing weapons.
