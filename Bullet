@@ -16,7 +16,9 @@ public class Bullet : MonoBehaviour
 
         //this will stick to objects that it collides with.
         //rb.constraints = RigidbodyConstraints.FreezeAll;
-        Destroy(gameObject);
+
+        //this will let the bullet re enter the queue instead of destroying it.
+        ObjectPool.instance.ReturnBullet(gameObject);
     }
 
     private void CreateImpactFx(Collision collision)
