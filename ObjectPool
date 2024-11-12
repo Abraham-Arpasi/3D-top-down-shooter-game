@@ -6,6 +6,10 @@ public class ObjectPool : MonoBehaviour
 {
     public static ObjectPool instance;
 
+    //this will create lots of bullets in the beginnging of the game.
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private int poolSize = 10;
+
     //this will make sure we only have one instance of object pool in the game. 
     private void Awake()
     {
@@ -13,5 +17,16 @@ public class ObjectPool : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
+
+        CreateInitialPool();
+    }
+
+    private void CreateInitialPool()
+    {
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject newBullet = Instantiate(bulletPrefab);
+            newBullet.SetActive(false);
+        }
     }
 }
