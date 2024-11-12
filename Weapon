@@ -24,6 +24,12 @@ public class Weapon
     public int magazineCapacity;
     public int totalReserveAmmo;
 
+    // this will set the speed of reload and switching weapons with a default of 1 and a range between 1 and 2.
+    [Range(1,2)]
+    public float reloadSpeed = 1;
+    [Range(1, 2)]
+    public float equipmentSpeed = 1;
+
 
     public bool CanShoot()
     {
@@ -73,4 +79,3 @@ public class Weapon
             totalReserveAmmo = 0;
     }
 }
-
