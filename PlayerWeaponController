@@ -104,8 +104,12 @@ public class PlayerWeaponController : MonoBehaviour
             return;
 
 
-        //create local variable for bullet.
-        GameObject newBullet = Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
+        //gets newbullet from the ObjectPool.
+        GameObject newBullet = ObjectPool.instance.GetBullet();
+        //Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
+        newBullet.transform.position = gunPoint.position;
+        newBullet.transform.rotation = Quaternion.LookRotation(gunPoint.forward);
+
 
         //this will assign the mass of rigidbody to the reference of the movement speed.
         Rigidbody rbNewBullet = newBullet.GetComponent<Rigidbody>();
