@@ -118,10 +118,6 @@ public class PlayerWeaponController : MonoBehaviour
         rbNewBullet.mass = REFERENCE_BULLET_SPEED / bulletSpeed;
         rbNewBullet.velocity = BulletDirection() * bulletSpeed;
 
-        //this is going to destroy the bullet after a duration.
-        Destroy(newBullet, 10);
-
-
         //setting up the player animation for shooting weapons.
         GetComponentInChildren<Animator>().SetTrigger("Fire");
     }
@@ -163,3 +159,4 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => gunPoint;
 }
+
