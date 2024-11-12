@@ -10,6 +10,9 @@ public class ObjectPool : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private int poolSize = 10;
 
+    //queue is when an object enters a queue first it is also the first to get out.
+    private Queue<GameObject> bulletPool;
+
     //this will make sure we only have one instance of object pool in the game. 
     private void Awake()
     {
@@ -21,12 +24,22 @@ public class ObjectPool : MonoBehaviour
         CreateInitialPool();
     }
 
+    public GameObject GetBullet()
+    {
+        //this will take the bullet out that is inside of the queue.
+        GameObject bulletToGet = bulletPool.Dequeue();
+        bulletToGet.SetActive(true);
+
+        return bulletToGet;
+    }
+
     private void CreateInitialPool()
     {
         for (int i = 0; i < poolSize; i++)
         {
             GameObject newBullet = Instantiate(bulletPrefab);
             newBullet.SetActive(false);
+            bulletPool.Enqueue(newBullet);
         }
     }
 }
