@@ -33,9 +33,14 @@ public class PlayerWeaponController : MonoBehaviour
 
         AssignInputEvents();
 
+        Invoke("EquipStartingWeapo", .1f);
+
         //this is for the ammo of the weapon that is being held.
-        currentWeapon.bulletsInMagazine = currentWeapon.totalReserveAmmo;
+        //currentWeapon.bulletsInMagazine = currentWeapon.totalReserveAmmo;
     }
+
+    //adds a starting weapon to the character if he doesn't have one.
+    private void EquipStartingWeapon() => EquipWeapon(0);
 
     private void AssignInputEvents()
     {
