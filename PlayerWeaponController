@@ -19,7 +19,6 @@ public class PlayerWeaponController : MonoBehaviour
     //this is for creating the bullet.
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed;
-    [SerializeField] private Transform gunPoint;
 
     [SerializeField] private Transform weaponHolder;
 
@@ -118,8 +117,8 @@ public class PlayerWeaponController : MonoBehaviour
         //gets newbullet from the ObjectPool.
         GameObject newBullet = ObjectPool.instance.GetBullet();
         //Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
-        newBullet.transform.position = gunPoint.position;
-        newBullet.transform.rotation = Quaternion.LookRotation(gunPoint.forward);
+        newBullet.transform.position = GunPoint().position;
+        newBullet.transform.rotation = Quaternion.LookRotation(GunPoint().forward);
 
 
         //this will assign the mass of rigidbody to the reference of the movement speed.
@@ -142,7 +141,7 @@ public class PlayerWeaponController : MonoBehaviour
     {
         Transform aim = player.aim.Aim();
 
-        Vector3 direction = (aim.position - gunPoint.position).normalized;
+        Vector3 direction = (aim.position - GunPoint().position).normalized;
 
         //check if player can aim precisly.
         if (player.aim.CanAimPrecisly() == false && player.aim.Target() == null)
@@ -173,5 +172,5 @@ public class PlayerWeaponController : MonoBehaviour
     }
 
     //Setting up the aim laser.
-    public Transform GunPoint() => gunPoint;
+    public Transform GunPoint() => player.weaponVisuals.CurrentWeaponModel().gunPoint;
 }
