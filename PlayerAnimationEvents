@@ -35,8 +35,6 @@ public class PlayerAnimationEvents : MonoBehaviour
     //this will return the rig weight for the other script when the animation is over.
     public void WeaponGrabIsOver()
     {
-        visualController.SetBusyGrabbingWeaponTo(false);
-
         //this will make the laser reappear when the character isn't swapping weapons.
         weaponController.SetWeaponReady(true);
     }
