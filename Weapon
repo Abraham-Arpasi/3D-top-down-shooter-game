@@ -45,7 +45,7 @@ public class Weapon
             return true;
         }
 
-        return HaveEnoughBullets() && ReadyToFire();
+        return false;
     }
 
     private bool ReadyToFire()
@@ -60,14 +60,7 @@ public class Weapon
         return false;
     }
 
-    private bool HaveEnoughBullets()
-    {
-        if (bulletsInMagazine > 0)
-        {
-            return true;
-        }
-        return false;
-    }
+    private bool HaveEnoughBullets() => bulletsInMagazine > 0;
 
     // this will let you reload if there is still ammo left in the weapon.
     public bool canReload()
