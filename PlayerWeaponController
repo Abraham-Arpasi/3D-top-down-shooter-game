@@ -59,7 +59,7 @@ public class PlayerWeaponController : MonoBehaviour
 
         //calling the reload here.
         controls.Character.Reload.performed += context => {
-            if (currentWeapon != null && currentWeapon.canReload())
+            if (currentWeapon.canReload() && WeaponReady())
             {
                 Reload();
             }
@@ -109,6 +109,10 @@ public class PlayerWeaponController : MonoBehaviour
     //This is the function that will control the shooting animation.
     private void Shoot()
     {
+        //cannot shoot until weapon is ready.
+        if (WeaponReady() == false)
+            return;
+
         //check for current weapon.
         if (currentWeapon.CanShoot() == false)
             return;
@@ -147,10 +151,6 @@ public class PlayerWeaponController : MonoBehaviour
         if (player.aim.CanAimPrecisly() == false && player.aim.Target() == null)
             direction.y = 0;
 
-        //this updates the weapon rotation while aiming.
-       // weaponHolder.LookAt(aim);
-       // gunPoint.LookAt(aim); TODO: find a better place for this.
-
         return direction;
     }
 
@@ -174,3 +174,4 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => player.weaponVisuals.CurrentWeaponModel().gunPoint;
 }
+
