@@ -20,6 +20,9 @@ public class PlayerAnimationEvents : MonoBehaviour
         visualController.MaximizeRigWeight();
         weaponController.CurrentWeapon().RefilledBullets();
 
+        //this will make the laser reappear when the weapon isn't reloading.
+        weaponController.SetWeaponReady(true);
+
     }
     //this will make the character only be able to shoot once animation is done
     public void ReturnRig()
@@ -33,12 +36,11 @@ public class PlayerAnimationEvents : MonoBehaviour
     public void WeaponGrabIsOver()
     {
         visualController.SetBusyGrabbingWeaponTo(false);
+
+        //this will make the laser reappear when the character isn't swapping weapons.
+        weaponController.SetWeaponReady(true);
     }
 
     //this will switch on the weapon model.
     public void SwitchOnWeaponModel() => visualController.SwitchOnCurrentWeaponModel();
 }
-
-
-
-
