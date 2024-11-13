@@ -49,6 +49,8 @@ public class PlayerWeaponVisuals : MonoBehaviour
         UpdateLeftHandIKWeight();
     }
 
+    //created a function for fire animation so we dont need to retype anim over again.
+    public void PlayFreAnimation() => anim.SetTrigger("Fire");
 
     public WeaponModel CurrentWeaponModel()
     {
