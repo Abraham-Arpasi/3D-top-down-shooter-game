@@ -67,6 +67,19 @@ public class PlayerAim : MonoBehaviour
 
     private void UpdateAimVisuals()
     {
+        //if character is not ready then the laser will not update.
+        aimLaser.enabled = player.weapon.WeaponReady();
+
+        if (aimLaser.enabled == false)
+            return;
+
+        WeaponModel weaponModel = player.weaponVisuals.CurrentWeaponModel();
+
+        //this updates the weapon rotation while aiming.
+        weaponModel.transform.LookAt(aim);
+        weaponModel.gunPoint.LookAt(aim);
+
+
         //make the length value a local variable instead of global.
         float laserTipLength = 0.5f;
 
