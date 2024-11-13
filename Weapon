@@ -11,6 +11,13 @@ public enum WeaponType
     Sniper
 }
 
+//this will switch weapon from semi-auto to full auto fire rate.
+public enum ShootType
+{
+    single, 
+    auto
+}
+
 //this makes the class visible in the inspector.
 [System.Serializable]
 
@@ -19,6 +26,7 @@ public class Weapon
 {
     public WeaponType weaponType;
 
+    [Header("Magazine info")]
     //varaibles for the bullets and reload requirements.
     public int bulletsInMagazine;
     public int magazineCapacity;
@@ -30,9 +38,9 @@ public class Weapon
     [Range(1, 5)]
     public float equipmentSpeed = 1;
 
-    [Space]
+    [Header("Shooting info")]
+    public ShootType shootType;
     public float fireRate = 1;
-
     private float lastShootTime;
 
 
@@ -95,3 +103,4 @@ public class Weapon
             totalReserveAmmo = 0;
     }
 }
+
