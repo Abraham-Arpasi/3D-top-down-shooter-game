@@ -30,17 +30,36 @@ public class Weapon
     [Range(1, 5)]
     public float equipmentSpeed = 1;
 
+    [Space]
+    public float fireRate = 1;
+
+    private float lastShootTime;
+
 
     public bool CanShoot()
     {
-        return HaveEnoughBullets();
+        //this will mkae sure the bullets in the magazine dont decrease when clicking unless the weapon fires.
+        if (HaveEnoughBullets() && ReadyToFire()) return true;
+
+        return HaveEnoughBullets() && ReadyToFire();
+    }
+
+    private bool ReadyToFire()
+    {
+        //this will calculate how many bullets the weapon can shoot per second. 
+        if(Time.time > lastShootTime + 1 / fireRate)
+        {
+            lastShootTime = Time.time;
+            return true;
+        }
+
+        return false;
     }
 
     private bool HaveEnoughBullets()
     {
         if (bulletsInMagazine > 0)
         {
-            bulletsInMagazine--;
             return true;
         }
         return false;
