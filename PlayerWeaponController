@@ -133,7 +133,7 @@ public class PlayerWeaponController : MonoBehaviour
         rbNewBullet.velocity = BulletDirection() * bulletSpeed;
 
         //setting up the player animation for shooting weapons.
-        GetComponentInChildren<Animator>().SetTrigger("Fire");
+        player.weaponVisuals.PlayFreAnimation();
     }
     private void Reload()
     {
@@ -174,4 +174,3 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => player.weaponVisuals.CurrentWeaponModel().gunPoint;
 }
-
