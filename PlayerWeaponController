@@ -12,6 +12,9 @@ public class PlayerWeaponController : MonoBehaviour
 
     [SerializeField] private Weapon currentWeapon;
 
+    //this will be used to help fix the laser aim direction.
+    private bool weaponReady;
+
     [Header("Bullet Info")]
     //this is for creating the bullet.
     [SerializeField] private GameObject bulletPrefab;
@@ -59,7 +62,7 @@ public class PlayerWeaponController : MonoBehaviour
         controls.Character.Reload.performed += context => {
             if (currentWeapon != null && currentWeapon.canReload())
             {
-                player.weaponVisuals.PlayReloadAnimation();
+                Reload();
             }
         };
 
@@ -67,6 +70,10 @@ public class PlayerWeaponController : MonoBehaviour
 
     private void EquipWeapon(int i)
     {
+
+        //this will set the weapon being ready to false so the laser doesn't appear when switching weapons.
+        SetWeaponReady(false);
+
         currentWeapon = weaponSlots[i];
 
         //this stiches off the weapon models when equipping a new weapon.
@@ -95,6 +102,10 @@ public class PlayerWeaponController : MonoBehaviour
         EquipWeapon(0);
     }
 
+    //the bottom two functions will make sure that the laser only appears when the weapon is ready.
+    public void SetWeaponReady(bool ready) => weaponReady = ready;
+    public bool WeaponReady() => weaponReady;
+
 
     //This is the function that will control the shooting animation.
     private void Shoot()
@@ -120,6 +131,11 @@ public class PlayerWeaponController : MonoBehaviour
 
         //setting up the player animation for shooting weapons.
         GetComponentInChildren<Animator>().SetTrigger("Fire");
+    }
+    private void Reload()
+    {
+        SetWeaponReady(false);
+        player.weaponVisuals.PlayReloadAnimation();
     }
 
     public Vector3 BulletDirection()
@@ -159,4 +175,3 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => gunPoint;
 }
-
