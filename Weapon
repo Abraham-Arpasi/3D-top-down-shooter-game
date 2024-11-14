@@ -43,6 +43,18 @@ public class Weapon
     public float fireRate = 1;
     private float lastShootTime;
 
+    [Header("Spread info")]
+    public float spreadAmount;
+
+    public Vector3 ApplySpread(Vector3 originalDirection)
+    {
+        float randomizedValue = Random.Range(spreadAmount - spreadAmount, spreadAmount);
+
+        Quaternion spreadRotation = Quaternion.Euler(randomizedValue, randomizedValue, randomizedValue);
+
+        return spreadRotation * originalDirection;
+    }
+
 
     public bool CanShoot()
     {
@@ -103,4 +115,3 @@ public class Weapon
             totalReserveAmmo = 0;
     }
 }
-
