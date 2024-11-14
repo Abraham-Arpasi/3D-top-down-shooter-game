@@ -50,16 +50,30 @@ public class Weapon
     public float maximumSpread = 3;
     //this will make the bullets spread grow larger over time as the character keeps shooting.
     public float spreadIncreaseRate = 0.15f;
+    //this will be used to reset the bullet spread if not shooting.
+    private float lastSpreadUpdateTime;
+    private float spreadCooldown = 1;
 
     public Vector3 ApplySpread(Vector3 originalDirection)
     {
-        IncreaseSpread();
+        UpdateSpread();
 
         float randomizedValue = Random.Range(currentSpread - currentSpread, currentSpread);
 
         Quaternion spreadRotation = Quaternion.Euler(randomizedValue, randomizedValue, randomizedValue);
 
         return spreadRotation * originalDirection;
+    }
+
+    //this will reset the spread that was increaseing when not shooting.
+    private void UpdateSpread()
+    {
+        lastSpreadUpdateTime = Time.time;
+
+        if (Time.time > lastSpreadUpdateTime + spreadCooldown)
+            currentSpread = baseSpread;
+        else
+            IncreaseSpread();
     }
 
     private void IncreaseSpread()
