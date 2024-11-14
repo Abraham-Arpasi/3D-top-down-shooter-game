@@ -68,12 +68,14 @@ public class Weapon
     //this will reset the spread that was increaseing when not shooting.
     private void UpdateSpread()
     {
-        lastSpreadUpdateTime = Time.time;
-
         if (Time.time > lastSpreadUpdateTime + spreadCooldown)
             currentSpread = baseSpread;
         else
             IncreaseSpread();
+        
+        
+        
+        lastSpreadUpdateTime = Time.time;
     }
 
     private void IncreaseSpread()
