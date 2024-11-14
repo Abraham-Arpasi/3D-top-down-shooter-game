@@ -44,17 +44,29 @@ public class Weapon
     private float lastShootTime;
 
     [Header("Spread info")]
-    public float spreadAmount;
+    //the spread of the bullets will increase to a max of 3.
+    public float baseSpread;
+    public float currentSpread = 2;
+    public float maximumSpread = 3;
+    //this will make the bullets spread grow larger over time as the character keeps shooting.
+    public float spreadIncreaseRate = 0.15f;
 
     public Vector3 ApplySpread(Vector3 originalDirection)
     {
-        float randomizedValue = Random.Range(spreadAmount - spreadAmount, spreadAmount);
+        IncreaseSpread();
+
+        float randomizedValue = Random.Range(currentSpread - currentSpread, currentSpread);
 
         Quaternion spreadRotation = Quaternion.Euler(randomizedValue, randomizedValue, randomizedValue);
 
         return spreadRotation * originalDirection;
     }
 
+    private void IncreaseSpread()
+    {
+        //this will return the given value if it is within the range between the base value and maximum value.
+        currentSpread = Mathf.Clamp(currentSpread + spreadIncreaseRate, baseSpread, maximumSpread);
+    }
 
     public bool CanShoot()
     {
