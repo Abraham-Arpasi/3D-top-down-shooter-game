@@ -40,12 +40,19 @@ public class Weapon
 
     [Header("Shooting info")]
     public ShootType shootType;
+    public int bulletsPerShot;
+    public float defaultFireRate;
     public float fireRate = 1;
     private float lastShootTime;
 
     //this for setting up the burst fire mode for the weapom.
     [Header("Burst Fire info")]
-    public int bulletsPerShot;
+    public bool burstAvailable;
+    public bool burstActive;
+
+    public int burstModeBulletsPerShot;
+    public float burstModeFireRate;
+    public float burstFireDelay = .1f;
 
     [Header("Spread info")]
     //the spread of the bullets will increase to a max of 3.
@@ -89,6 +96,29 @@ public class Weapon
     {
         //this will return the given value if it is within the range between the base value and maximum value.
         currentSpread = Mathf.Clamp(currentSpread + spreadIncreaseRate, baseSpread, maximumSpread);
+    }
+
+    //this will let us turn on the burst mode for the weapon.
+    public bool BurstActivated() => burstActive;
+    public void ToggleBurst()
+    {
+        if (burstAvailable == false)
+            return;
+
+        burstActive = !burstActive;
+        //when burst is active it sets to burst values.
+        //changes the fire rate.
+        if (burstActive)
+        {
+            bulletsPerShot = burstModeBulletsPerShot;
+            fireRate = burstModeFireRate;
+        }
+        //when burst isn't active it sets to 1 bullet per shot.
+        else
+        {
+            bulletsPerShot = 1;
+            fireRate = defaultFireRate;
+        }
     }
 
     public bool CanShoot()
@@ -150,4 +180,3 @@ public class Weapon
             totalReserveAmmo = 0;
     }
 }
-
