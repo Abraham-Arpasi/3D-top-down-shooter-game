@@ -50,8 +50,8 @@ public class Weapon
     public bool burstAvailable;
     public bool burstActive;
 
-    public int burstModeBulletsPerShot;
-    public float burstModeFireRate;
+    public int burstBulletsPerShot;
+    public float burstFireRate;
     public float burstFireDelay = .1f;
 
     [Header("Spread info")]
@@ -110,8 +110,8 @@ public class Weapon
         //changes the fire rate.
         if (burstActive)
         {
-            bulletsPerShot = burstModeBulletsPerShot;
-            fireRate = burstModeFireRate;
+            bulletsPerShot = burstBulletsPerShot;
+            fireRate = burstFireRate;
         }
         //when burst isn't active it sets to 1 bullet per shot.
         else
