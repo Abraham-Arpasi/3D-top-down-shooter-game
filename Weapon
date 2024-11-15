@@ -98,8 +98,17 @@ public class Weapon
         currentSpread = Mathf.Clamp(currentSpread + spreadIncreaseRate, baseSpread, maximumSpread);
     }
 
-    //this will let us turn on the burst mode for the weapon.
-    public bool BurstActivated() => burstActive;
+    public bool BurstActivated()
+    {
+        //this will make the burst mode always turned on for the Shotgun;
+        if(weaponType == WeaponType.Shotgun)
+        {
+            burstFireDelay = 0;
+            return true;
+        }
+
+        return burstActive;
+    }
     public void ToggleBurst()
     {
         if (burstAvailable == false)
