@@ -162,6 +162,9 @@ public class PlayerWeaponController : MonoBehaviour
 
     private void FireSingleBullet()
     {
+        //this will make the bullet count go down in the magazine when firing.
+        currentWeapon.bulletsInMagazine--;
+
         //gets newbullet from the ObjectPool.
         GameObject newBullet = ObjectPool.instance.GetBullet();
         //Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
