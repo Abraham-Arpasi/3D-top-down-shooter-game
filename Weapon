@@ -121,17 +121,8 @@ public class Weapon
         }
     }
 
-    public bool CanShoot()
-    {
-        //this will mkae sure the bullets in the magazine dont decrease when clicking unless the weapon fires.
-        if (HaveEnoughBullets() && ReadyToFire())
-        {
-            bulletsInMagazine--;
-            return true;
-        }
-
-        return false;
-    }
+    //this will mkae sure the bullets in the magazine dont decrease when clicking unless the weapon fires.
+    public bool CanShoot() => HaveEnoughBullets() && ReadyToFire();
 
     private bool ReadyToFire()
     {
