@@ -43,10 +43,14 @@ public class Weapon
     public float fireRate = 1;
     private float lastShootTime;
 
+    //this for setting up the burst fire mode for the weapom.
+    [Header("Burst Fire info")]
+    public int bulletsPerShot;
+
     [Header("Spread info")]
     //the spread of the bullets will increase to a max of 3.
-    public float baseSpread;
-    public float currentSpread = 2;
+    public float baseSpread = 1;
+    private float currentSpread = 2;
     public float maximumSpread = 3;
     //this will make the bullets spread grow larger over time as the character keeps shooting.
     public float spreadIncreaseRate = 0.15f;
@@ -68,6 +72,9 @@ public class Weapon
     //this will reset the spread that was increaseing when not shooting.
     private void UpdateSpread()
     {
+        //this checks if the amount of time in the game is bigger than the amount of time the spread updated it will reset.
+        //else it increases the spread if update time is shorter than the game time.
+        //simply, if not holding down the trigger it will reset and if holding down the trigger it will keep growing.
         if (Time.time > lastSpreadUpdateTime + spreadCooldown)
             currentSpread = baseSpread;
         else
@@ -143,3 +150,4 @@ public class Weapon
             totalReserveAmmo = 0;
     }
 }
+
