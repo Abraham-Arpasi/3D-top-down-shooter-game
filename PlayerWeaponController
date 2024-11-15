@@ -50,6 +50,16 @@ public class PlayerWeaponController : MonoBehaviour
             Shoot();
     }
 
+    private IEnumerator BurstFire()
+    {
+        for (int i = 1; i <= currentWeapon.bulletsPerShot; i++)
+        {
+            FireSingleBullet();
+
+            yield return new WaitForSeconds(.1f);
+        }
+    }
+
     //adds a starting weapon to the character if he doesn't have one.
     private void EquipStartingWeapon() => EquipWeapon(0);
 
@@ -130,7 +140,15 @@ public class PlayerWeaponController : MonoBehaviour
         if (currentWeapon.shootType == ShootType.single)
             isShooting = false;
 
+        //FireSingleBullet();
+        StartCoroutine(BurstFire());
 
+        //setting up the player animation for shooting weapons.
+        player.weaponVisuals.PlayFreAnimation();
+    }
+
+    private void FireSingleBullet()
+    {
         //gets newbullet from the ObjectPool.
         GameObject newBullet = ObjectPool.instance.GetBullet();
         //Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
@@ -147,10 +165,8 @@ public class PlayerWeaponController : MonoBehaviour
         //this will change the mass of the bullet to be divided by the speed of the bullet.
         rbNewBullet.mass = REFERENCE_BULLET_SPEED / bulletSpeed;
         rbNewBullet.velocity = bulletsDirection * bulletSpeed;
-
-        //setting up the player animation for shooting weapons.
-        player.weaponVisuals.PlayFreAnimation();
     }
+
     private void Reload()
     {
         SetWeaponReady(false);
@@ -190,3 +206,4 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => player.weaponVisuals.CurrentWeaponModel().gunPoint;
 }
+
