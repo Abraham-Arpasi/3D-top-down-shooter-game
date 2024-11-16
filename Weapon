@@ -38,9 +38,14 @@ public class Weapon
     [Range(1, 5)]
     public float equipmentSpeed = 1;
 
+    //this will be the range for the gun distance.
     //this will determine how far the bullets will fly.
     [Range(2, 12)]
-    public float gunDistance = 4;
+    public float gunDistance = 4; //this is the default value of gunDistance.
+
+    //this will be the range for the camera distance
+    [Range(3, 8)]
+    public float cameraDistance = 6; //this is the default value of cameraDistance.
 
 
     [Header("Shooting info")]
