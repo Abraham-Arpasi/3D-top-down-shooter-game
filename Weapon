@@ -38,6 +38,11 @@ public class Weapon
     [Range(1, 5)]
     public float equipmentSpeed = 1;
 
+    //this will determine how far the bullets will fly.
+    [Range(2, 12)]
+    public float gunDistance = 4;
+
+
     [Header("Shooting info")]
     public ShootType shootType;
     public int bulletsPerShot;
