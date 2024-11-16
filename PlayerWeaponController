@@ -104,6 +104,9 @@ public class PlayerWeaponController : MonoBehaviour
 
         //this stiches off the weapon models when equipping a new weapon.
         player.weaponVisuals.PlayWeaponEquipAnimation();
+
+        //this will change the camera distance for the character depending on the weapon equipped.
+        CameraManager.instance.ChangeCameraDistance(currentWeapon.cameraDistance);
     }
 
     public void PickupWeapon(Weapon newWeapon)
