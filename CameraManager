@@ -30,10 +30,22 @@ public class CameraManager : MonoBehaviour
 
     private void Update()
     {
-        //using Lerp will make the camera change from switching weapons more smooth.
-        transposer.m_CameraDistance = Mathf.Lerp(transposer.m_CameraDistance, targetCameraDistance, distanceCameraRate * Time.deltaTime);
+        UpdateCameraDistance();
+    }
+
+    private void UpdateCameraDistance()
+    {
+        float currentDistance = transposer.m_CameraDistance;
+
+        //this will make is so that the cameraDistance can be off by 0.1 so that the camera isn't slowing down for a long time.
+        if (Mathf.Abs(targetCameraDistance - currentDistance) < 0.1f)
+            return;
+
+            //using Lerp will make the camera change from switching weapons more smooth.
+            transposer.m_CameraDistance = Mathf.Lerp(currentDistance, targetCameraDistance, distanceCameraRate * Time.deltaTime);  
     }
 
     public void ChangeCameraDistance(float distance) => targetCameraDistance = distance;
 
 }
+
