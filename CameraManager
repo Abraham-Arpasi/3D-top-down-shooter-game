@@ -10,18 +10,30 @@ public class CameraManager : MonoBehaviour
     private CinemachineVirtualCamera virtualCamera;
     private CinemachineFramingTransposer transposer;
 
+    private float targetCameraDistance;
+    [SerializeField]private float distanceCameraRate;
+
     private void Awake()
     {
         if (instance == null)
             instance = this;
         else
+        {
+            Debug.LogWarning("You had more than one Camera Manager");
             Destroy(gameObject);
+        }
 
         virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
         transposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
 
     }
 
-    public void ChangeCameraDistance(float distance) => transposer.m_CameraDistance = distance;
+    private void Update()
+    {
+        //using Lerp will make the camera change from switching weapons more smooth.
+        transposer.m_CameraDistance = Mathf.Lerp(transposer.m_CameraDistance, targetCameraDistance, distanceCameraRate * Time.deltaTime);
+    }
+
+    public void ChangeCameraDistance(float distance) => targetCameraDistance = distance;
 
 }
