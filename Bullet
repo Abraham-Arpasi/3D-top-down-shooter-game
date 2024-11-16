@@ -37,11 +37,18 @@ public class Bullet : MonoBehaviour
         if(Vector3.Distance(startPosition, transform.position) > flyDistance - 1.5f)
             trailRenderer.time -= 2 * Time.deltaTime;
 
-        if (Vector3.Distance(startPosition, transform.position) > flyDistance && !bulletDisabled)
+        if(Vector3.Distance(startPosition, transform.position) > flyDistance && !bulletDisabled)
         {
             cd.enabled = false;
             meshRenderer.enabled = false;
             bulletDisabled = true;
+        }
+
+        //this will return the bullet to the objectPool once its disappeared.
+        if(trailRenderer.time < 0)
+        {
+            //this will let the bullet re enter the queue instead of destroying it.
+            ObjectPool.instance.ReturnBullet(gameObject);
         }
        
     }
