@@ -8,6 +8,25 @@ public class Bullet : MonoBehaviour
     [SerializeField] private GameObject bulletImpactFX;
     private Rigidbody rb => GetComponent<Rigidbody>();
 
+    //this will be used to see how far the bullets are flying.
+    //we are going to use this along with PlayerAim's laser for how far the gun can shoot based of its weapon type.
+    private Vector3 startPosition;
+    private float flyDistance;
+    public void BulletSetup(float flyDistance)
+    {
+        startPosition = transform.position;
+        this.flyDistance = flyDistance;
+    }
+
+    private void Update()
+    {
+        if (Vector3.Distance(startPosition, transform.position) > flyDistance)
+        {
+            //this will let the bullet re enter the queue instead of destroying it.
+            ObjectPool.instance.ReturnBullet(gameObject);
+        }
+    }
+
     //creating a collider for the bullet.
     private void OnCollisionEnter(Collision collision)
     {
@@ -36,3 +55,4 @@ public class Bullet : MonoBehaviour
         }
     }
 }
+
