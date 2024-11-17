@@ -10,8 +10,11 @@ public class CameraManager : MonoBehaviour
     private CinemachineVirtualCamera virtualCamera;
     private CinemachineFramingTransposer transposer;
 
+    [Header("Camera info")]
     private float targetCameraDistance;
     [SerializeField]private float distanceCameraRate;
+    [SerializeField] private bool canChangeCameraDistance;
+
 
     private void Awake()
     {
@@ -35,6 +38,10 @@ public class CameraManager : MonoBehaviour
 
     private void UpdateCameraDistance()
     {
+        //we can swtich on/off camera distance change during testing for the weapon.
+        if (canChangeCameraDistance == false)
+            return;
+
         float currentDistance = transposer.m_CameraDistance;
 
         //this will make is so that the cameraDistance can be off by 0.1 so that the camera isn't slowing down for a long time.
@@ -48,4 +55,3 @@ public class CameraManager : MonoBehaviour
     public void ChangeCameraDistance(float distance) => targetCameraDistance = distance;
 
 }
-
