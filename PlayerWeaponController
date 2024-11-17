@@ -38,7 +38,7 @@ public class PlayerWeaponController : MonoBehaviour
 
         AssignInputEvents();
 
-        Invoke("EquipStartingWeapo", .1f);
+        Invoke("EquipStartingWeapon", .1f);
 
         //this is for the ammo of the weapon that is being held.
         //currentWeapon.bulletsInMagazine = currentWeapon.totalReserveAmmo;
@@ -80,6 +80,9 @@ public class PlayerWeaponController : MonoBehaviour
         //calling the equipslot here.
         controls.Character.EquipSlot1.performed += context => EquipWeapon(0);
         controls.Character.EquipSlot2.performed += context => EquipWeapon(1);
+        controls.Character.EquipSlot3.performed += context => EquipWeapon(2);
+        controls.Character.EquipSlot4.performed += context => EquipWeapon(3);
+        controls.Character.EquipSlot5.performed += context => EquipWeapon(4);
 
         //calling the drop weapon here.
         controls.Character.DropCurrentWeapon.performed += context => DropWeapon();
@@ -96,6 +99,10 @@ public class PlayerWeaponController : MonoBehaviour
 
     private void EquipWeapon(int i)
     {
+        //this will check if there is a weapon in the equip slot you are trying to access.
+        if (i >= weaponSlots.Count)
+            return;
+
 
         //this will set the weapon being ready to false so the laser doesn't appear when switching weapons.
         SetWeaponReady(false);
