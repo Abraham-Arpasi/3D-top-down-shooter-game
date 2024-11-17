@@ -192,7 +192,7 @@ public class PlayerWeaponVisuals : MonoBehaviour
                 continue;
 
             //checks what type of hangtype it is and assignes that to the backupModel of the character.
-            if (player.weapon.hasWeaponTypeInInventory(backupModel.weaponType))
+            if (player.weapon.hasWeaponTypeInInventory(backupModel.weaponType) != null)
             {
                 if(backupModel.HangTypeIs(HangType.LowBackHang))
                     lowHangWeapon = backupModel;
