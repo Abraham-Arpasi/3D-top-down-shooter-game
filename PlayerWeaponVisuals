@@ -50,7 +50,7 @@ public class PlayerWeaponVisuals : MonoBehaviour
     }
 
     //created a function for fire animation so we dont need to retype anim over again.
-    public void PlayFreAnimation() => anim.SetTrigger("Fire");
+    public void PlayFireAnimation() => anim.SetTrigger("Fire");
 
     public WeaponModel CurrentWeaponModel()
     {
@@ -169,20 +169,45 @@ public class PlayerWeaponVisuals : MonoBehaviour
     private void SwitchOffBackupWeaponModels()
     {
         foreach(BackupWeaponModel backupModel in backupWeaponModels) 
-        { 
-            backupModel.gameObject.SetActive(false);
+        {
+            backupModel.Activate(false);
         }
     }
     //this will switch on the back weapon.
     public void SwitchOnBackupWeaponModel()
     {
-        WeaponType weaponType = player.weapon.BackupWeapon().weaponType;
+        //swithces off all models first.
+        SwitchOffBackupWeaponModels();
 
+        //3 local variables that are null.
+        BackupWeaponModel lowHangWeapon = null;
+        BackupWeaponModel backHangWeapon = null;
+        BackupWeaponModel sideHangWeapon = null;
+
+        //this checks if player has the weapon type in the inventory by comparing weapon types.
         foreach(BackupWeaponModel backupModel in backupWeaponModels)
         {
-            if(backupModel.weaponType == weaponType)
-                backupModel.gameObject.SetActive(true);
+            //this will check if the backupModel is the same as the current weapontype and if so, its to be ignored.
+            if (backupModel.weaponType == player.weapon.CurrentWeapon().weaponType)
+                continue;
+
+            //checks what type of hangtype it is and assignes that to the backupModel of the character.
+            if (player.weapon.hasWeaponTypeInInventory(backupModel.weaponType))
+            {
+                if(backupModel.HangTypeIs(HangType.LowBackHang))
+                    lowHangWeapon = backupModel;
+
+                if(backupModel.HangTypeIs(HangType.BackHang))
+                    backHangWeapon = backupModel;
+
+                if(backupModel.HangTypeIs(HangType.SideHang))
+                    sideHangWeapon = backupModel;
+            }
         }
+        //this checks if the local variable is null.
+        lowHangWeapon?.Activate(true);
+        backHangWeapon?.Activate(true);
+        sideHangWeapon?.Activate(true);
     }
 
     //This function here is what will be used when switching the left hands position when switching weapons.
