@@ -218,7 +218,7 @@ public class PlayerWeaponController : MonoBehaviour
     }
 
     public bool HasOnlyOneWeapon() => weaponSlots.Count <= 1;
-    public Weapon hasWeaponTypeInInventory(WeaponType weaponType)
+    public Weapon WeaponInSlots(WeaponType weaponType)
     {
         foreach (Weapon weapon in weaponSlots)
         {
@@ -230,18 +230,6 @@ public class PlayerWeaponController : MonoBehaviour
 
     //this will return currentweapon.
     public Weapon CurrentWeapon() => currentWeapon;
-
-    //this will find which weapon is not current weapon.
-    public Weapon BackupWeapon()
-    {
-        foreach (Weapon weapon in weaponSlots)
-        {
-            if (weapon != currentWeapon)
-                return weapon;
-        }
-
-        return null;
-    }
 
     //Setting up the aim laser.
     public Transform GunPoint() => player.weaponVisuals.CurrentWeaponModel().gunPoint;
