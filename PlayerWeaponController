@@ -218,14 +218,14 @@ public class PlayerWeaponController : MonoBehaviour
     }
 
     public bool HasOnlyOneWeapon() => weaponSlots.Count <= 1;
-    public bool hasWeaponTypeInInventory(WeaponType weaponType)
+    public Weapon hasWeaponTypeInInventory(WeaponType weaponType)
     {
         foreach (Weapon weapon in weaponSlots)
         {
             if (weapon.weaponType == weaponType)
-                return true;
+                return weapon;
         }
-        return false;
+        return null;
     }
 
     //this will return currentweapon.
@@ -246,4 +246,3 @@ public class PlayerWeaponController : MonoBehaviour
     //Setting up the aim laser.
     public Transform GunPoint() => player.weaponVisuals.CurrentWeaponModel().gunPoint;
 }
-
