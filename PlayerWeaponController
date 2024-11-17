@@ -48,9 +48,6 @@ public class PlayerWeaponController : MonoBehaviour
     {
         if (isShooting)
             Shoot();
-
-        if(Input.GetKeyDown(KeyCode.T))
-            currentWeapon.ToggleBurst();
     }
 
     private IEnumerator BurstFire()
@@ -94,6 +91,8 @@ public class PlayerWeaponController : MonoBehaviour
                 Reload();
             }
         };
+        //this will toggle the burst mode of the weapon when pressing T.
+        controls.Character.ToggleWeaponMode.performed += context => currentWeapon.ToggleBurst();
 
     }
 
