@@ -6,12 +6,18 @@ public class ObjectPool : MonoBehaviour
 {
     public static ObjectPool instance;
 
+    [SerializeField] private GameObject itemPrefab;
+    [SerializeField] private GameObject effectPrefab;
     //this will create lots of bullets in the beginnging of the game.
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private int poolSize = 10;
 
     //queue is when an object enters a queue first it is also the first to get out.
     private Queue<GameObject> bulletPool;
+    private Queue<GameObject> effectPool;
+    private Queue<GameObject> itemPool;
+
+    private Dictionary<string, Queue<GameObject>> poolDictionary = new Dictionary<string, Queue<GameObject>>();
 
     //this will make sure we only have one instance of object pool in the game. 
     private void Awake()
@@ -20,20 +26,25 @@ public class ObjectPool : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
+    }
 
+    private void Start()
+    {
         bulletPool = new Queue<GameObject>();
 
         CreateInitialPool();
+
+        poolDictionary["Bullet"] = bulletPool;
     }
 
     //this will take the bullet out the the pool instead of creating a new bullet.
-    public GameObject GetBullet()
+    public GameObject GetObject(string poolName)
     {
         if(bulletPool.Count == 0)
             CreateNewBullet();
 
         //this will take the bullet out that is inside of the queue.
-        GameObject bulletToGet = bulletPool.Dequeue();
+        GameObject bulletToGet = poolDictionary[poolName].Dequeue();
         bulletToGet.SetActive(true);
         bulletToGet.transform.parent = null;
 
@@ -44,7 +55,7 @@ public class ObjectPool : MonoBehaviour
     public void ReturnBullet(GameObject bullet)
     {
         bullet.SetActive(false);
-        bulletPool.Enqueue(bullet);
+        poolDictionary["Bullet"].Enqueue(bullet);
         bullet.transform.parent = transform;
     }
 
