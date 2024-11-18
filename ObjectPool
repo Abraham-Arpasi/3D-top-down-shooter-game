@@ -6,17 +6,10 @@ public class ObjectPool : MonoBehaviour
 {
     public static ObjectPool instance;
 
-    [SerializeField] private GameObject itemPrefab;
-    [SerializeField] private GameObject effectPrefab;
     //this will create lots of bullets in the beginnging of the game.
-    [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private int poolSize = 10;
 
     //queue is when an object enters a queue first it is also the first to get out.
-    private Queue<GameObject> bulletPool;
-    private Queue<GameObject> effectPool;
-    private Queue<GameObject> itemPool;
-
     //gives the queue of the gameobject is something is asking for it by using the key bulletPrefab.
     private Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
 
@@ -29,50 +22,53 @@ public class ObjectPool : MonoBehaviour
             Destroy(gameObject);
     }
 
-    private void Start()
-    {
-        bulletPool = new Queue<GameObject>();
-
-        CreateInitialPool();
-
-        poolDictionary[bulletPrefab] = bulletPool;
-    }
-
     //this will take the bullet out the the pool instead of creating a new bullet.
-    public GameObject GetObject(GameObject bulletPrefab)
+    public GameObject GetObject(GameObject prefab)
     {
-        if(bulletPool.Count == 0)
-            CreateNewBullet();
+        if(poolDictionary.ContainsKey(prefab) == false)
+        {
+            InitilizeNewPool(prefab);
+        }
+
+        if (poolDictionary[prefab].Count == 0)
+            CreateNewObject(prefab); //if all objects of this type are in use, create a new one.
 
         //this will take the bullet out that is inside of the queue.
-        GameObject bulletToGet = poolDictionary[bulletPrefab].Dequeue();
-        bulletToGet.SetActive(true);
-        bulletToGet.transform.parent = null;
+        GameObject objectToGet = poolDictionary[prefab].Dequeue();
+        objectToGet.SetActive(true);
+        objectToGet.transform.parent = null;
 
-        return bulletToGet;
+        return objectToGet;
     }
 
     //instead of destroying the bullet we are going to let it re enter the queue.
-    public void ReturnBullet(GameObject bullet)
+    public void ReturnToPool(GameObject objectToReturn)
     {
-        bullet.SetActive(false);
-        poolDictionary[bulletPrefab].Enqueue(bullet);
-        bullet.transform.parent = transform;
+        GameObject originalPrefab = objectToReturn.GetComponent<PooledObject>().originalPrefab;
+
+        objectToReturn.SetActive(false);
+        poolDictionary[originalPrefab].Enqueue(objectToReturn);
+
+        objectToReturn.transform.parent = transform;
     }
 
-    private void CreateInitialPool()
+    private void InitilizeNewPool(GameObject prefab)
     {
+        poolDictionary[prefab] = new Queue<GameObject>();
+
         for (int i = 0; i < poolSize; i++)
         {
-            CreateNewBullet();
+            CreateNewObject(prefab);
         }
     }
 
-    private void CreateNewBullet()
+    private void CreateNewObject(GameObject prefab)
     {
         //set up a parent for the bullets in the object pool.
-        GameObject newBullet = Instantiate(bulletPrefab, transform);
-        newBullet.SetActive(false);
-        bulletPool.Enqueue(newBullet);
+        GameObject newObject = Instantiate(prefab, transform);
+        newObject.AddComponent<PooledObject>().originalPrefab = prefab;
+
+        newObject.SetActive(false);
+        poolDictionary[prefab].Enqueue(newObject);
     }
 }
