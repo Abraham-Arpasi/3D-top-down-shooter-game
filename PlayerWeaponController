@@ -68,7 +68,7 @@ public class PlayerWeaponController : MonoBehaviour
     private void EquipStartingWeapon()
     {
         //when 0 index is called it will fill the slot with a weapon and constructor will be called automatically.
-        weaponSlots[0] = new Weapon();
+        weaponSlots[0] = new Weapon(WeaponType.Pistol);
 
         EquipWeapon(0);
     }
