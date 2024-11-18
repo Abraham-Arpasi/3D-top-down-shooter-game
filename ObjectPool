@@ -41,8 +41,18 @@ public class ObjectPool : MonoBehaviour
         return objectToGet;
     }
 
+    public void ReturnObject(GameObject objectToReturn, float delay = .001f) 
+        => StartCoroutine(DelayReturn(delay, objectToReturn));
+
+    private IEnumerator DelayReturn(float delay, GameObject objectToReturn)
+    {
+        yield return new WaitForSeconds(delay);
+
+        ReturnToPool(objectToReturn);
+    }
+
     //instead of destroying the bullet we are going to let it re enter the queue.
-    public void ReturnToPool(GameObject objectToReturn)
+    private void ReturnToPool(GameObject objectToReturn)
     {
         GameObject originalPrefab = objectToReturn.GetComponent<PooledObject>().originalPrefab;
 
