@@ -17,6 +17,7 @@ public class ObjectPool : MonoBehaviour
     private Queue<GameObject> effectPool;
     private Queue<GameObject> itemPool;
 
+    //gives the queue of the gameobject is something is asking for it by using the key bulletPrefab.
     private Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
 
     //this will make sure we only have one instance of object pool in the game. 
@@ -38,7 +39,7 @@ public class ObjectPool : MonoBehaviour
     }
 
     //this will take the bullet out the the pool instead of creating a new bullet.
-    public GameObject GetObject()
+    public GameObject GetObject(GameObject bulletPrefab)
     {
         if(bulletPool.Count == 0)
             CreateNewBullet();
