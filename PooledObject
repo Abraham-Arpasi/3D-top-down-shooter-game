@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class PooledObject : MonoBehaviour
 {
-   public GameObject originalPrefab { get; private set; }
+   public GameObject originalPrefab { get; set; }
 }
