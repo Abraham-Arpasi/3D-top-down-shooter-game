@@ -50,7 +50,7 @@ public class Bullet : MonoBehaviour
         if (trailRenderer.time < 0)
         {
             //this will let the bullet re enter the queue instead of destroying it.
-            ObjectPool.instance.ReturnBullet(gameObject);
+            ObjectPool.instance.ReturnToPool(gameObject);
         }
     }
 
@@ -81,7 +81,7 @@ public class Bullet : MonoBehaviour
         //rb.constraints = RigidbodyConstraints.FreezeAll;
 
         //this will let the bullet re enter the queue instead of destroying it.
-        ObjectPool.instance.ReturnBullet(gameObject);
+        ObjectPool.instance.ReturnToPool(gameObject);
     }
 
     private void CreateImpactFx(Collision collision)
@@ -92,7 +92,8 @@ public class Bullet : MonoBehaviour
             ContactPoint contact = collision.contacts[0];
 
             //this will start the visual effect of the impact effect after bullet hits object.
-            GameObject newImpactFX = Instantiate(bulletImpactFX, contact.point, Quaternion.LookRotation(contact.normal));
+            GameObject newImpactFX = ObjectPool.instance.GetObject(bulletImpactFX);
+            newImpactFX.transform.position = contact.point;
 
             //Destroy the VFX after it hits an object so it doesn't loop.
             Destroy(newImpactFX, 1f);
