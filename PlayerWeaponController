@@ -175,7 +175,7 @@ public class PlayerWeaponController : MonoBehaviour
         currentWeapon.bulletsInMagazine--;
 
         //gets newbullet from the ObjectPool.
-        GameObject newBullet = ObjectPool.instance.GetObject("Bullet");
+        GameObject newBullet = ObjectPool.instance.GetObject(bulletPrefab);
         //Instantiate(bulletPrefab, gunPoint.position,Quaternion.LookRotation(gunPoint.forward));
         newBullet.transform.position = GunPoint().position;
         newBullet.transform.rotation = Quaternion.LookRotation(GunPoint().forward);
