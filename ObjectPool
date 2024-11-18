@@ -17,7 +17,7 @@ public class ObjectPool : MonoBehaviour
     private Queue<GameObject> effectPool;
     private Queue<GameObject> itemPool;
 
-    private Dictionary<string, Queue<GameObject>> poolDictionary = new Dictionary<string, Queue<GameObject>>();
+    private Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
 
     //this will make sure we only have one instance of object pool in the game. 
     private void Awake()
@@ -34,17 +34,17 @@ public class ObjectPool : MonoBehaviour
 
         CreateInitialPool();
 
-        poolDictionary["Bullet"] = bulletPool;
+        poolDictionary[bulletPrefab] = bulletPool;
     }
 
     //this will take the bullet out the the pool instead of creating a new bullet.
-    public GameObject GetObject(string poolName)
+    public GameObject GetObject()
     {
         if(bulletPool.Count == 0)
             CreateNewBullet();
 
         //this will take the bullet out that is inside of the queue.
-        GameObject bulletToGet = poolDictionary[poolName].Dequeue();
+        GameObject bulletToGet = poolDictionary[bulletPrefab].Dequeue();
         bulletToGet.SetActive(true);
         bulletToGet.transform.parent = null;
 
@@ -55,7 +55,7 @@ public class ObjectPool : MonoBehaviour
     public void ReturnBullet(GameObject bullet)
     {
         bullet.SetActive(false);
-        poolDictionary["Bullet"].Enqueue(bullet);
+        poolDictionary[bulletPrefab].Enqueue(bullet);
         bullet.transform.parent = transform;
     }
 
