@@ -10,9 +10,17 @@ using UnityEngine;
     public WeaponType weaponType;
     public float fireRate;
 
+    [Header("Burst")]
+    public bool burstAvalible;
+    public bool burstActive;
+    public int burstBulletsPerShot;
+    public float burstFireRate;
+    public float burstFireDelay;
+
     [Header("Spread")]
     public float baseSpread;
     public float maxSpread;
+
 
     public float spreadIncreaseRate = .15f;
 
