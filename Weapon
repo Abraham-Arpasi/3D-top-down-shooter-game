@@ -24,7 +24,6 @@ public enum ShootType
 //removed monobehaviour since this script wont be using start or update function.
 public class Weapon
 {
-    public WeaponType weaponType;
 
     [Header("Magazine info")]
     //varaibles for the bullets and reload requirements.
@@ -32,54 +31,74 @@ public class Weapon
     public int magazineCapacity;
     public int totalReserveAmmo;
 
-    // this will set the speed of reload and switching weapons with a default of 1 and a range between 1 and 2.
-    [Range(1,5)]
-    public float reloadSpeed = 1;
-    [Range(1, 5)]
-    public float equipmentSpeed = 1;
+    public WeaponType weaponType;
 
+    //this will be used in the weapon data so it doesn't need to be seen in the inspector.
+    // this will set the speed of reload and switching weapons with a default of 1 and a range between 1 and 2.
+    public float reloadSpeed { get; private set; }
+    public float equipmentSpeed { get; private set; }
     //this will be the range for the gun distance.
     //this will determine how far the bullets will fly.
-    [Range(2, 12)]
-    public float gunDistance = 4; //this is the default value of gunDistance.
-
+    public float gunDistance { get; private set; } //this is the default value of gunDistance.
     //this will be the range for the camera distance
-    [Range(3, 8)]
-    public float cameraDistance = 6; //this is the default value of cameraDistance.
+    public float cameraDistance { get; private set; } //this is the default value of cameraDistance.
 
 
     [Header("Shooting info")]
     public ShootType shootType;
-    public int bulletsPerShot;
-    public float defaultFireRate;
-    public float fireRate = 1;
+    public int bulletsPerShot { get; private set; }
+    private float defaultFireRate;
+    private float fireRate = 1;
     private float lastShootTime;
 
     //this for setting up the burst fire mode for the weapom.
     [Header("Burst Fire info")]
-    public bool burstAvailable;
+    private bool burstAvailable;
     public bool burstActive;
 
-    public int burstBulletsPerShot;
-    public float burstFireRate;
-    public float burstFireDelay = .1f;
+    private int burstBulletsPerShot;
+    private float burstFireRate;
+    public float burstFireDelay { get; private set; }
 
     [Header("Spread info")]
     //the spread of the bullets will increase to a max of 3.
-    public float baseSpread = 1;
+    private float baseSpread = 1;
     private float currentSpread = 2;
-    public float maximumSpread = 3;
+    private float maximumSpread = 3;
     //this will make the bullets spread grow larger over time as the character keeps shooting.
-    public float spreadIncreaseRate = 0.15f;
+    private float spreadIncreaseRate = 0.15f;
     //this will be used to reset the bullet spread if not shooting.
     private float lastSpreadUpdateTime;
     private float spreadCooldown = 1;
 
     //creating a constructor.
+    //this will be seen in the weapon data which can be changed there.
     public Weapon(Weapon_Data weaponData)
     {
+        bulletsInMagazine = weaponData.bulletsInMagazine;
+        magazineCapacity = weaponData.magazineCapacity;
+        totalReserveAmmo = weaponData.totalReserveAmmo;
+
         fireRate = weaponData.fireRate;
         weaponType = weaponData.weaponType;
+
+        bulletsPerShot = weaponData.bulletsPerShot;
+        shootType = weaponData.shootType;
+
+        burstAvailable = weaponData.burstAvalible;
+        burstActive = weaponData.burstActive;
+        burstBulletsPerShot = weaponData.burstBulletsPerShot;
+        burstFireRate = weaponData.burstFireRate;
+        burstFireDelay = weaponData.burstFireDelay;
+
+        baseSpread = weaponData.baseSpread;
+        maximumSpread = weaponData.maxSpread;
+        spreadIncreaseRate = weaponData.spreadIncreaseRate;
+
+        reloadSpeed = weaponData.reloadSpeed;
+        equipmentSpeed = weaponData.equipmentSpeed;
+        gunDistance = weaponData.gunDistance;
+        cameraDistance = weaponData.cameraDistance;
 
         defaultFireRate = fireRate;
     }
