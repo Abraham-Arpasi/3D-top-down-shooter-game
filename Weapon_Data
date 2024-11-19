@@ -4,8 +4,16 @@ using UnityEngine;
 
 //This will let us create weaponData in the assetsmenu.
 [CreateAssetMenu(fileName = "New Weapon Data", menuName = "Weapon System/Weapon Data")]
-   public class Weaapon_Data : ScriptableObject
+   public class Weapon_Data : ScriptableObject
     {
+    public string weaponName;
+    public WeaponType weaponType;
+    public float fireRate;
 
+    [Header("Spread")]
+    public float baseSpread;
+    public float maxSpread;
+
+    public float spreadIncreaseRate = .15f;
     }
 
