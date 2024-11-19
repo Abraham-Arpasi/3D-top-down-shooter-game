@@ -8,6 +8,8 @@ using UnityEngine;
     {
     public string weaponName;
     public WeaponType weaponType;
+    public ShootType shootType;
+    public int bulletsPerShot;
     public float fireRate;
 
     [Header("Burst")]
@@ -15,7 +17,7 @@ using UnityEngine;
     public bool burstActive;
     public int burstBulletsPerShot;
     public float burstFireRate;
-    public float burstFireDelay;
+    public float burstFireDelay = .15f;
 
     [Header("Spread")]
     public float baseSpread;
