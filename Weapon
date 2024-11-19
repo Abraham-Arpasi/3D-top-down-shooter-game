@@ -76,10 +76,12 @@ public class Weapon
     private float spreadCooldown = 1;
 
     //creating a constructor.
-    public Weapon(WeaponType weaponType)
+    public Weapon(Weapon_Data weaponData)
     {
+        fireRate = weaponData.fireRate;
+        weaponType = weaponData.weaponType;
+
         defaultFireRate = fireRate;
-        this.weaponType = weaponType;
     }
 
     public Vector3 ApplySpread(Vector3 originalDirection)
