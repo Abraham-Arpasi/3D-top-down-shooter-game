@@ -1,0 +1,11 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+//This will let us create weaponData in the assetsmenu.
+[CreateAssetMenu(fileName = "New Weapon Data", menuName = "Weapon System/Weapon Data")]
+   public class Weaapon_Data : ScriptableObject
+    {
+
+    }
+
