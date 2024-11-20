@@ -17,10 +17,9 @@ public class Interactable : MonoBehaviour
         defaultMaterial = mesh.material;
     }
 
-    private void Update()
+    public void Interaction()
     {
-        if (Input.GetKeyDown(KeyCode.B))
-            HighLightActive(true);
+        Debug.Log("Interacted with " + gameObject.name);
     }
 
     //this will make the material turn on and off is active or not.
