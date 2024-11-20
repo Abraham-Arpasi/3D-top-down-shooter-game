@@ -4,6 +4,32 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+    [SerializeField] private MeshRenderer mesh;
+    private Material defaultMaterial;
+    [SerializeField] private Material highLightMaterial;
+
+    private void Start()
+    {
+        if (mesh == null)
+            mesh = GetComponentInChildren<MeshRenderer>();
+
+        defaultMaterial = mesh.material;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+            HighLightActive(true);
+    }
+
+    public void HighLightActive(bool active)
+    {
+        if(active)
+            mesh.material = highLightMaterial;
+        else
+            mesh.material = defaultMaterial;
+    }
+
     //if the character touches the object it will be added to the playerInteraction list.
     private void OnTriggerEnter(Collider other)
     {
@@ -12,6 +38,7 @@ public class Interactable : MonoBehaviour
         if (playerInteraction == null)
             return;
 
+        HighLightActive(true);
         playerInteraction.interactables.Add(this);
     }
 
@@ -23,6 +50,7 @@ public class Interactable : MonoBehaviour
         if (playerInteraction == null)
             return;
 
+        HighLightActive(false);
         playerInteraction.interactables.Remove(this);
     }
 }
