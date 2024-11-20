@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Item_Pickup : MonoBehaviour
-{
+{ 
     [SerializeField] private Weapon_Data weaponData;
     private void OnTriggerEnter(Collider other)
     {
