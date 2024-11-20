@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+    //if the character touches the object it will be added to the playerInteraction list.
     private void OnTriggerEnter(Collider other)
     {
         PlayerInteraction playerInteraction = other.GetComponent<PlayerInteraction>();
@@ -14,6 +15,7 @@ public class Interactable : MonoBehaviour
         playerInteraction.interactables.Add(this);
     }
 
+    //if the character is not touching the object it will no longer be in the playerInteraction list.
     private void OnTriggerExit(Collider other)
     {
         PlayerInteraction playerInteraction = other.GetComponent<PlayerInteraction>();
