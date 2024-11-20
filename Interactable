@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+    //makes a glowing material.
     [SerializeField] private MeshRenderer mesh;
     private Material defaultMaterial;
     [SerializeField] private Material highLightMaterial;
@@ -22,6 +23,7 @@ public class Interactable : MonoBehaviour
             HighLightActive(true);
     }
 
+    //this will make the material turn on and off is active or not.
     public void HighLightActive(bool active)
     {
         if(active)
@@ -38,8 +40,10 @@ public class Interactable : MonoBehaviour
         if (playerInteraction == null)
             return;
 
-        HighLightActive(true);
+        //this will make the material active if touching the object.
+        //HighLightActive(true);
         playerInteraction.interactables.Add(this);
+        playerInteraction.UpdateClosestInteractable();
     }
 
     //if the character is not touching the object it will no longer be in the playerInteraction list.
@@ -50,7 +54,9 @@ public class Interactable : MonoBehaviour
         if (playerInteraction == null)
             return;
 
-        HighLightActive(false);
+        //this will make the material go back to default when not touching the object.
+        //HighLightActive(false);
         playerInteraction.interactables.Remove(this);
+        playerInteraction.UpdateClosestInteractable();
     }
 }
