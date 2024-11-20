@@ -10,8 +10,9 @@ public class PlayerInteraction : MonoBehaviour
 
     public void UpdateClosestInteractable()
     {
-        closestInteractable = null;
+        closestInteractable?.HighLightActive(false);
 
+        closestInteractable = null;
         float closestDistance = float.MaxValue;
 
         foreach (Interactable interactable in interactables)
@@ -24,5 +25,6 @@ public class PlayerInteraction : MonoBehaviour
                 closestInteractable = interactable;
             }
         }
+        closestInteractable?.HighLightActive(true);
     }
 }
