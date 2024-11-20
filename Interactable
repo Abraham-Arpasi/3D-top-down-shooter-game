@@ -17,7 +17,7 @@ public class Interactable : MonoBehaviour
         defaultMaterial = mesh.material;
     }
 
-    public void Interaction()
+    public virtual void Interaction()
     {
         Debug.Log("Interacted with " + gameObject.name);
     }
@@ -32,7 +32,7 @@ public class Interactable : MonoBehaviour
     }
 
     //if the character touches the object it will be added to the playerInteraction list.
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         PlayerInteraction playerInteraction = other.GetComponent<PlayerInteraction>();
 
@@ -46,7 +46,7 @@ public class Interactable : MonoBehaviour
     }
 
     //if the character is not touching the object it will no longer be in the playerInteraction list.
-    private void OnTriggerExit(Collider other)
+    protected virtual void OnTriggerExit(Collider other)
     {
         PlayerInteraction playerInteraction = other.GetComponent<PlayerInteraction>();
 
