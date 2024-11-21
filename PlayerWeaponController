@@ -156,7 +156,7 @@ public class PlayerWeaponController : MonoBehaviour
 
         GameObject droppedWeapon = ObjectPool.instance.GetObject(weaponPickupPrefab);
 
-        droppedWeapon.transform.position = transform.position;
+        droppedWeapon.GetComponent<Pickup_Weapon>()?.SetupPickupWeapon(currentWeapon, transform);
 
         weaponSlots.Remove(currentWeapon);
 
