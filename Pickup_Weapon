@@ -29,7 +29,10 @@ public class Pickup_Weapon : Interactable
             model.gameObject.SetActive(false);
 
             if(model.weaponType == weaponData.weaponType)
+            {
                 model.gameObject.SetActive(true);
+                UpdateMeshAndMaterial(model.GetComponent<MeshRenderer>());
+            }
         }
     }
 
