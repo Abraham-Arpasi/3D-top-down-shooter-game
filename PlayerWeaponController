@@ -32,6 +32,8 @@ public class PlayerWeaponController : MonoBehaviour
     //this will make sure that the player only picks up 2 weapons that can be equiped.
     [SerializeField] private int maxSlots = 2;
 
+    [SerializeField] private GameObject weaponPickupPrefab;
+
     //We will be calling functions here for shooting the weapons.
     private void Start()
     {
@@ -151,6 +153,10 @@ public class PlayerWeaponController : MonoBehaviour
     {
         if (HasOnlyOneWeapon())
             return;
+
+        GameObject droppedWeapon = ObjectPool.instance.GetObject(weaponPickupPrefab);
+
+        droppedWeapon.transform.position = transform.position;
 
         weaponSlots.Remove(currentWeapon);
 
