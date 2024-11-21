@@ -10,13 +10,21 @@ public class Pickup_Weapon : Interactable
 
     [SerializeField] private BackupWeaponModel[] models;
 
+    private bool oldWeapon;
+
     private void Start()
     {
+
+        if(oldWeapon == false)
+            weapon = new Weapon(weaponData);
+        
         UpdateGameObject();
     }
 
     public void SetupPickupWeapon(Weapon weapon, Transform transform)
     {
+        oldWeapon = true;
+
         this.weapon = weapon;
         weaponData = weapon.weaponData;
 
@@ -37,7 +45,7 @@ public class Pickup_Weapon : Interactable
         {
             model.gameObject.SetActive(false);
 
-            if(model.weaponType == weapon.weaponType)
+            if(model.weaponType == weaponData.weaponType)
             {
                 model.gameObject.SetActive(true);
                 UpdateMeshAndMaterial(model.GetComponent<MeshRenderer>());
@@ -60,4 +68,3 @@ public class Pickup_Weapon : Interactable
             weaponController = other.GetComponent<PlayerWeaponController>();
     }
 }
-
