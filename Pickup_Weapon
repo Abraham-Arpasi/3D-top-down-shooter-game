@@ -15,6 +15,14 @@ public class Pickup_Weapon : Interactable
         UpdateGameObject();
     }
 
+    public void SetupPickupWeapon(Weapon weapon, Transform transform)
+    {
+        this.weapon = weapon;
+        weaponData = weapon.weaponData;
+
+        this.transform.position = transform.position + new Vector3(0, 0.75f, 0);
+    }
+
     [ContextMenu("Update Item Model")]
 
     public void UpdateGameObject()
