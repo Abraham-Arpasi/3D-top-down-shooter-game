@@ -136,6 +136,7 @@ public class PlayerWeaponController : MonoBehaviour
         {
             int weaponIndex = weaponSlots.IndexOf(currentWeapon);
 
+            player.weaponVisuals.SwitchOffWeaponModels();
             weaponSlots[weaponIndex] = newWeapon;
             EquipWeapon(weaponIndex);
 
