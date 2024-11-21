@@ -37,7 +37,7 @@ public class Pickup_Weapon : Interactable
         {
             model.gameObject.SetActive(false);
 
-            if(model.weaponType == weaponData.weaponType)
+            if(model.weaponType == weapon.weaponType)
             {
                 model.gameObject.SetActive(true);
                 UpdateMeshAndMaterial(model.GetComponent<MeshRenderer>());
@@ -48,7 +48,7 @@ public class Pickup_Weapon : Interactable
     public override void Interaction()
     {
         //base.Interaction();
-        weaponController.PickupWeapon(weaponData);
+        weaponController.PickupWeapon(weapon);
         Debug.Log("picked up waepon");
     }
 
@@ -60,3 +60,4 @@ public class Pickup_Weapon : Interactable
             weaponController = other.GetComponent<PlayerWeaponController>();
     }
 }
+
