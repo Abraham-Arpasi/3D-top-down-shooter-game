@@ -139,6 +139,8 @@ public class PlayerWeaponController : MonoBehaviour
 
             player.weaponVisuals.SwitchOffWeaponModels();
             weaponSlots[weaponIndex] = newWeapon;
+
+            CreateWeaponOnTheGround();
             EquipWeapon(weaponIndex);
 
             return;
@@ -153,14 +155,19 @@ public class PlayerWeaponController : MonoBehaviour
         if (HasOnlyOneWeapon())
             return;
 
-        GameObject droppedWeapon = ObjectPool.instance.GetObject(weaponPickupPrefab);
-
-        droppedWeapon.GetComponent<Pickup_Weapon>()?.SetupPickupWeapon(currentWeapon,transform);
+        CreateWeaponOnTheGround();
 
         weaponSlots.Remove(currentWeapon);
 
         //this will remove the weapon model if dropping a gun.
         EquipWeapon(0);
+    }
+
+    private void CreateWeaponOnTheGround()
+    {
+        GameObject droppedWeapon = ObjectPool.instance.GetObject(weaponPickupPrefab);
+
+        droppedWeapon.GetComponent<Pickup_Weapon>()?.SetupPickupWeapon(currentWeapon, transform);
     }
 
     //the bottom two functions will make sure that the laser only appears when the weapon is ready.
