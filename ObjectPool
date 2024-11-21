@@ -13,6 +13,9 @@ public class ObjectPool : MonoBehaviour
     //gives the queue of the gameobject is something is asking for it by using the key bulletPrefab.
     private Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
 
+    [Header("To Initialize")]
+    [SerializeField] private GameObject weaponPickup;
+
     //this will make sure we only have one instance of object pool in the game. 
     private void Awake()
     {
@@ -20,6 +23,11 @@ public class ObjectPool : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+        InitilizeNewPool(weaponPickup);
     }
 
     //this will take the bullet out the the pool instead of creating a new bullet.
@@ -41,8 +49,10 @@ public class ObjectPool : MonoBehaviour
         return objectToGet;
     }
 
-    public void ReturnObject(GameObject objectToReturn, float delay = .001f) 
-        => StartCoroutine(DelayReturn(delay, objectToReturn));
+    public void ReturnObject(GameObject objectToReturn, float delay = .001f)
+    {
+        StartCoroutine(DelayReturn(delay, objectToReturn));
+    }
 
     private IEnumerator DelayReturn(float delay, GameObject objectToReturn)
     {
