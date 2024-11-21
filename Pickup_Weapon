@@ -6,6 +6,7 @@ public class Pickup_Weapon : Interactable
 {
     [SerializeField] private Weapon_Data weaponData;
     private PlayerWeaponController weaponController;
+    [SerializeField] private Weapon weapon;
 
     [SerializeField] private BackupWeaponModel[] models;
 
