@@ -124,10 +124,9 @@ public class PlayerWeaponController : MonoBehaviour
         CameraManager.instance.ChangeCameraDistance(currentWeapon.cameraDistance);
     }
 
-    public void PickupWeapon(Weapon_Data newWeaponData)
+    public void PickupWeapon(Weapon newWeapon)
     { 
-        Weapon newWeapon = new Weapon(newWeaponData);
-
+       
         if(WeaponInSlots(newWeapon.weaponType) != null)
         {
             WeaponInSlots(newWeapon.weaponType).totalReserveAmmo += newWeapon.bulletsInMagazine;
@@ -156,7 +155,7 @@ public class PlayerWeaponController : MonoBehaviour
 
         GameObject droppedWeapon = ObjectPool.instance.GetObject(weaponPickupPrefab);
 
-        droppedWeapon.GetComponent<Pickup_Weapon>()?.SetupPickupWeapon(currentWeapon, transform);
+        droppedWeapon.GetComponent<Pickup_Weapon>()?.SetupPickupWeapon(currentWeapon,transform);
 
         weaponSlots.Remove(currentWeapon);
 
