@@ -47,7 +47,7 @@ public class Interactable : MonoBehaviour
 
         //this will make the material active if touching the object.
         //HighLightActive(true);
-        playerInteraction.interactables.Add(this);
+        playerInteraction.GetInteractables().Add(this);
         playerInteraction.UpdateClosestInteractable();
     }
 
@@ -61,7 +61,7 @@ public class Interactable : MonoBehaviour
 
         //this will make the material go back to default when not touching the object.
         //HighLightActive(false);
-        playerInteraction.interactables.Remove(this);
+        playerInteraction.GetInteractables().Remove(this);
         playerInteraction.UpdateClosestInteractable();
     }
 }
