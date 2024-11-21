@@ -25,13 +25,16 @@ public enum ShootType
 public class Weapon
 {
 
+    public WeaponType weaponType;
+    public ShootType shootType;
+    public bool burstActive;
+
     [Header("Magazine info")]
     //varaibles for the bullets and reload requirements.
     public int bulletsInMagazine;
     public int magazineCapacity;
     public int totalReserveAmmo;
 
-    public WeaponType weaponType;
 
     //this will be used in the weapon data so it doesn't need to be seen in the inspector.
     // this will set the speed of reload and switching weapons with a default of 1 and a range between 1 and 2.
@@ -43,18 +46,13 @@ public class Weapon
     //this will be the range for the camera distance
     public float cameraDistance { get; private set; } //this is the default value of cameraDistance.
 
-
-    [Header("Shooting info")]
-    public ShootType shootType;
     public int bulletsPerShot { get; private set; }
     private float defaultFireRate;
-    private float fireRate = 1;
+    public float fireRate = 1;
     private float lastShootTime;
 
     //this for setting up the burst fire mode for the weapom.
-    [Header("Burst Fire info")]
     private bool burstAvailable;
-    public bool burstActive;
 
     private int burstBulletsPerShot;
     private float burstFireRate;
@@ -70,6 +68,8 @@ public class Weapon
     //this will be used to reset the bullet spread if not shooting.
     private float lastSpreadUpdateTime;
     private float spreadCooldown = 1;
+
+    public Weapon_Data weaponData {  get; private set; } //serves as default weapon data.
 
     //creating a constructor.
     //this will be seen in the weapon data which can be changed there.
@@ -101,6 +101,7 @@ public class Weapon
         cameraDistance = weaponData.cameraDistance;
 
         defaultFireRate = fireRate;
+        this.weaponData = weaponData;
     }
 
     public Vector3 ApplySpread(Vector3 originalDirection)
