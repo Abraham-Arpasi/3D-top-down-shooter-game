@@ -11,10 +11,12 @@ public class ObjectPool : MonoBehaviour
 
     //queue is when an object enters a queue first it is also the first to get out.
     //gives the queue of the gameobject is something is asking for it by using the key bulletPrefab.
-    private Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
+    private Dictionary<GameObject, Queue<GameObject>> poolDictionary = 
+        new Dictionary<GameObject, Queue<GameObject>>();
 
     [Header("To Initialize")]
     [SerializeField] private GameObject weaponPickup;
+    [SerializeField] private GameObject ammoPickup;
 
     //this will make sure we only have one instance of object pool in the game. 
     private void Awake()
@@ -28,6 +30,7 @@ public class ObjectPool : MonoBehaviour
     private void Start()
     {
         InitilizeNewPool(weaponPickup);
+        InitilizeNewPool(ammoPickup);
     }
 
     //this will take the bullet out the the pool instead of creating a new bullet.
