@@ -60,11 +60,4 @@ public class Pickup_Weapon : Interactable
         ObjectPool.instance.ReturnObject(gameObject);
         Debug.Log("picked up waepon");
     }
-
-    protected override void OnTriggerEnter(Collider other)
-    {
-        base.OnTriggerEnter(other);
-
-        
-    }
 }
