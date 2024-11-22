@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+    protected PlayerWeaponController weaponController;
+
     //makes a glowing material.
     protected MeshRenderer mesh;
     protected Material defaultMaterial;
@@ -40,6 +42,9 @@ public class Interactable : MonoBehaviour
     //if the character touches the object it will be added to the playerInteraction list.
     protected virtual void OnTriggerEnter(Collider other)
     {
+        if (weaponController == null)
+            weaponController = other.GetComponent<PlayerWeaponController>();
+
         PlayerInteraction playerInteraction = other.GetComponent<PlayerInteraction>();
 
         if (playerInteraction == null)
