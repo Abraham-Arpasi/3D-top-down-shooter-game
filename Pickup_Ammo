@@ -7,6 +7,8 @@ public enum AmmoBoxType { smallBox, bigBox}
 
 public class Pickup_Ammo : Interactable
 {
+    private PlayerWeaponController weaponController;
+
     [SerializeField] private AmmoBoxType boxType;
 
     [System.Serializable]
@@ -46,7 +48,35 @@ public class Pickup_Ammo : Interactable
     {
         //base.Interaction();
 
-        Debug.Log("added ammo");
+        List<AmmoData> currentAmmoList = smallBoxAmmo;
 
+        if (boxType == AmmoBoxType.bigBox)
+            currentAmmoList = bigBoxAmmo;
+
+        foreach (AmmoData ammo in currentAmmoList)
+        {
+            Weapon weapon = weaponController.WeaponInSlots(ammo.weaponType);
+
+            AddBulletsToWeapon(weapon, ammo.amount);
+        }
+
+        ObjectPool.instance.ReturnObject(gameObject);
+
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+
+        if(weaponController == null)
+            weaponController = other.GetComponent<PlayerWeaponController>();
+    }
+
+    private void AddBulletsToWeapon(Weapon weapon, int amount)
+    {
+        if (weapon == null)
+            return;
+
+        weapon.totalReserveAmmo += amount;
     }
 }
