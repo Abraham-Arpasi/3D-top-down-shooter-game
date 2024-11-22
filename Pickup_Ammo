@@ -1,25 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public enum AmmoBoxType { smallBox, bigBox}
+[System.Serializable]
+public struct AmmoData
+{
+    public WeaponType weaponType;
+    //this will be used to get a random amount of bullets from the ammo box.
+    [Range(10, 100)] public int minAmount;
+    [Range(10, 100)] public int maxAmount;
+}
+public enum AmmoBoxType { smallBox, bigBox }
 
 public class Pickup_Ammo : Interactable
 {
-    private PlayerWeaponController weaponController;
 
     [SerializeField] private AmmoBoxType boxType;
 
-    [System.Serializable]
-
-    public struct AmmoData
-    {
-        public WeaponType weaponType;
-        //this will be used to get a random amount of bullets from the ammo box.
-        [Range(10,100)] public int minAmount;
-        [Range(10,100)] public int maxAmount;
-    }
 
     [SerializeField] private List<AmmoData> smallBoxAmmo;
     [SerializeField] private List<AmmoData> bigBoxAmmo;
@@ -64,14 +60,6 @@ public class Pickup_Ammo : Interactable
         //makes the box disappear after interacted with.
         ObjectPool.instance.ReturnObject(gameObject);
 
-    }
-
-    protected override void OnTriggerEnter(Collider other)
-    {
-        base.OnTriggerEnter(other);
-
-        if(weaponController == null)
-            weaponController = other.GetComponent<PlayerWeaponController>();
     }
 
     private int GetBulletAmount(AmmoData ammoData)
