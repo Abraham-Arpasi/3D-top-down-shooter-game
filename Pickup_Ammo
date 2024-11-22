@@ -16,7 +16,9 @@ public class Pickup_Ammo : Interactable
     public struct AmmoData
     {
         public WeaponType weaponType;
-        public int amount;
+        //this will be used to get a random amount of bullets from the ammo box.
+        [Range(10,100)] public int minAmount;
+        [Range(10,100)] public int maxAmount;
     }
 
     [SerializeField] private List<AmmoData> smallBoxAmmo;
@@ -57,9 +59,9 @@ public class Pickup_Ammo : Interactable
         {
             Weapon weapon = weaponController.WeaponInSlots(ammo.weaponType);
 
-            AddBulletsToWeapon(weapon, ammo.amount);
+            AddBulletsToWeapon(weapon, GetBulletAmount(ammo));
         }
-
+        //makes the box disappear after interacted with.
         ObjectPool.instance.ReturnObject(gameObject);
 
     }
@@ -70,6 +72,17 @@ public class Pickup_Ammo : Interactable
 
         if(weaponController == null)
             weaponController = other.GetComponent<PlayerWeaponController>();
+    }
+
+    private int GetBulletAmount(AmmoData ammoData)
+    {
+        //this will add a random amount of bullets to the weapon from the min and max amount.
+        float min = Mathf.Min(ammoData.minAmount, ammoData.maxAmount);
+        float max = Mathf.Max(ammoData.minAmount, ammoData.maxAmount);
+
+        float randomAmmoAmount = Random.Range(min, max);
+
+        return Mathf.RoundToInt(randomAmmoAmount);
     }
 
     private void AddBulletsToWeapon(Weapon weapon, int amount)
