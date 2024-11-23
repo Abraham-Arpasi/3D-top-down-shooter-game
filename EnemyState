@@ -1,23 +1,19 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyStateMachine
+public class EnemyState 
 {
-    public EnemyState currentState {  get; private set; }
+    public virtual void Enter()
+    {
 
-    //the state starts off by entering the first state.
-    public void Initialize(EnemyState startState)
+    } 
+    public virtual void Update()
     {
-        currentState = startState;
-        currentState.Enter();
+        Debug.Log("Running update from state machine");
     }
-    //this is a state machine that will allow us to change states from exiting from one state and entering another.
-    public void ChangeState(EnemyState newState)
+    public virtual void Exit()
     {
-        currentState.Exit();
-        currentState = newState;
-        currentState.Enter();
+
     }
 }
