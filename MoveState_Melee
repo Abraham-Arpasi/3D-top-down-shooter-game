@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class MoveState_Melee : EnemyState
 {
+    private Enemy_Melee enemy;
     public MoveState_Melee(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
     {
+        enemy = enemyBase as Enemy_Melee;
     }
 
     public override void Enter()
@@ -16,10 +18,17 @@ public class MoveState_Melee : EnemyState
     public override void Exit()
     {
         base.Exit();
+
+        Debug.Log("i exit move state");
     }
 
     public override void Update()
     {
         base.Update();
+
+        enemy.agent.SetDestination(enemy.destination.position);
+
+        if (enemy.agent.remainingDistance <= 1)
+            stateMachine.ChangeState(enemy.idleState);
     }
 }
