@@ -23,7 +23,7 @@ public class Enemy : MonoBehaviour
         stateMachine = new EnemyStateMachine();
 
         agent = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
+        anim = GetComponentInChildren<Animator>();
 
     }
 
