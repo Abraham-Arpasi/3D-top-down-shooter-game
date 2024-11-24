@@ -7,9 +7,9 @@ public class EnemyState
 
     protected Enemy enemyBase;
     protected EnemyStateMachine stateMachine;
-    protected Animator anim;
 
     protected string animBoolName;
+    protected float stateTimer;
     public EnemyState(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName)
     {
         this.enemyBase = enemyBase;
@@ -18,15 +18,15 @@ public class EnemyState
     }
     public virtual void Enter()
     {
-        Debug.Log("I enter " + animBoolName);
+       
     } 
     public virtual void Update()
     {
-        Debug.Log("Is running " + animBoolName);
+        stateTimer -= Time.deltaTime;
 
     }
     public virtual void Exit()
     {
-        Debug.Log("I exit " + animBoolName);
+        
     }
 }
