@@ -30,6 +30,8 @@ public class MoveState_Melee : EnemyState
     public override void Update()
     {
         base.Update();
+        //this will make the rotation more smooth for the enemy;
+        enemy.transform.rotation = enemy.FaceTarget(destination);
 
         if (enemy.agent.remainingDistance <= enemy.agent.stoppingDistance + .05f)
             stateMachine.ChangeState(enemy.idleState);
