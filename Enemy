@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+
+    [Header("Idle Info")]
+    public float idleTime;
     public EnemyStateMachine stateMachine { get; private set; }
 
     protected virtual void Awake()
