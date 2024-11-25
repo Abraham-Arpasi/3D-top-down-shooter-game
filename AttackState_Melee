@@ -16,6 +16,8 @@ public class AttackState_Melee : EnemyState
     public override void Enter()
     {
         base.Enter();
+        //shows pull weapon when attacking and hides hidden weapon.
+        enemy.PullWeapon();
 
         enemy.agent.isStopped = true;
         enemy.agent.velocity = Vector3.zero;
@@ -32,6 +34,7 @@ public class AttackState_Melee : EnemyState
     {
         base.Update();
 
+        //imporves the enemies position when attacking to have a better chance of landing an attack.
         enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, attackDirection, enemy.attackMoveSpeed * Time.deltaTime);
 
         //changes back to recoveryState after attack state.
@@ -39,4 +42,3 @@ public class AttackState_Melee : EnemyState
             stateMachine.ChangeState(enemy.recoveryState); //can change this to chase state if I want to make the game harder.
     }
 }
-
