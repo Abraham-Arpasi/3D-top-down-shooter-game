@@ -23,5 +23,8 @@ public class AttackState_Melee : EnemyState
     public override void Update()
     {
         base.Update();
+        //changes back to recoveryState after attack state.
+        if (triggerCalled)
+            stateMachine.ChangeState(enemy.recoveryState);
     }
 }
