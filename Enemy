@@ -49,11 +49,13 @@ public class Enemy : MonoBehaviour
     {
       
     }
-
+    //this will show the aggresion range of the enemy.
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, aggresionRange);
     }
+
+    public void AnimationTrigger() => stateMachine.currentState.AnimationTrigger();
 
     public bool PlayerInAggresionRange() => Vector3.Distance(transform.position, player.position) < aggresionRange;
 
