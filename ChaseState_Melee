@@ -14,6 +14,8 @@ public class ChaseState_Melee : EnemyState
     public override void Enter()
     {
         base.Enter();
+
+        enemy.agent.isStopped = false;
     }
 
     public override void Exit()
@@ -24,13 +26,15 @@ public class ChaseState_Melee : EnemyState
     public override void Update()
     {
         base.Update();
+        //this faces the path points.
+        enemy.transform.rotation = enemy.FaceTarget(GetNextPathPoint());
 
         if (CanUpdateDestination())
         {
             enemy.agent.destination = enemy.player.transform.position;
         }
     }
-
+    //this will have the enemy chase the player.
     private bool CanUpdateDestination()
     {
         if (Time.time > lastTimeUpdateDestination + 0.25f)
@@ -41,3 +45,4 @@ public class ChaseState_Melee : EnemyState
         return false;
     }
 }
+
