@@ -55,6 +55,8 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, aggresionRange);
     }
 
+    public bool PlayerInAggresionRange() => Vector3.Distance(transform.position, player.position) < aggresionRange;
+
     public Vector3 GetPatrolDestination()
     {
         Vector3 destination = patrolPoints[currentPatrolIndex].transform.position;
