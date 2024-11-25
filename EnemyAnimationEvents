@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class EnemyAnimationEvents : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Enemy enemy;
+
+    private void Awake()
     {
-        
+        enemy = GetComponentInParent<Enemy>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public void AnimationTrigger() => enemy.AnimationTrigger();
 }
