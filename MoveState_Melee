@@ -31,6 +31,10 @@ public class MoveState_Melee : EnemyState
     public override void Update()
     {
         base.Update();
+
+        if (enemy.PlayerInAggresionRange())
+            stateMachine.ChangeState(enemy.recoveryState);
+
         //this will make the rotation more smooth for the enemy;
         enemy.transform.rotation = enemy.FaceTarget(GetNextPathPoint());
 
@@ -38,6 +42,7 @@ public class MoveState_Melee : EnemyState
             stateMachine.ChangeState(enemy.idleState);
     }
 
+    //this will have the enemy look in the direction its walking in and be able to turn around corners properly.
     private Vector3 GetNextPathPoint()
     {
         NavMeshAgent agent = enemy.agent;
