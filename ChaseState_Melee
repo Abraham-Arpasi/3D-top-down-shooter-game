@@ -28,6 +28,10 @@ public class ChaseState_Melee : EnemyState
     public override void Update()
     {
         base.Update();
+        //changes to attack state if inside of attack range.
+        if (enemy.PlayerInAttackRange())
+            stateMachine.ChangeState(enemy.attackState);
+
         //this faces the path points.
         enemy.transform.rotation = enemy.FaceTarget(GetNextPathPoint());
 
