@@ -13,6 +13,8 @@ public class RecoveryState_Melee : EnemyState
     public override void Enter()
     {
         base.Enter();
+
+        enemy.agent.isStopped = true;
     }
 
     public override void Exit()
@@ -23,7 +25,11 @@ public class RecoveryState_Melee : EnemyState
     public override void Update()
     {
         base.Update();
-
+        //rotates the enemy towards the player when in aggression.
         enemy.transform.rotation = enemy.FaceTarget(enemy.player.position);
+
+        //when trigger is called it will change the behaviour of the enemy to chase state.
+        if (triggerCalled)
+            stateMachine.ChangeState(enemy.chaseState);
     }
 }
