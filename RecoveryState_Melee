@@ -28,8 +28,14 @@ public class RecoveryState_Melee : EnemyState
         //rotates the enemy towards the player when in aggression.
         enemy.transform.rotation = enemy.FaceTarget(enemy.player.position);
 
-        //when trigger is called it will change the behaviour of the enemy to chase state.
+        //when trigger is called it either swtich to chase state or attack state if player is within attack range.
         if (triggerCalled)
-            stateMachine.ChangeState(enemy.chaseState);
+        {
+            if(enemy.PlayerInAttackRange())
+                stateMachine.ChangeState(enemy.attackState);
+            else
+                stateMachine.ChangeState(enemy.chaseState);
+        }
+
     }
 }
