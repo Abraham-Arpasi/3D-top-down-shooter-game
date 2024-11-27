@@ -2,14 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public struct AttackData
+{
+    public float attackRange;
+    public float moveSpeed;
+    public float attackIndex;
+    public float animationSpeed;
+}
+
 public class Enemy_Melee : Enemy
 {
-
     public IdleState_Melee idleState {  get; private set; }
     public MoveState_Melee moveState { get; private set; }
     public RecoveryState_Melee recoveryState { get; private set; }
     public ChaseState_Melee chaseState { get; private set; }
     public AttackState_Melee attackState { get; private set; }
+
+    [Header("Attack info")]
+    public AttackData attackData;
 
     [SerializeField] private Transform hiddenWeapon;
     [SerializeField] private Transform pulledWeapon;
@@ -40,7 +51,7 @@ public class Enemy_Melee : Enemy
         stateMachine.currentState.Update();
 
     }
-
+    //this is for the enemy weapon visual of showing his weapon when attacking and then hiding it on his back when passive or chasing.
     public void PullWeapon()
     {
         hiddenWeapon.gameObject.SetActive(false);
