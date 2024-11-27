@@ -46,7 +46,10 @@ public class AttackState_Melee : EnemyState
         base.Update();
         //this will rotate the enemy towards the player when attacking.
         if (enemy.ManualRotationActive())
+        {
             enemy.transform.rotation = enemy.FaceTarget(enemy.player.position);
+            attackDirection = enemy.transform.position + (enemy.transform.forward * MAX_ATTACK_DISTANCE);
+        }
 
         if (enemy.ManualMovementActive())
         {
