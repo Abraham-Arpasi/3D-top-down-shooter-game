@@ -46,9 +46,13 @@ public class AttackState_Melee : EnemyState
         enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, attackDirection, attackMoveSpeed * Time.deltaTime);
         }
        
-        //changes back to recoveryState after attack state.
+        //changes back to recovery state if inside of attack range, or chase state if outside attack range.
         if (triggerCalled)
-            stateMachine.ChangeState(enemy.recoveryState); //can change this to chase state if I want to make the game harder.
+        {
+            if (enemy.PlayerInAttackRange())
+                stateMachine.ChangeState(enemy.recoveryState); 
+            else
+                stateMachine.ChangeState(enemy.chaseState);
+        }
     }
 }
-
