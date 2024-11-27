@@ -19,6 +19,7 @@ public class AttackState_Melee : EnemyState
         base.Enter();
 
         attackMoveSpeed = enemy.attackData.moveSpeed;
+        enemy.anim.SetFloat("AttackAnimationSpeed", enemy.attackData.animationSpeed);
 
         //shows pull weapon when attacking and hides hidden weapon.
         enemy.PullWeapon();
