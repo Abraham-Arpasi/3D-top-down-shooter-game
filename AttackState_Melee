@@ -34,6 +34,11 @@ public class AttackState_Melee : EnemyState
     public override void Exit()
     {
         base.Exit();
+
+        //this will change the recovery animation depending on the recoveryindex value.
+        enemy.anim.SetFloat("RecoveryIndex", 0);
+        if (enemy.PlayerInAttackRange())
+            enemy.anim.SetFloat("RecoveryIndex", 1);
     }
 
     public override void Update()
