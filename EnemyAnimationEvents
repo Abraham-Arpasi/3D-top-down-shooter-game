@@ -13,6 +13,11 @@ public class EnemyAnimationEvents : MonoBehaviour
 
     public void AnimationTrigger() => enemy.AnimationTrigger();
 
+    //this will help stop the enemy from sliding when stopped attacking.
     public void StartManualMovement() => enemy.ActivateManualMovement(true);
     public void StopManualMovement() => enemy.ActivateManualMovement(false);
+
+    //this will have the enemy rotate towards the player when attacking.
+    public void StartManualRotation() => enemy.ActivateManualRotation(true);
+    public void StopManualRotation() => enemy.ActivateManualRotation(false);
 }
