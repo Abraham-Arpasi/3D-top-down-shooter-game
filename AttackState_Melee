@@ -20,6 +20,7 @@ public class AttackState_Melee : EnemyState
 
         attackMoveSpeed = enemy.attackData.moveSpeed;
         enemy.anim.SetFloat("AttackAnimationSpeed", enemy.attackData.animationSpeed);
+        enemy.anim.SetFloat("AttackIndex", enemy.attackData.attackIndex);
 
         //shows pull weapon when attacking and hides hidden weapon.
         enemy.PullWeapon();
@@ -50,3 +51,4 @@ public class AttackState_Melee : EnemyState
             stateMachine.ChangeState(enemy.recoveryState); //can change this to chase state if I want to make the game harder.
     }
 }
+
