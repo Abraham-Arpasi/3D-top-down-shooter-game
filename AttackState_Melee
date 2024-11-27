@@ -6,6 +6,7 @@ public class AttackState_Melee : EnemyState
 {
     Enemy_Melee enemy;
     private Vector3 attackDirection;
+    private float attackMoveSpeed;
 
     private const float MAX_ATTACK_DISTANCE = 50f;
     public AttackState_Melee(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
@@ -16,6 +17,9 @@ public class AttackState_Melee : EnemyState
     public override void Enter()
     {
         base.Enter();
+
+        attackMoveSpeed = enemy.attackData.moveSpeed;
+
         //shows pull weapon when attacking and hides hidden weapon.
         enemy.PullWeapon();
 
@@ -37,7 +41,7 @@ public class AttackState_Melee : EnemyState
         if (enemy.ManualMovementActive())
         {
         //imporves the enemies position when attacking to have a better chance of landing an attack.
-        enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, attackDirection, enemy.attackMoveSpeed * Time.deltaTime);
+        enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, attackDirection, attackMoveSpeed * Time.deltaTime);
         }
        
         //changes back to recoveryState after attack state.
