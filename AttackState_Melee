@@ -78,11 +78,11 @@ public class AttackState_Melee : EnemyState
     private AttackData UpdatedAttackData()
     {
         List<AttackData> validAttacks = new List<AttackData>(enemy.attackList);
-        int random = Random.Range(0,validAttacks.Count);
 
         if (PlayerClose())
             validAttacks.RemoveAll(parameter => parameter.attackType == AttackType_Melee.Charge);
 
+        int random = Random.Range(0,validAttacks.Count);
         return validAttacks[random];
     }
 }
