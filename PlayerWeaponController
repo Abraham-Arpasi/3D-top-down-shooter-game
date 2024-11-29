@@ -20,6 +20,7 @@ public class PlayerWeaponController : MonoBehaviour
     private bool isShooting;
 
     [Header("Bullet Info")]
+    [SerializeField] private float bulletImpactForce = 100;
     //this is for creating the bullet.
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed;
@@ -220,7 +221,7 @@ public class PlayerWeaponController : MonoBehaviour
         //this will be getting the component of the bullet that we just setup the flydistance for.
         //we are calling the method of BulletSetup() and passing the gunDistance value.
         Bullet bulletScript = newBullet.GetComponent<Bullet>();
-        bulletScript.BulletSetup(currentWeapon.gunDistance);
+        bulletScript.BulletSetup(currentWeapon.gunDistance, bulletImpactForce);
 
         //this will apply bullet spread for the weapons if needed.
         Vector3 bulletsDirection = currentWeapon.ApplySpread(BulletDirection());
