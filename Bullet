@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public float ImpactForce;
+
     //This will be for the VFX of the bullet impact.
     [SerializeField] private GameObject bulletImpactFX;
 
@@ -26,8 +28,10 @@ public class Bullet : MonoBehaviour
         meshRenderer = GetComponent<MeshRenderer>();
         trailRenderer = GetComponent<TrailRenderer>();
     }
-    public void BulletSetup(float flyDistance)
+    public void BulletSetup(float flyDistance, float impactForce)
     {
+        this.ImpactForce = impactForce;
+
         bulletDisabled = false;
         cd.enabled = true;
         meshRenderer.enabled = true;
@@ -83,7 +87,12 @@ public class Bullet : MonoBehaviour
         //this will play the gethit function when enemy gets hit with the bullet.
         if(enemy != null)
         {
+            //this will setup impact force on the body part that got hit.
+            Vector3 force = rb.velocity.normalized * ImpactForce;
+            Rigidbody hitRigidbody = collision.collider.attachedRigidbody;
+
             enemy.GetHit();
+            enemy.HitImpact(force, collision.contacts[0].point, hitRigidbody);
         }
 
         CreateImpactFx(collision);
