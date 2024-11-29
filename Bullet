@@ -79,7 +79,7 @@ public class Bullet : MonoBehaviour
     //creating a collider for the bullet.
     private void OnCollisionEnter(Collision collision)
     {
-        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+        Enemy enemy = collision.gameObject.GetComponentInParent<Enemy>();
         //this will play the gethit function when enemy gets hit with the bullet.
         if(enemy != null)
         {
