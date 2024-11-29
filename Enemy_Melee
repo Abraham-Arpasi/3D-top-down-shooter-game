@@ -59,6 +59,13 @@ public class Enemy_Melee : Enemy
         stateMachine.currentState.Update();
 
     }
+
+    public override void GetHit()
+    {
+        base.GetHit();
+
+        stateMachine.ChangeState(deadState);
+    }
     //this is for the enemy weapon visual of showing his weapon when attacking and then hiding it on his back when passive or chasing.
     public void PullWeapon()
     {
