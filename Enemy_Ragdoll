@@ -25,4 +25,12 @@ public class Enemy_Ragdoll : MonoBehaviour
             rb.isKinematic = !active;
         }
     }
+    //this will turn off the colliders of the enemy when killed.
+    public void CollidersActive(bool active)
+    {
+        foreach (Collider cdc in ragdollColliders)
+        {
+            cdc.enabled = active;
+        }
+    }
 }
