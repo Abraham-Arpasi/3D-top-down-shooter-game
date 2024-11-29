@@ -79,8 +79,14 @@ public class Bullet : MonoBehaviour
     //creating a collider for the bullet.
     private void OnCollisionEnter(Collision collision)
     {
-        CreateImpactFx(collision);
+        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+        //this will play the gethit function when enemy gets hit with the bullet.
+        if(enemy != null)
+        {
+            enemy.GetHit();
+        }
 
+        CreateImpactFx(collision);
 
         //this will stick to objects that it collides with.
         //rb.constraints = RigidbodyConstraints.FreezeAll;
