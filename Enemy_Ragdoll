@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class Enemy_Ragdoll : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Transform ragdollParent;
 
-    // Update is called once per frame
-    void Update()
+    //we are going to collect all the colliders and rigidbodies.
+    [SerializeField] private Collider[] ragdollColliders;
+    [SerializeField] private Rigidbody[] ragdollRigidbodies;
+
+    private void Awake()
     {
-        
+        ragdollColliders = GetComponentsInChildren<Collider>();
+        ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
+
+        RagdollActive(false);
+    }
+    //we are going to have all the kinematic in rigidbodies on but when the enemy dies it all turns off.
+    public void RagdollActive(bool active)
+    {
+        foreach(Rigidbody rb in ragdollRigidbodies)
+        {
+            rb.isKinematic = !active;
+        }
     }
 }
