@@ -54,6 +54,23 @@ public class Enemy : MonoBehaviour
     {
       
     }
+
+    public virtual void GetHit()
+    {
+        Debug.Log(gameObject.name + "Enemy hit");
+    }
+
+    public virtual void HitImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
+    {
+        StartCoroutine(HitImpactCoroutine(force, hitPoint, rb));
+    }
+
+    private IEnumerator HitImpactCoroutine(Vector3 force, Vector3 hitPoint, Rigidbody rb)
+    {
+        yield return new WaitForSeconds(0.1f);
+        rb.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
+    }
+
     //this will show the aggresion range of the enemy.
     protected virtual void OnDrawGizmos()
     {
