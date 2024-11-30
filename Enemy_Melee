@@ -28,7 +28,7 @@ public class Enemy_Melee : Enemy
 
     [Header("Enemy info")]
     public EnemyMelee_Type meleeType;
-    [SerializeField] private Transform shieldTransform;
+    [SerializeField] public Transform shieldTransform;
 
     [Header("Attack info")]
     public AttackData attackData;
@@ -93,6 +93,11 @@ public class Enemy_Melee : Enemy
     }
 
     public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackData.attackRange;
+   
+    public void ActivateDodgeRoll()
+    {
+        anim.SetTrigger("DodgeRoll");
+    } 
     protected override void OnDrawGizmos()
     {
         base.OnDrawGizmos();
