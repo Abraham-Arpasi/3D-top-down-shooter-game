@@ -1,0 +1,17 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EnemyShield : MonoBehaviour
+{
+    [SerializeField] private int durability;
+
+    //this will make the shield disappear if it reaches 0 durability which is set in the inspector.
+    public void ReduceDurability()
+    {
+        durability--;
+
+        if (durability <= 0)
+            Destroy(gameObject);
+    }
+}
