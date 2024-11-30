@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyShield : MonoBehaviour
 {
+    private Enemy_Melee enemy;
     [SerializeField] private int durability;
 
     //this will make the shield disappear if it reaches 0 durability which is set in the inspector.
@@ -12,6 +13,9 @@ public class EnemyShield : MonoBehaviour
         durability--;
 
         if (durability <= 0)
+        {
+            enemy.anim.SetFloat("ChaseIndex", 0); //switches back to the default chase animation.
             Destroy(gameObject);
+        }
     }
 }
