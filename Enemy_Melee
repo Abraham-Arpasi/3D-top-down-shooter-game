@@ -14,6 +14,7 @@ public struct AttackData
     public AttackType_Melee attackType;
 }
 public enum AttackType_Melee { Close, Charge }
+public enum EnemyMelee_Type { Regular, Shield}
 
 public class Enemy_Melee : Enemy
 {
@@ -24,6 +25,10 @@ public class Enemy_Melee : Enemy
     public AttackState_Melee attackState { get; private set; }
 
     public DeadState_Melee deadState { get; private set; }
+
+    [Header("Enemy info")]
+    public EnemyMelee_Type meleeType;
+    [SerializeField] private Transform shieldTransform;
 
     [Header("Attack info")]
     public AttackData attackData;
@@ -50,6 +55,8 @@ public class Enemy_Melee : Enemy
         base.Start();
 
         stateMachine.Initialize(idleState);
+
+        InitalizeSpeciality();
     }
 
     protected override void Update()
@@ -60,11 +67,23 @@ public class Enemy_Melee : Enemy
 
     }
 
+    private void InitalizeSpeciality()
+    {
+        if(meleeType == EnemyMelee_Type.Shield)
+        {
+           anim.SetFloat("ChaseIndex", 1);
+            shieldTransform.gameObject.SetActive(true);
+        }
+    }
+
     public override void GetHit()
     {
         base.GetHit();
 
-        stateMachine.ChangeState(deadState);
+        if(healthPoints <= 0)
+        {
+            stateMachine.ChangeState(deadState);
+        }
     }
     //this is for the enemy weapon visual of showing his weapon when attacking and then hiding it on his back when passive or chasing.
     public void PullWeapon()
