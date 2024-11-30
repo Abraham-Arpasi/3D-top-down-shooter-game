@@ -83,7 +83,18 @@ public class Bullet : MonoBehaviour
     //creating a collider for the bullet.
     private void OnCollisionEnter(Collision collision)
     {
+        CreateImpactFx(collision);
+        ReturnBulletToPool();
+
         Enemy enemy = collision.gameObject.GetComponentInParent<Enemy>();
+        EnemyShield shield = collision.gameObject.GetComponent<EnemyShield>();
+
+        //this will reduce the shields durability when it gets hit by bullets.
+        if(shield != null)
+        {
+            shield.ReduceDurability();
+            return;
+        }
         //this will play the gethit function when enemy gets hit with the bullet.
         if(enemy != null)
         {
@@ -95,12 +106,9 @@ public class Bullet : MonoBehaviour
             enemy.HitImpact(force, collision.contacts[0].point, hitRigidbody);
         }
 
-        CreateImpactFx(collision);
-
         //this will stick to objects that it collides with.
         //rb.constraints = RigidbodyConstraints.FreezeAll;
 
-        ReturnBulletToPool();
     }
 
     private void CreateImpactFx(Collision collision)
