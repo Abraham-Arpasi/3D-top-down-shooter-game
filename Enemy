@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    protected int healthPoints = 20;
 
     [Header("Idle Info")]
     public float idleTime;
@@ -58,6 +59,7 @@ public class Enemy : MonoBehaviour
     public virtual void GetHit()
     {
         Debug.Log(gameObject.name + "Enemy hit");
+        healthPoints--;
     }
 
     public virtual void HitImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
