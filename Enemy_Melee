@@ -33,7 +33,7 @@ public class Enemy_Melee : Enemy
     public EnemyMelee_Type meleeType;
     [SerializeField] public Transform shieldTransform;
     public float dodgeCooldown;
-    private float lastTimeDodge;
+    private float lastTimeDodge = -10;
 
     [Header("Axe Throw info")]
     public GameObject axePrefab;
@@ -119,7 +119,9 @@ public class Enemy_Melee : Enemy
         if (Vector3.Distance(transform.position, player.position) < 2)
             return;
 
-        if(Time.time > dodgeCooldown + lastTimeDodge)
+        float dodgeAnimationDiration = GetanimationClipDuration("Dodge roll");
+
+        if(Time.time > dodgeCooldown + dodgeAnimationDiration + lastTimeDodge)
         {
             lastTimeDodge = Time.time;
             anim.SetTrigger("Dodge");
@@ -139,6 +141,19 @@ public class Enemy_Melee : Enemy
         return false;
     }
 
+    private float GetanimationClipDuration(string clipName)
+    {
+        AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+
+        foreach(AnimationClip clip in clips)
+        {
+            if (clip.name == clipName)
+                return clip.length;
+        }
+
+        Debug.Log("no animation found " + clipName);
+        return 0;
+    }
     public override void AbilityTrigger()
     {
         base.AbilityTrigger();
