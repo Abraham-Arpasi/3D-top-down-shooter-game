@@ -124,7 +124,7 @@ public class Enemy : MonoBehaviour
         return destination;
     }
     //this will have the enemy rotate towards the target.
-    public Quaternion FaceTarget(Vector3 target)
+    public void FaceTarget(Vector3 target)
     {
         Quaternion targetRotation = Quaternion.LookRotation(target - transform.position);
 
@@ -132,6 +132,6 @@ public class Enemy : MonoBehaviour
 
         float yRotation = Mathf.LerpAngle(currentEulerAngels.y, targetRotation.eulerAngles.y, turnSpeed * Time.deltaTime);
 
-        return Quaternion.Euler(currentEulerAngels.x, yRotation, currentEulerAngels.z);
+        transform.rotation = Quaternion.Euler(currentEulerAngels.x, yRotation, currentEulerAngels.z);
     }
 }
