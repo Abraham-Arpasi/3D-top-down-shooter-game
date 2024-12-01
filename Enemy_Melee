@@ -15,7 +15,7 @@ public struct AttackData
     public AttackType_Melee attackType;
 }
 public enum AttackType_Melee { Close, Charge }
-public enum EnemyMelee_Type { Regular, Shield, Dodge}
+public enum EnemyMelee_Type { Regular, Shield, Dodge, AxeThrow}
 
 public class Enemy_Melee : Enemy
 {
@@ -40,7 +40,7 @@ public class Enemy_Melee : Enemy
     public float axeFlySpeed;
     public float axeAimTimer;
     public float axeThrowCooldown;
-    private float lastTImeAxeThrown;
+    private float lastTimeAxeThrown;
     public Transform axeStartPoint;
 
     [Header("Attack info")]
@@ -128,9 +128,12 @@ public class Enemy_Melee : Enemy
 
     public bool canThrowAxe()
     {
-        if (Time.time > lastTImeAxeThrown + axeThrowCooldown)
+        if (meleeType != EnemyMelee_Type.AxeThrow)
+            return false;
+
+        if (Time.time > lastTimeAxeThrown + axeThrowCooldown)
         {
-            lastTImeAxeThrown = Time.deltaTime;
+            lastTimeAxeThrown = Time.deltaTime;
             return true;
         }
         return false;
