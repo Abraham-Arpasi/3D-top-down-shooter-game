@@ -46,6 +46,7 @@ public class Enemy : MonoBehaviour
         InitializePatrolPoints();
     }
 
+    //this will make the patrol points better and cleaner.
     private void InitializePatrolPoints()
     {
         patrolPointsPosition = new Vector3[patrolPoints.Length];
@@ -118,7 +119,8 @@ public class Enemy : MonoBehaviour
     
     public Vector3 GetPatrolDestination()
     {
-        Vector3 destination = patrolPoints[currentPatrolIndex].transform.position;
+        Vector3 destination = patrolPointsPosition[currentPatrolIndex];
+        Debug.Log(destination);
 
         currentPatrolIndex++;
 
