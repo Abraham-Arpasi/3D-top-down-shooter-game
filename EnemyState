@@ -37,6 +37,11 @@ public class EnemyState
 
     public void AnimationTrigger() => triggerCalled = true;
 
+    public virtual void AbilityTrigger()
+    {
+
+    }
+
     //this will have the enemy look in the direction its walking in and be able to turn around corners properly.
     protected Vector3 GetNextPathPoint()
     {
@@ -55,3 +60,4 @@ public class EnemyState
         return agent.destination;
     }
 }
+
