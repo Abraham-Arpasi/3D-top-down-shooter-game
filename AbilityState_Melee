@@ -2,17 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityState_Melee : MonoBehaviour
+public class AbilityState_Melee : EnemyState
 {
-    // Start is called before the first frame update
-    void Start()
+    private Enemy_Melee enemy;
+    public AbilityState_Melee(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
     {
-        
+        enemy = enemyBase as Enemy_Melee;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Enter()
     {
-        
+        base.Enter();
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+    }
+
+    public override void Update()
+    {
+        base.Update();
+
+        if (triggerCalled)
+            stateMachine.ChangeState(enemy.recoveryState);
     }
 }
