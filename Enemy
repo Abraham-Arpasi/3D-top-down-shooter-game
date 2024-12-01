@@ -18,7 +18,8 @@ public class Enemy : MonoBehaviour
     private bool manualMovement;
     //this will be used for the enemy rotation when attacking.
     private bool manualRotation;
-
+    //this will make the patrol points better.
+    private Vector3[] patrolPointsPosition;
     [SerializeField] private Transform[] patrolPoints;
     private int currentPatrolIndex;
 
@@ -47,9 +48,12 @@ public class Enemy : MonoBehaviour
 
     private void InitializePatrolPoints()
     {
-        foreach (Transform t in patrolPoints)
+        patrolPointsPosition = new Vector3[patrolPoints.Length];
+
+        for(int i = 0; i < patrolPoints.Length; i++)
         {
-            t.parent = null;
+            patrolPointsPosition[i] = patrolPoints[i].position;
+            patrolPoints[i].gameObject.SetActive(false);
         }
     }
 
