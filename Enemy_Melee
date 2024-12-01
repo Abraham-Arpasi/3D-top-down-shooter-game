@@ -35,6 +35,12 @@ public class Enemy_Melee : Enemy
     public float dodgeCooldown;
     private float lastTimeDodge;
 
+    [Header("Axe Throw info")]
+    public GameObject axePrefab;
+    public float axeFlySpeed;
+    public float axeTimer;
+    public float axeThrowCooldown;
+
     [Header("Attack info")]
     public AttackData attackData;
     public List<AttackData> attackList;
