@@ -13,6 +13,13 @@ public class EnemyAxe : MonoBehaviour
     private float rotationSpeed;
     private float timer = 1;
 
+    public void AxeSetup(float flySpeed, Transform player, float timer)
+    {
+        this.flySpeed = flySpeed;
+        this.player = player;
+        this.timer = timer;
+    }
+
     private void Update()
     {
         //this is to make the axe spin while in the air.
