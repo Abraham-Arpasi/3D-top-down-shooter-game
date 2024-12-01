@@ -10,7 +10,6 @@ public class AbilityState_Melee : EnemyState
     private const float MAX_MOVEMENT_DISTANCE = 20;
 
     private float moveSpeed;
-    private float lastTimeAxeThrown;
     public AbilityState_Melee(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
     {
         enemy = enemyBase as Enemy_Melee;
@@ -19,6 +18,8 @@ public class AbilityState_Melee : EnemyState
     public override void Enter()
     {
         base.Enter();
+        //pulls weapon when in ability state.
+        enemy.PullWeapon();
 
         moveSpeed = enemy.moveSpeed;
         movementDirection = enemy.transform.position + (enemy.transform.forward * MAX_MOVEMENT_DISTANCE);
@@ -37,7 +38,7 @@ public class AbilityState_Melee : EnemyState
         base.Update();
         if (enemy.ManualRotationActive())
         {
-            enemy.transform.rotation = enemy.FaceTarget(enemy.player.position);
+             enemy.FaceTarget(enemy.player.position);
             movementDirection = enemy.transform.position + (enemy.transform.forward * MAX_MOVEMENT_DISTANCE);
         }
 
@@ -55,11 +56,6 @@ public class AbilityState_Melee : EnemyState
     public override void AbilityTrigger()
     {
         base.AbilityTrigger();
-
-        if (Time.time > enemy.axeThrowCooldown + lastTimeAxeThrown)
-            return;
-
-        lastTimeAxeThrown = Time.time;
 
         GameObject newAxe = ObjectPool.instance.GetObject(enemy.axePrefab);
 
