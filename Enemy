@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    protected int healthPoints = 20;
+    [SerializeField] protected int healthPoints = 20;
 
     [Header("Idle Info")]
     public float idleTime;
@@ -86,6 +86,11 @@ public class Enemy : MonoBehaviour
     public bool ManualRotationActive() => manualRotation;
 
     public void AnimationTrigger() => stateMachine.currentState.AnimationTrigger();
+
+    public virtual void AbilityTrigger()
+    {
+        stateMachine.currentState.AbilityTrigger();
+    }
 
     public bool PlayerInAggresionRange() => Vector3.Distance(transform.position, player.position) < aggresionRange;
     public Vector3 GetPatrolDestination()
