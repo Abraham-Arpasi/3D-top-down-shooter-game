@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyAxe : MonoBehaviour
 {
+    [SerializeField] private GameObject impactFx;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Transform axeVisuals;
     [SerializeField] private float rotationSpeed = 1600;
@@ -36,5 +37,21 @@ public class EnemyAxe : MonoBehaviour
 
         rb.velocity = direction.normalized * flySpeed;
         transform.forward = rb.velocity;
+    }
+
+    //this will make the axe disappear if it gets shot or hits the player.
+    private void OnTriggerEnter(Collider other)
+    {
+        Bullet bullet = other.GetComponent<Bullet>();
+        Player player = other.GetComponent<Player>();
+
+        if (bullet != null || player != null)
+        {
+            GameObject newFx = ObjectPool.instance.GetObject(impactFx);
+            newFx.transform.position = transform.position;
+
+            ObjectPool.instance.ReturnObject(gameObject);
+            ObjectPool.instance.ReturnObject(newFx, 1f);
+        }
     }
 }
