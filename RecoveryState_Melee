@@ -31,8 +31,14 @@ public class RecoveryState_Melee : EnemyState
         //when trigger is called it either swtich to chase state or attack state if player is within attack range.
         if (triggerCalled)
         {
-            if(enemy.PlayerInAttackRange())
+            if (enemy.canThrowAxe())
+            {
+                stateMachine.ChangeState(enemy.abilityState);
+            }
+
+            else if(enemy.PlayerInAttackRange())
                 stateMachine.ChangeState(enemy.attackState);
+
             else
                 stateMachine.ChangeState(enemy.chaseState);
         }
