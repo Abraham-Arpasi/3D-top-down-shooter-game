@@ -12,15 +12,23 @@ public class EnemyAxe : MonoBehaviour
 
     public Vector3 direction;
 
+    private float timer = 1;
+
     private void Update()
     {
         //this is to make the axe spin while in the air.
         axeVisuals.Rotate(Vector3.right * rotationSpeed * Time.deltaTime);
+        timer -= Time.deltaTime;
         //this is for the direction of the axe flying in the air towards the player.
         //added vector3.up since this will make the axe fly above the pivot point of the player that is at its feet.
-        direction = player.position + Vector3.up - transform.position;
-        rb.velocity = direction.normalized * flySpeed;
+        // set the timer to 1 so it flys towards the players direction for 1 second and then continues flying in the direction it was going.
+       if(timer > 0)
+        {
+            direction = player.position + Vector3.up - transform.position;
+        }
+       
 
+        rb.velocity = direction.normalized * flySpeed;
         transform.forward = rb.velocity;
     }
 }
