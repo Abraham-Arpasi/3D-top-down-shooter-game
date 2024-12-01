@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class EnemyAxe : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Rigidbody rb;
+    public Transform axeVisuals;
+    public Transform player;
+    public float flySpeed;
+    public float rotationSpeed;
 
-    // Update is called once per frame
-    void Update()
+    public Vector3 direction;
+
+    private void Update()
     {
-        
+        //this is to make the axe spin while in the air.
+        axeVisuals.Rotate(Vector3.right * rotationSpeed * Time.deltaTime);
+        //this is for the direction of the axe flying in the air towards the player.
+        direction = player.position - transform.position;
+        rb.velocity = direction.normalized * flySpeed;
+
+        transform.forward = rb.velocity;
     }
 }
