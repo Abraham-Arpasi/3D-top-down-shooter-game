@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -116,6 +117,12 @@ public class Enemy_Melee : Enemy
             anim.SetTrigger("Dodge");
         }
     } 
+
+    public void TriggerAbility()
+    {
+        Debug.Log("Create Axe");
+        pulledWeapon.gameObject.SetActive(false);
+    }
     protected override void OnDrawGizmos()
     {
         base.OnDrawGizmos();
