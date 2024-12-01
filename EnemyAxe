@@ -6,11 +6,11 @@ public class EnemyAxe : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Transform axeVisuals;
+    [SerializeField] private float rotationSpeed = 1600;
 
     private Transform player;
     private float flySpeed;
     private Vector3 direction;
-    private float rotationSpeed;
     private float timer = 1;
 
     public void AxeSetup(float flySpeed, Transform player, float timer)
