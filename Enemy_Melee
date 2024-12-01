@@ -38,8 +38,10 @@ public class Enemy_Melee : Enemy
     [Header("Axe Throw info")]
     public GameObject axePrefab;
     public float axeFlySpeed;
-    public float axeTimer;
+    public float axeAimTimer;
     public float axeThrowCooldown;
+    private float lastTImeAxeThrown;
+    public Transform axeStartPoint;
 
     [Header("Attack info")]
     public AttackData attackData;
@@ -123,6 +125,16 @@ public class Enemy_Melee : Enemy
             anim.SetTrigger("Dodge");
         }
     } 
+
+    public bool canThrowAxe()
+    {
+        if (Time.time > lastTImeAxeThrown + axeThrowCooldown)
+        {
+            lastTImeAxeThrown = Time.deltaTime;
+            return true;
+        }
+        return false;
+    }
 
     public override void AbilityTrigger()
     {
