@@ -9,6 +9,11 @@ public class Enemy_Visuals : MonoBehaviour
     [SerializeField] private Texture[] colorTextures;
     [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
+    public void SetupLook()
+    {
+        SetupRandomColor();
+    }
+
     //sets up a random texture for each enemy.
     private void SetupRandomColor()
     {
