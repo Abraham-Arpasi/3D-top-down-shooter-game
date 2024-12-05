@@ -2,16 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//setup which weapons are one handed and which ones are thrown.
+public enum Enemy_MeleeWeaponType { OneHand, Throw}
 public class Enemy_Visuals : MonoBehaviour
 {
+    [Header("Weapons")]
+    [SerializeField] private Enemy_WeaponModel[] weaponModels;
+    [SerializeField] private Enemy_MeleeWeaponType weaponType;
+    public GameObject currentWeaponModel { get; private set; }
+
     //created an array for multiple textures of the enemy.
     [Header("Color")]
     [SerializeField] private Texture[] colorTextures;
     [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
+    private void Start()
+    {
+        weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);    
+        InvokeRepeating(nameof(SetupLook), 0, 1.5f);
+    }
     public void SetupLook()
     {
         SetupRandomColor();
+    }
+
+    //this randomizes which weapon the enemy is holding.
+    private void SetupRandomWeapon()
+    {
+        foreach(var weaponModel in weaponModels)
+        {
+            //sets all weapons false at the start.
+            weaponModel.gameObject.SetActive(false);
+        }
+
+        List<Enemy_WeaponModel> filteredWeaponModels = new List<Enemy_WeaponModel>();
+
+       foreach(var weaponModel in weaponModels)
+        {
+            if(weaponModel.weaponType == weaponType)
+                filteredWeaponModels.Add(weaponModel);
+        }
+       //only sets the weapon the enemy is holding to true;
+       int randomIndex = Random.Range(0, filteredWeaponModels.Count);
+        currentWeaponModel = filteredWeaponModels[randomIndex].gameObject;
+        currentWeaponModel.SetActive(true);
     }
 
     //sets up a random texture for each enemy.
