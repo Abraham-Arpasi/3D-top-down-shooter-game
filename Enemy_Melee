@@ -125,10 +125,9 @@ public class Enemy_Melee : Enemy
         }
     }
     //this is for the enemy weapon visual of showing his weapon when attacking and then hiding it on his back when passive or chasing.
-    public void PullWeapon()
+    public void EnableWeaponModel(bool active)
     {
-        hiddenWeapon.gameObject.SetActive(false);
-        pulledWeapon.gameObject.SetActive(true);    
+           visuals.currentWeaponModel.gameObject.SetActive(active);
     }
 
     public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackData.attackRange;
