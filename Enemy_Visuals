@@ -11,6 +11,10 @@ public class Enemy_Visuals : MonoBehaviour
     [SerializeField] private Enemy_MeleeWeaponType weaponType;
     public GameObject currentWeaponModel { get; private set; }
 
+    [Header("Corruption")]
+    [SerializeField] private GameObject[] corruptionCrystals;
+    [SerializeField] private int corruptionAmount;
+
     //created an array for multiple textures of the enemy.
     [Header("Color")]
     [SerializeField] private Texture[] colorTextures;
@@ -18,8 +22,22 @@ public class Enemy_Visuals : MonoBehaviour
 
     private void Start()
     {
-        weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);    
+        weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);
+
+        CollectCorruptionCrystals();
+
         InvokeRepeating(nameof(SetupLook), 0, 1.5f);
+    }
+
+    private void CollectCorruptionCrystals()
+    {
+        Enemy_CorruptionCrystal[] crystalComponent = GetComponentsInChildren<Enemy_CorruptionCrystal>(true);
+        corruptionCrystals = new GameObject[crystalComponent.Length];
+
+        for (int i = 0; i < crystalComponent.Length; i++)
+        {
+            corruptionCrystals[i] = crystalComponent[i].gameObject;
+        }
     }
 
     public void SetupWeaponType(Enemy_MeleeWeaponType type) => weaponType = type;
