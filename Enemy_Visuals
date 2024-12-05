@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class Enemy_Visuals : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    //created an array for multiple textures of the enemy.
+    [Header("Color")]
+    [SerializeField] private Texture[] colorTextures;
+    [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
-    // Update is called once per frame
-    void Update()
+    //sets up a random texture for each enemy.
+    private void SetupRandomColor()
     {
-        
+        int randomIndex = Random.Range(0, colorTextures.Length);
+
+        Material newMat = new Material(skinnedMeshRenderer.material);
+
+        newMat.mainTexture = colorTextures[randomIndex];
+
+        skinnedMeshRenderer.material = newMat;
     }
 }
