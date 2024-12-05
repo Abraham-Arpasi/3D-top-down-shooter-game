@@ -42,7 +42,7 @@ public class PlayerWeaponController : MonoBehaviour
 
         AssignInputEvents();
 
-        Invoke("EquipStartingWeapon", .1f);
+        Invoke(nameof(EquipStartingWeapon), .1f);
 
         //this is for the ammo of the weapon that is being held.
         //currentWeapon.bulletsInMagazine = currentWeapon.totalReserveAmmo;
@@ -276,7 +276,7 @@ public class PlayerWeaponController : MonoBehaviour
 
         if(Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, Mathf.Infinity))
         {
-            Enemy_Melee enemy_Melee = hit.collider.gameObject.GetComponent<Enemy_Melee>();
+            Enemy_Melee enemy_Melee = hit.collider.gameObject.GetComponentInParent<Enemy_Melee>();
 
             if(enemy_Melee != null)
             {
