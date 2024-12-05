@@ -24,6 +24,7 @@ public class Enemy_Visuals : MonoBehaviour
     public void SetupLook()
     {
         SetupRandomColor();
+        SetupRandomWeapon();
     }
 
     //this randomizes which weapon the enemy is holding.
