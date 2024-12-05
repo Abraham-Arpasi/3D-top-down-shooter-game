@@ -20,7 +20,7 @@ public class Enemy_Visuals : MonoBehaviour
     [SerializeField] private Texture[] colorTextures;
     [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
-    private void Start()
+    private void Awake()
     {
         weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);
 
