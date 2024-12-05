@@ -184,7 +184,7 @@ public class Enemy_Melee : Enemy
 
         moveSpeed = moveSpeed * 0.6f;
         Debug.Log("Create Axe");
-        pulledWeapon.gameObject.SetActive(false);
+        EnableWeaponModel(false);
     }
     protected override void OnDrawGizmos()
     {
