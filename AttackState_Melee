@@ -24,7 +24,7 @@ public class AttackState_Melee : EnemyState
         enemy.anim.SetFloat("SlashAttackIndex", Random.Range(0, 2));
 
         //shows pull weapon when attacking and hides hidden weapon.
-        enemy.PullWeapon();
+        enemy.EnableWeaponModel(true);
 
         enemy.agent.isStopped = true;
         enemy.agent.velocity = Vector3.zero;
