@@ -21,6 +21,9 @@ public class Enemy_Visuals : MonoBehaviour
         weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);    
         InvokeRepeating(nameof(SetupLook), 0, 1.5f);
     }
+
+    public void SetupWeaponType(Enemy_MeleeWeaponType type) => weaponType = type;
+    
     public void SetupLook()
     {
         SetupRandomColor();
