@@ -27,6 +27,12 @@ public class Enemy_Visuals : MonoBehaviour
         CollectCorruptionCrystals();
     }
 
+    public void EnableWeaponTrail(bool enable)
+    {
+        Enemy_WeaponModel currentWeaponScript = currentWeaponModel.GetComponent<Enemy_WeaponModel>();
+        currentWeaponScript.EnableTrailEffect(enable);
+    }
+
     private void CollectCorruptionCrystals()
     {
         Enemy_CorruptionCrystal[] crystalComponents = GetComponentsInChildren<Enemy_CorruptionCrystal>(true);
