@@ -6,4 +6,18 @@ public class Enemy_WeaponModel : MonoBehaviour
 {
     public Enemy_MeleeWeaponType weaponType;
     public AnimatorOverrideController overrideController;
+
+    //this will be used to have a trail effect on the weapons which can be turned on and off when swinging.
+    [SerializeField] private GameObject[] trailEffects;
+    private void Awake()
+    {
+        EneableTrailEffect(false); 
+    }
+    public void EneableTrailEffect(bool enable)
+    {
+        foreach (var effect in trailEffects)
+        {
+            effect.SetActive(enable);
+        }
+    }
 }
