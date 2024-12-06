@@ -72,6 +72,8 @@ public class Enemy_Melee : Enemy
         InitalizeSpeciality();
 
         visuals.SetupLook();
+
+        UpdateAttackData();
     }
 
     protected override void Update()
