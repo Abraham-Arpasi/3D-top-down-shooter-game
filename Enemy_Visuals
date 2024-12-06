@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //setup which weapons are one handed and which ones are thrown.
-public enum Enemy_MeleeWeaponType { OneHand, Throw}
+public enum Enemy_MeleeWeaponType { OneHand, Throw, Unarmed}
 public class Enemy_Visuals : MonoBehaviour
 {
     [Header("Weapons")]
@@ -29,12 +29,12 @@ public class Enemy_Visuals : MonoBehaviour
 
     private void CollectCorruptionCrystals()
     {
-        Enemy_CorruptionCrystal[] crystalComponent = GetComponentsInChildren<Enemy_CorruptionCrystal>(true);
-        corruptionCrystals = new GameObject[crystalComponent.Length];
+        Enemy_CorruptionCrystal[] crystalComponents = GetComponentsInChildren<Enemy_CorruptionCrystal>(true);
+        corruptionCrystals = new GameObject[crystalComponents.Length];
 
-        for (int i = 0; i < crystalComponent.Length; i++)
+        for (int i = 0; i < crystalComponents.Length; i++)
         {
-            corruptionCrystals[i] = crystalComponent[i].gameObject;
+            corruptionCrystals[i] = crystalComponents[i].gameObject;
         }
     }
 
@@ -49,24 +49,24 @@ public class Enemy_Visuals : MonoBehaviour
 
     private void SetupRandomCorruption()
     {
-        List<int> availableIndex = new List<int>();
+        List<int> availableIndexs = new List<int>();
 
         for(int i = 0; i < corruptionCrystals.Length; i++)
         {
-            availableIndex.Add(i);
+            availableIndexs.Add(i);
             corruptionCrystals[i].SetActive(false);
         }
 
         for(int i = 0; i < corruptionAmount; i++)
         {
-            if (availableIndex.Count == 0)
+            if (availableIndexs.Count == 0)
                 break;
 
-            int randomIndex = Random.Range(0, availableIndex.Count);
-            int objectIndex = availableIndex[randomIndex];
+            int randomIndex = Random.Range(0, availableIndexs.Count);
+            int objectIndex = availableIndexs[randomIndex];
 
             corruptionCrystals[objectIndex].SetActive(true);
-            availableIndex.RemoveAt(randomIndex);
+            availableIndexs.RemoveAt(randomIndex);
         }
     }
 
