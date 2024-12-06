@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct AttackData
+public struct MeleeAttackData
 {
     public string attackName;
     public float attackRange;
@@ -46,8 +46,8 @@ public class Enemy_Melee : Enemy
     public Transform axeStartPoint;
 
     [Header("Attack info")]
-    public AttackData attackData;
-    public List<AttackData> attackList;
+    public MeleeAttackData attackData;
+    public List<MeleeAttackData> attackList;
 
     protected override void Awake()
     {
