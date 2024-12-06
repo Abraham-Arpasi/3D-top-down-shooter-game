@@ -19,7 +19,7 @@ public enum EnemyMelee_Type { Regular, Shield, Dodge, AxeThrow}
 
 public class Enemy_Melee : Enemy
 {
-    private Enemy_Visuals visuals;
+    public Enemy_Visuals visuals {get; private set;}
 
     public IdleState_Melee idleState {  get; private set; }
     public MoveState_Melee moveState { get; private set; }
@@ -48,9 +48,6 @@ public class Enemy_Melee : Enemy
     [Header("Attack info")]
     public AttackData attackData;
     public List<AttackData> attackList;
-
-    [SerializeField] private Transform hiddenWeapon;
-    [SerializeField] private Transform pulledWeapon;
 
     protected override void Awake()
     {
@@ -112,6 +109,10 @@ public class Enemy_Melee : Enemy
             anim.SetFloat("ChaseIndex", 1);
             shieldTransform.gameObject.SetActive(true);
             visuals.SetupWeaponType(Enemy_MeleeWeaponType.OneHand);
+        }
+        if(meleeType == EnemyMelee_Type.Dodge)
+        {
+            visuals.SetupWeaponType(Enemy_MeleeWeaponType.Unarmed);
         }
     }
 
