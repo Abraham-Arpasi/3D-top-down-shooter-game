@@ -73,7 +73,7 @@ public class Enemy_Visuals : MonoBehaviour
     //this randomizes which weapon the enemy is holding.
     private void SetupRandomWeapon()
     {
-        foreach(var weaponModel in weaponModels)
+        foreach (var weaponModel in weaponModels)
         {
             //sets all weapons false at the start.
             weaponModel.gameObject.SetActive(false);
@@ -81,15 +81,26 @@ public class Enemy_Visuals : MonoBehaviour
 
         List<Enemy_WeaponModel> filteredWeaponModels = new List<Enemy_WeaponModel>();
 
-       foreach(var weaponModel in weaponModels)
+        foreach (var weaponModel in weaponModels)
         {
-            if(weaponModel.weaponType == weaponType)
+            if (weaponModel.weaponType == weaponType)
                 filteredWeaponModels.Add(weaponModel);
         }
-       //only sets the weapon the enemy is holding to true;
-       int randomIndex = Random.Range(0, filteredWeaponModels.Count);
+        //only sets the weapon the enemy is holding to true;
+        int randomIndex = Random.Range(0, filteredWeaponModels.Count);
         currentWeaponModel = filteredWeaponModels[randomIndex].gameObject;
         currentWeaponModel.SetActive(true);
+        OverrideAnimatorControllerIfCan();
+    }
+
+    private void OverrideAnimatorControllerIfCan()
+    {
+        AnimatorOverrideController overrideController = currentWeaponModel.GetComponent<Enemy_WeaponModel>().overrideController;
+
+        if (overrideController != null)
+        {
+            GetComponentInChildren<Animator>().runtimeAnimatorController = overrideController;
+        }
     }
 
     //sets up a random texture for each enemy.
