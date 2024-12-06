@@ -195,7 +195,10 @@ public class Enemy_Melee : Enemy
         Enemy_WeaponModel currentWeapon = visuals.currentWeaponModel.GetComponent<Enemy_WeaponModel>();
 
         if (currentWeapon.weaponData != null)
+        {
             attackList = new List<Enemy_MeleeAttackData>(currentWeapon.weaponData.attackData);
+            turnSpeed = currentWeapon.weaponData.turnSpeed;
+        }
     }
 
     protected override void OnDrawGizmos()
