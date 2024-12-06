@@ -11,9 +11,9 @@ public class Enemy_WeaponModel : MonoBehaviour
     [SerializeField] private GameObject[] trailEffects;
     private void Awake()
     {
-        EneableTrailEffect(false); 
+        EnableTrailEffect(false); 
     }
-    public void EneableTrailEffect(bool enable)
+    public void EnableTrailEffect(bool enable)
     {
         foreach (var effect in trailEffects)
         {
