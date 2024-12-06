@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct MeleeAttackData
+public struct Enemy_MeleeAttackData
 {
     public string attackName;
     public float attackRange;
@@ -46,8 +46,8 @@ public class Enemy_Melee : Enemy
     public Transform axeStartPoint;
 
     [Header("Attack info")]
-    public MeleeAttackData attackData;
-    public List<MeleeAttackData> attackList;
+    public Enemy_MeleeAttackData attackData;
+    public List<Enemy_MeleeAttackData> attackList;
 
     protected override void Awake()
     {
@@ -187,6 +187,15 @@ public class Enemy_Melee : Enemy
         Debug.Log("Create Axe");
         EnableWeaponModel(false);
     }
+
+    public void UpdateAttackData()
+    {
+        Enemy_WeaponModel currentWeapon = visuals.currentWeaponModel.GetComponent<Enemy_WeaponModel>();
+
+        if (currentWeapon.weaponData != null)
+            attackList = new List<Enemy_MeleeAttackData>(currentWeapon.weaponData.attackData);
+    }
+
     protected override void OnDrawGizmos()
     {
         base.OnDrawGizmos();
