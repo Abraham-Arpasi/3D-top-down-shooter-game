@@ -9,7 +9,7 @@ public class Enemy_Bullet : Bullet
         CreateImpactFx(collision);
         ReturnBulletToPool();
 
-        Player player = collision.gameObject.GetComponent<Player>();
+        Player player = collision.gameObject.GetComponentInParent<Player>();
 
         if(player != null)
         {
