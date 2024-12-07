@@ -6,12 +6,6 @@ public class Enemy_Bullet : Bullet
 {
     protected override void OnCollisionEnter(Collision collision)
     {
-        //this will make the enemy bullets fly threw the enemy to reach the player.
-        Enemy enemy = collision.gameObject.GetComponentInParent<Enemy>();
-        if(enemy != null)
-        {
-            return;
-        }
 
         CreateImpactFx(collision);
         ReturnBulletToPool();
