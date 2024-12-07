@@ -21,7 +21,7 @@ public class Bullet : MonoBehaviour
     private float flyDistance;
     private bool bulletDisabled;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         cd = GetComponent<BoxCollider>();
         rb = GetComponent<Rigidbody>();
@@ -41,14 +41,14 @@ public class Bullet : MonoBehaviour
         this.flyDistance = flyDistance + 0.6f;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         FadeTrailIfNeeded();
         DiableBulletIfNeeded();
         ReturnToPoolIfNeeded();
     }
 
-    private void ReturnToPoolIfNeeded()
+    protected void ReturnToPoolIfNeeded()
     {
         //this will return the bullet to the objectPool once its disappeared.
         if (trailRenderer.time < 0)
@@ -57,13 +57,13 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    private void ReturnBulletToPool()
+    protected void ReturnBulletToPool()
     {
         //this will let the bullet re enter the queue instead of destroying it.
         ObjectPool.instance.ReturnObject(gameObject);
     }
 
-    private void DiableBulletIfNeeded()
+    protected void DiableBulletIfNeeded()
     {
         if (Vector3.Distance(startPosition, transform.position) > flyDistance && !bulletDisabled)
         {
@@ -73,7 +73,7 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    private void FadeTrailIfNeeded()
+    protected void FadeTrailIfNeeded()
     {
         //before the bullet reaches its max flyDistance we are going to get its trailRenderer and decrease its visibility.
         if (Vector3.Distance(startPosition, transform.position) > flyDistance - 1.5f)
@@ -81,13 +81,13 @@ public class Bullet : MonoBehaviour
     }
 
     //creating a collider for the bullet.
-    private void OnCollisionEnter(Collision collision)
+    protected virtual void OnCollisionEnter(Collision collision)
     {
         CreateImpactFx(collision);
         ReturnBulletToPool();
 
         Enemy enemy = collision.gameObject.GetComponentInParent<Enemy>();
-        EnemyShield shield = collision.gameObject.GetComponent<EnemyShield>();
+        Enemy_Shield shield = collision.gameObject.GetComponent<Enemy_Shield>();
 
         //this will reduce the shields durability when it gets hit by bullets.
         if(shield != null)
@@ -103,7 +103,7 @@ public class Bullet : MonoBehaviour
             Rigidbody hitRigidbody = collision.collider.attachedRigidbody;
 
             enemy.GetHit();
-            enemy.HitImpact(force, collision.contacts[0].point, hitRigidbody);
+            enemy.DeathImpact(force, collision.contacts[0].point, hitRigidbody);
         }
 
         //this will stick to objects that it collides with.
@@ -111,7 +111,7 @@ public class Bullet : MonoBehaviour
 
     }
 
-    private void CreateImpactFx(Collision collision)
+    protected void CreateImpactFx(Collision collision)
     {
         if (collision.contacts.Length > 0)
         {
@@ -122,7 +122,7 @@ public class Bullet : MonoBehaviour
             GameObject newImpactFX = ObjectPool.instance.GetObject(bulletImpactFX);
             newImpactFX.transform.position = contact.point;
 
-            ObjectPool.instance.ReturnObject(newImpactFX, 1);
+            ObjectPool.instance.ReturnObject(newImpactFX, 0.1f);
         }
     }
 }
