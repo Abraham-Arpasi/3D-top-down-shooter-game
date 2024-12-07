@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Bullet : MonoBehaviour
+public class Enemy_Bullet : Bullet
 {
-    // Start is called before the first frame update
-    void Start()
+    protected override void OnCollisionEnter(Collision collision)
     {
-        
+        CreateImpactFx(collision);
+        ReturnBulletToPool();
+
+        Player player = collision.gameObject.GetComponent<Player>();
+
+        if(player != null)
+        {
+            Debug.Log("Shot the player");
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
+
