@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Enemy_Range : Enemy
 {
+    public Transform weaponHolder;
 
+    public float fireRate = 1; //bullets per second.
     public IdleState_Range idleState { get; private set; }
     public MoveState_Range moveState { get; private set; }  
     public BattleState_Range battleState { get; private set; }
@@ -29,6 +31,11 @@ public class Enemy_Range : Enemy
         base.Update();
 
         stateMachine.currentState.Update();
+    }
+
+    public void FireSingleBullet()
+    {
+        anim.SetTrigger("Shoot");
     }
 
     public override void EnterBattleMode()
