@@ -122,7 +122,7 @@ public class Enemy_Visuals : MonoBehaviour
 
     private void OverrideAnimatorControllerIfCan()
     {
-        AnimatorOverrideController overrideController = currentWeaponModel.GetComponent<Enemy_WeaponModel>().overrideController;
+        AnimatorOverrideController overrideController = currentWeaponModel.GetComponent<Enemy_WeaponModel>()?.overrideController;
 
         if (overrideController != null)
         {
