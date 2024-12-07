@@ -60,7 +60,10 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Update()
     {
-
+        if (ShouldEnterBattleMode())
+        {
+            EnterBattleMode();
+        }
     }
 
     //this will check if enemy should enter battle mode.
