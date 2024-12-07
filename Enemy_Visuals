@@ -8,7 +8,6 @@ public class Enemy_Visuals : MonoBehaviour
 {
     [Header("Weapons")]
     [SerializeField] private Enemy_WeaponModel[] weaponModels;
-    [SerializeField] private Enemy_MeleeWeaponType weaponType;
     public GameObject currentWeaponModel { get; private set; }
 
     [Header("Corruption")]
@@ -43,8 +42,6 @@ public class Enemy_Visuals : MonoBehaviour
             corruptionCrystals[i] = crystalComponents[i].gameObject;
         }
     }
-
-    public void SetupWeaponType(Enemy_MeleeWeaponType type) => weaponType = type;
     
     public void SetupLook()
     {
@@ -85,6 +82,16 @@ public class Enemy_Visuals : MonoBehaviour
             weaponModel.gameObject.SetActive(false);
         }
 
+       currentWeaponModel = FindMeleeWeaponModel();
+
+        currentWeaponModel.SetActive(true);
+        OverrideAnimatorControllerIfCan();
+    }
+
+    private GameObject FindMeleeWeaponModel()
+    {
+        Enemy_MeleeWeaponType weaponType = GetComponent<Enemy_Melee>().weaponType;
+
         List<Enemy_WeaponModel> filteredWeaponModels = new List<Enemy_WeaponModel>();
 
         foreach (var weaponModel in weaponModels)
@@ -94,9 +101,7 @@ public class Enemy_Visuals : MonoBehaviour
         }
         //only sets the weapon the enemy is holding to true;
         int randomIndex = Random.Range(0, filteredWeaponModels.Count);
-        currentWeaponModel = filteredWeaponModels[randomIndex].gameObject;
-        currentWeaponModel.SetActive(true);
-        OverrideAnimatorControllerIfCan();
+        return filteredWeaponModels[randomIndex].gameObject;
     }
 
     private void OverrideAnimatorControllerIfCan()
