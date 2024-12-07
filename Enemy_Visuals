@@ -18,26 +18,23 @@ public class Enemy_Visuals : MonoBehaviour
     [SerializeField] private Texture[] colorTextures;
     [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
-    private void Awake()
-    {
-        CollectCorruptionCrystals();
-    }
-
     public void EnableWeaponTrail(bool enable)
     {
         Enemy_WeaponModel currentWeaponScript = currentWeaponModel.GetComponent<Enemy_WeaponModel>();
         currentWeaponScript.EnableTrailEffect(enable);
     }
 
-    private void CollectCorruptionCrystals()
+    private GameObject[] CollectCorruptionCrystals()
     {
         Enemy_CorruptionCrystal[] crystalComponents = GetComponentsInChildren<Enemy_CorruptionCrystal>(true);
-        corruptionCrystals = new GameObject[crystalComponents.Length];
+        GameObject[] corruptionCrystals = new GameObject[crystalComponents.Length];
 
         for (int i = 0; i < crystalComponents.Length; i++)
         {
             corruptionCrystals[i] = crystalComponents[i].gameObject;
         }
+
+        return corruptionCrystals;
     }
     
     public void SetupLook()
@@ -50,6 +47,7 @@ public class Enemy_Visuals : MonoBehaviour
     private void SetupRandomCorruption()
     {
         List<int> availableIndexs = new List<int>();
+        corruptionCrystals = CollectCorruptionCrystals();
 
         for(int i = 0; i < corruptionCrystals.Length; i++)
         {
@@ -74,20 +72,35 @@ public class Enemy_Visuals : MonoBehaviour
     private void SetupRandomWeapon()
     {
         bool thisEnemyIsMelee = GetComponent<Enemy_Melee>() != null;
-        bool thisEnemyisRange = GetComponent<Enemy_Range>() != null;
+        bool thisEnemyIsRange = GetComponent<Enemy_Range>() != null;
 
         if (thisEnemyIsMelee)
         {
             currentWeaponModel = FindMeleeWeaponModel();
         }
 
-        if (thisEnemyisRange)
+        if (thisEnemyIsRange)
         {
-            FindRangeWeaponModel();
+            currentWeaponModel = FindRangeWeaponModel();
         }
 
         currentWeaponModel.SetActive(true);
         OverrideAnimatorControllerIfCan();
+    }
+
+    private GameObject FindRangeWeaponModel()
+    {
+        Enemy_RangeWeaponModel[] weaponModels = GetComponentsInChildren<Enemy_RangeWeaponModel>(true);
+        Enemy_RangeWeaponType weaponType = GetComponent<Enemy_Range>().weaponType;
+
+        foreach (var weaponModel in weaponModels)
+        {
+            if (weaponModel.weaponType == weaponType)
+                return weaponModel.gameObject;
+        }
+
+        Debug.LogWarning("No range weapon model found");
+        return null;
     }
 
     private GameObject FindMeleeWeaponModel()
@@ -105,21 +118,6 @@ public class Enemy_Visuals : MonoBehaviour
         //only sets the weapon the enemy is holding to true;
         int randomIndex = Random.Range(0, filteredWeaponModels.Count);
         return filteredWeaponModels[randomIndex].gameObject;
-    }
-
-    private GameObject FindRangeWeaponModel()
-    {
-        Enemy_RangeWeaponModel[] weaponModels = GetComponentsInChildren<Enemy_RangeWeaponModel>(true);
-        Enemy_RangeWeaponType weaponType = GetComponent<Enemy_Range>().weaponType;
-
-        foreach (var weaponModel in weaponModels)
-        {
-            if (weaponModel.weaponType == weaponType)
-                return weaponModel.gameObject;
-        }
-
-        Debug.LogWarning("No range weapon model found");
-        return null;
     }
 
     private void OverrideAnimatorControllerIfCan()
