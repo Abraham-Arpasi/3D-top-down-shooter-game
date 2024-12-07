@@ -4,10 +4,9 @@ using UnityEngine;
 
 //setup which weapons are one handed and which ones are thrown.
 public enum Enemy_MeleeWeaponType { OneHand, Throw, Unarmed}
+public enum Enemy_RangeWeaponType { Pistol, Revolver, Rifle, Shotgun, Sniper}
 public class Enemy_Visuals : MonoBehaviour
 {
-    [Header("Weapons")]
-    [SerializeField] private Enemy_WeaponModel[] weaponModels;
     public GameObject currentWeaponModel { get; private set; }
 
     [Header("Corruption")]
@@ -21,8 +20,6 @@ public class Enemy_Visuals : MonoBehaviour
 
     private void Awake()
     {
-        weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);
-
         CollectCorruptionCrystals();
     }
 
@@ -76,13 +73,18 @@ public class Enemy_Visuals : MonoBehaviour
     //this randomizes which weapon the enemy is holding.
     private void SetupRandomWeapon()
     {
-        foreach (var weaponModel in weaponModels)
+        bool thisEnemyIsMelee = GetComponent<Enemy_Melee>() != null;
+        bool thisEnemyisRange = GetComponent<Enemy_Range>() != null;
+
+        if (thisEnemyIsMelee)
         {
-            //sets all weapons false at the start.
-            weaponModel.gameObject.SetActive(false);
+            currentWeaponModel = FindMeleeWeaponModel();
         }
 
-       currentWeaponModel = FindMeleeWeaponModel();
+        if (thisEnemyisRange)
+        {
+            FindRangeWeaponModel();
+        }
 
         currentWeaponModel.SetActive(true);
         OverrideAnimatorControllerIfCan();
@@ -90,6 +92,7 @@ public class Enemy_Visuals : MonoBehaviour
 
     private GameObject FindMeleeWeaponModel()
     {
+        Enemy_WeaponModel[] weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);
         Enemy_MeleeWeaponType weaponType = GetComponent<Enemy_Melee>().weaponType;
 
         List<Enemy_WeaponModel> filteredWeaponModels = new List<Enemy_WeaponModel>();
@@ -102,6 +105,21 @@ public class Enemy_Visuals : MonoBehaviour
         //only sets the weapon the enemy is holding to true;
         int randomIndex = Random.Range(0, filteredWeaponModels.Count);
         return filteredWeaponModels[randomIndex].gameObject;
+    }
+
+    private GameObject FindRangeWeaponModel()
+    {
+        Enemy_RangeWeaponModel[] weaponModels = GetComponentsInChildren<Enemy_RangeWeaponModel>(true);
+        Enemy_RangeWeaponType weaponType = GetComponent<Enemy_Range>().weaponType;
+
+        foreach (var weaponModel in weaponModels)
+        {
+            if (weaponModel.weaponType == weaponType)
+                return weaponModel.gameObject;
+        }
+
+        Debug.LogWarning("No range weapon model found");
+        return null;
     }
 
     private void OverrideAnimatorControllerIfCan()
