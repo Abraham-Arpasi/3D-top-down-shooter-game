@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using UnityEngine.Animations.Rigging;
 
 //setup which weapons are one handed and which ones are thrown.
 public enum Enemy_MeleeWeaponType { OneHand, Throw, Unarmed}
@@ -21,6 +23,7 @@ public class Enemy_Visuals : MonoBehaviour
     [Header("Rig")]
     [SerializeField] private Transform leftHandIK;
     [SerializeField] private Transform leftElbowIK;
+    [SerializeField] private Rig rig;
 
     public void EnableWeaponTrail(bool enable)
     {
@@ -160,6 +163,11 @@ public class Enemy_Visuals : MonoBehaviour
         }
 
         anim.SetLayerWeight(layerIndex, 1);
+    }
+
+    public void EnableIK(bool enable)
+    {
+        rig.weight = enable ? 1 : 0;
     }
 
     private void SetupLeftHandIK(Transform leftHandTarget, Transform leftElbowTarget)
