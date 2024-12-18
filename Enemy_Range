@@ -2,76 +2,90 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleState_Range : EnemyState
+public class Enemy_Range : Enemy
 {
-    private Enemy_Range enemy;
+    [Header("weapon details")]
+    public Enemy_RangeWeaponType weaponType;
+    public Enemy_RangeWeaponData weaponData;
+    [Space]
+    public Transform gunPoint;
+    public Transform weaponHolder;
+    public GameObject bulletPrefab;
 
-    private float lastTimeShot = -10;
-    private int bulletsShot = 0;
+    [SerializeField] List<Enemy_RangeWeaponData> availableWeaponData;
 
-    private int bulletsPerAttack;
-    private float weaponCooldown;
-    public BattleState_Range(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
+    public IdleState_Range idleState { get; private set; }
+    public MoveState_Range moveState { get; private set; }  
+    public BattleState_Range battleState { get; private set; }
+    protected override void Awake()
     {
-        enemy = enemyBase as Enemy_Range;
+        base.Awake();
+
+        idleState = new IdleState_Range(this, stateMachine, "Idle");
+        moveState = new MoveState_Range(this, stateMachine, "Move");
+        battleState = new BattleState_Range(this, stateMachine, "Battle");
     }
 
-    public override void Enter()
+    protected override void Start()
     {
-        base.Enter();
+        base.Start();
 
-        bulletsPerAttack = enemy.weaponData.GetBulletsPerAttack();
-        weaponCooldown = enemy.weaponData.GetWeaponCooldown();
-
-        enemy.visuals.EnableIK(true);
+        stateMachine.Initialize(idleState);
+        visuals.SetupLook();
+        SetupWeaponData();
     }
 
-    public override void Exit()
-    {
-        base.Exit();
-        enemy.visuals.EnableIK(false);
-    }
-
-    public override void Update()
+    protected override void Update()
     {
         base.Update();
 
-        enemy.FaceTarget(enemy.player.position);
+        stateMachine.currentState.Update();
+    }
 
-        if (WeaponOutOfBullets())
-        {
-            if (WeaponOnCooldown())
-                AttemptToResetWeapon();
+    public void FireSingleBullet()
+    {
+        anim.SetTrigger("Shoot");
 
+        Vector3 bulletsDirection = ((player.position + Vector3.up) - gunPoint.position).normalized;
+
+        //this aims the enemies gun forward in the direction its looking.
+        GameObject newBullet = ObjectPool.instance.GetObject(bulletPrefab);
+        newBullet.transform.position = gunPoint.position;
+        newBullet.transform.rotation = Quaternion.LookRotation(gunPoint.forward);
+
+        newBullet.GetComponent<Enemy_Bullet>().BulletSetup();
+
+        Rigidbody rbNewBullet = newBullet.GetComponent<Rigidbody>();
+       
+        rbNewBullet.mass = 20 / weaponData.bulletSpeed;
+        rbNewBullet.velocity = bulletsDirection * weaponData.bulletSpeed;
+    }
+
+    public override void EnterBattleMode()
+    {
+        if (inBattleMode)
             return;
-        }
 
-        //enemy can only shoot 10 bullets with a fire rate of 1 bullet per second.
-        if (CanShoot())
+        base.EnterBattleMode();
+
+        stateMachine.ChangeState(battleState);
+    }
+
+    private void SetupWeaponData()
+    {
+        List<Enemy_RangeWeaponData> filteredData = new List<Enemy_RangeWeaponData>();
+        foreach(var weaponData in availableWeaponData)
         {
-            Shoot();
+            if(weaponData.weaponType == weaponType)
+                filteredData.Add(weaponData);
         }
-    }
 
-    private void AttemptToResetWeapon()
-    {
-        bulletsShot = 0;
-        bulletsPerAttack = enemy.weaponData.GetBulletsPerAttack();
-        weaponCooldown = enemy.weaponData.GetWeaponCooldown();
-    }
-
-    private bool WeaponOnCooldown() => Time.time > lastTimeShot + weaponCooldown;
-    private bool WeaponOutOfBullets() => bulletsShot >= bulletsPerAttack;
-
-    private bool CanShoot()
-    {
-        return Time.time > lastTimeShot + 1 / enemy.fireRate;
-    }
-
-    private void Shoot()
-    {
-        enemy.FireSingleBullet();
-        lastTimeShot = Time.time;
-        bulletsShot++;
+        if (filteredData.Count > 0)
+        {
+            int random = Random.Range(0, filteredData.Count);
+            weaponData = filteredData[random];
+        }
+        else
+            Debug.LogWarning("no available weapon data was found");
     }
 }
