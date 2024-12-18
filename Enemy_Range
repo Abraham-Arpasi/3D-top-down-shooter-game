@@ -32,7 +32,7 @@ public class Enemy_Range : Enemy
 
         stateMachine.Initialize(idleState);
         visuals.SetupLook();
-        SetupWeaponData();
+        SetupWeapon();
     }
 
     protected override void Update()
@@ -73,7 +73,7 @@ public class Enemy_Range : Enemy
         stateMachine.ChangeState(battleState);
     }
 
-    private void SetupWeaponData()
+    private void SetupWeapon()
     {
         List<Enemy_RangeWeaponData> filteredData = new List<Enemy_RangeWeaponData>();
         foreach(var weaponData in availableWeaponData)
@@ -89,5 +89,8 @@ public class Enemy_Range : Enemy
         }
         else
             Debug.LogWarning("no available weapon data was found");
+
+
+        gunPoint = visuals.currentWeaponModel.GetComponent<Enemy_RangeWeaponModel>().gunPoint;
     }
 }
