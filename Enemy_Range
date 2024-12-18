@@ -36,6 +36,7 @@ public class Enemy_Range : Enemy
 
         stateMachine.Initialize(idleState);
         visuals.SetupLook();
+        SetupWeaponData();
     }
 
     protected override void Update()
