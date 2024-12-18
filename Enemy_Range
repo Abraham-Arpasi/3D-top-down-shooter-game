@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class Enemy_Range : Enemy
 {
-    public Transform weaponHolder;
+    [Header("weapon details")]
     public Enemy_RangeWeaponType weaponType;
-
-    public float fireRate = 1; //bullets per second.
-
-    public GameObject bulletPrefab;
+    public Enemy_RangeWeaponData weaponData;
+    [Space]
     public Transform gunPoint;
+    public Transform weaponHolder;
+    public GameObject bulletPrefab;
+
+    [SerializeField] List<Enemy_RangeWeaponData> availableWeaponData;
+    public float fireRate = 1; //bullets per second.
     public float bulletSpeed = 20;
     //bullets shot by enemy before cooldown and cooldown timer.
     public int bulletsToShoot = 5;
@@ -69,5 +72,23 @@ public class Enemy_Range : Enemy
         base.EnterBattleMode();
 
         stateMachine.ChangeState(battleState);
+    }
+
+    private void SetupWeaponData()
+    {
+        List<Enemy_RangeWeaponData> filteredData = new List<Enemy_RangeWeaponData>();
+        foreach(var weaponData in availableWeaponData)
+        {
+            if(weaponData.weaponType == weaponType)
+                filteredData.Add(weaponData);
+        }
+
+        if (filteredData.Count > 0)
+        {
+            int random = Random.Range(0, filteredData.Count);
+            weaponData = filteredData[random];
+        }
+        else
+            Debug.LogWarning("no available weapon data was found");
     }
 }
