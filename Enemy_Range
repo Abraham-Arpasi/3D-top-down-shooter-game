@@ -56,9 +56,11 @@ public class Enemy_Range : Enemy
         newBullet.GetComponent<Enemy_Bullet>().BulletSetup();
 
         Rigidbody rbNewBullet = newBullet.GetComponent<Rigidbody>();
+
+        Vector3 bulletsDirectionWithSpread = weaponData.ApplyWeaponSpread(bulletsDirection);
        
         rbNewBullet.mass = 20 / weaponData.bulletSpeed;
-        rbNewBullet.velocity = bulletsDirection * weaponData.bulletSpeed;
+        rbNewBullet.velocity = bulletsDirectionWithSpread * weaponData.bulletSpeed;
     }
 
     public override void EnterBattleMode()
