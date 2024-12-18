@@ -5,9 +5,12 @@ using UnityEngine;
 public enum Enemy_rangeWeaponHoldType { Common, LowHold, HighHold}
 public class Enemy_RangeWeaponModel : MonoBehaviour
 {
+    public Transform gunPoint;
+    [Space]
     public Enemy_RangeWeaponType weaponType;
     public Enemy_rangeWeaponHoldType weaponHoldType;
 
     public Transform leftHandTarget;
     public Transform leftElbowTarget;
+
 }
