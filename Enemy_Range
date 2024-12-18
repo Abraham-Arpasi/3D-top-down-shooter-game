@@ -61,7 +61,7 @@ public class Enemy_Range : Enemy
         {
             Cover cover = collider.GetComponent<Cover>();
 
-            if(cover != null)
+            if(cover != null && collectedCovers.Contains(cover) == false)
                 collectedCovers.Add(cover);
         }
         return collectedCovers;
