@@ -52,38 +52,9 @@ public class Enemy_Range : Enemy
     }
     //only collects covers that the enemy can hide behind in a 30 radius range.
 
-    public Transform AttemptToFindCover()
-    {
-        List<CoverPoint> collectedCoverPoints = new List<CoverPoint>();
-
-        foreach (Cover cover in allCovers)
-        {
-            collectedCoverPoints.AddRange(cover.GetCoverPoints());
-        }
-
-        CoverPoint closestCoverPoint = null;
-        float shortestDistance = float.MaxValue;
-
-        foreach(CoverPoint coverPoint in collectedCoverPoints)
-        {
-            float currentDistance = Vector3.Distance(transform.position, coverPoint.transform.position);
-            if (currentDistance < shortestDistance)
-            {
-                closestCoverPoint = coverPoint;
-                shortestDistance = currentDistance;
-            }
-
-        }
-        if(closestCoverPoint != null)
-        {
-            lastCover = closestCoverPoint;
-        }
-
-        return lastCover.transform;
-    }
     private List<Cover> CollectNearByCovers()
     {
-        float coverRadiusCheck = 30;
+        float coverRadiusCheck = 10;
         Collider[] hitColliders = Physics.OverlapSphere(transform.position,coverRadiusCheck);
         List<Cover> collectedCovers = new List<Cover>();
 
@@ -95,6 +66,38 @@ public class Enemy_Range : Enemy
                 collectedCovers.Add(cover);
         }
         return collectedCovers;
+    }
+
+    public Transform AttemptToFindCover()
+    {
+        List<CoverPoint> collectedCoverPoints = new List<CoverPoint>();
+
+        foreach (Cover cover in allCovers)
+        {
+            collectedCoverPoints.AddRange(cover.GetValidCoverPoints());
+        }
+
+        CoverPoint closestCoverPoint = null;
+        float shortestDistance = float.MaxValue;
+
+        foreach (CoverPoint coverPoint in collectedCoverPoints)
+        {
+            float currentDistance = Vector3.Distance(transform.position, coverPoint.transform.position);
+            if (currentDistance < shortestDistance)
+            {
+                closestCoverPoint = coverPoint;
+                shortestDistance = currentDistance;
+            }
+
+        }
+        if (closestCoverPoint != null)
+        {
+            lastCover?.SetOccupied(false);
+            lastCover = closestCoverPoint;
+            lastCover.SetOccupied(true);
+        }
+
+        return lastCover.transform;
     }
     public void FireSingleBullet()
     {
