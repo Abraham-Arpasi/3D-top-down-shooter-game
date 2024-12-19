@@ -12,8 +12,8 @@ public class Enemy : MonoBehaviour
     public float aggresionRange;
 
     [Header("Move Info")]
-    public float moveSpeed;
-    public float chaseSpeed;
+    public float walkSpeed = 1.5f;
+    public float runSpeed = 3;
     public float turnSpeed;
     private bool manualMovement;
     //this will be used for the enemy rotation when attacking.
@@ -71,9 +71,7 @@ public class Enemy : MonoBehaviour
     //this will check if enemy should enter battle mode.
     protected bool ShouldEnterBattleMode()
     {
-        bool inAggresionRange = Vector3.Distance(transform.position, player.position) < aggresionRange;
-
-        if(inAggresionRange && !inBattleMode)
+        if(IsPlayerInAgressionRange() && !inBattleMode)
         {
             EnterBattleMode();
             return true;
@@ -101,6 +99,8 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         rb.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
     }
+
+    public bool IsPlayerInAgressionRange() => Vector3.Distance(transform.position, player.position) < aggresionRange;
 
     //this will show the aggresion range of the enemy.
     protected virtual void OnDrawGizmos()
