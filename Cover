@@ -7,7 +7,7 @@ public class Cover : MonoBehaviour
     [Header("Cover points")]
     [SerializeField] private GameObject coverPointPrefab;
     [SerializeField] private List<CoverPoint> coverPoints = new List<CoverPoint>();
-    [SerializeField] private float xOffset = 1;
+    [SerializeField] private float xOffset = 1.25f;
     [SerializeField] private float yOffset = 0.2f;
     [SerializeField] private float zOffset = 1;
 
@@ -29,10 +29,25 @@ public class Cover : MonoBehaviour
         foreach(Vector3 localPoint in localCoverPoints)
         {
             Vector3 worldPoint = transform.TransformPoint(localPoint);
-            CoverPoint coverPoint = Instantiate(coverPointPrefab, worldPoint, Quaternion.identity, transform).GetComponent<CoverPoint>();
+            CoverPoint coverPoint = 
+                Instantiate(coverPointPrefab, worldPoint, Quaternion.identity, transform).GetComponent<CoverPoint>();
             coverPoints.Add(coverPoint);
         }
     }
 
-    public List<CoverPoint> GetCoverPoints() => coverPoints;
+    public List<CoverPoint> GetValidCoverPoints()
+    {
+        List<CoverPoint> validCoverPoints = new List<CoverPoint>();
+
+        foreach(CoverPoint coverPoint in coverPoints)
+        {
+            validCoverPoints.Add(coverPoint);
+        }
+        return validCoverPoints;
+    }
+
+    private bool IsValidCOverPoint(CoverPoint coverPoint)
+    {
+
+    }
 }
