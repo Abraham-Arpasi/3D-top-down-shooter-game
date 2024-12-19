@@ -37,6 +37,12 @@ public class BattleState_Range : EnemyState
     public override void Update()
     {
         base.Update();
+
+        if(enemy.IsPlayerInAgressionRange() == false)
+        {
+            stateMachine.ChangeState(enemy.advancePlayerState);
+        }
+
         ChangeCoverIfShould();
 
         enemy.FaceTarget(enemy.player.position);
