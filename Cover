@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Cover : MonoBehaviour
@@ -52,20 +53,63 @@ public class Cover : MonoBehaviour
     //this will return invalid if coverpoint is occupied by another enemy or return valid if no enemy is occupieing the cover point.
     private bool IsValidCoverPoint(CoverPoint coverPoint, Transform enemy)
     {
+        //return false is cover is occupied.
         if (coverPoint.occupied)
             return false;
 
+        //return false if enemy cant move to farthest cover point.
+        if (IsFarthestFromPlayer(coverPoint) == false)
+            return false;
+
+        //return false if the player is closer to the cover.
+        if(IsCoverCloseToPlayer(coverPoint))
+            return false;
+
+        //return false if cover is behind the player.
         if (IsCoverBehindPlayer(coverPoint, enemy))
+            return false;
+
+        //returns false if player gets close to enemy in cover.
+        if (IsCoverCloseToLastCover(coverPoint, enemy))
             return false;
 
         return true;
     }
-    
+
+    private bool IsFarthestFromPlayer(CoverPoint coverPoint)
+    {
+        CoverPoint farthestPoint = null;
+        float farthestDistance = 0;
+
+        foreach(CoverPoint point in coverPoints)
+        {
+            float distance = Vector3.Distance(point.transform.position, playerTransform.transform.position);
+            if(distance > farthestDistance)
+            {
+                farthestDistance = distance;
+                farthestPoint = point;
+            }
+        }
+        return farthestPoint == coverPoint;
+    }
+
+    //this will check if the cover is behind the player.
     private bool IsCoverBehindPlayer(CoverPoint coverPoint, Transform enemy)
     {
         float distanceToPlayer = Vector3.Distance(coverPoint.transform.position, playerTransform.position);
         float distanceToEnemy = Vector3.Distance(coverPoint.transform.position, enemy.position);
         //this will return if the player is closer to the enemy.
         return distanceToPlayer < distanceToEnemy;
+    }
+    //checks if the player is farther away from the cover point than the enemy is.
+    private bool IsCoverCloseToPlayer(CoverPoint coverPoint)
+    {
+        return Vector3.Distance(coverPoint.transform.position, playerTransform.transform.position) < 2;
+    }
+
+    private bool IsCoverCloseToLastCover(CoverPoint coverPoint, Transform enemy)
+    {
+        CoverPoint lastCover = enemy.GetComponent<Enemy_Range>().lastCover;
+        return lastCover != null && Vector3.Distance(coverPoint.transform.position, lastCover.transform.position) < 3;
     }
 }
