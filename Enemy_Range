@@ -7,6 +7,7 @@ public class Enemy_Range : Enemy
     [Header("Cover system")]
     public bool canUseCovers = true;
     public CoverPoint lastCover;
+    public CoverPoint currentCover;
     public List<Cover> allCovers = new List<Cover>();
 
     [Header("weapon details")]
@@ -68,7 +69,21 @@ public class Enemy_Range : Enemy
         return collectedCovers;
     }
 
-    public Transform AttemptToFindCover()
+    public bool CanGetCover()
+    {
+        if (canUseCovers == false)
+            return false;
+
+        currentCover = AttemptToFindCover()?.GetComponent<CoverPoint>();
+
+        if (lastCover != currentCover && currentCover != null)
+            return true;
+
+        Debug.LogWarning("No cover Found");
+        return false;
+    }
+
+    private Transform AttemptToFindCover()
     {
         List<CoverPoint> collectedCoverPoints = new List<CoverPoint>();
 
@@ -93,11 +108,15 @@ public class Enemy_Range : Enemy
         if (closestCoverPoint != null)
         {
             lastCover?.SetOccupied(false);
-            lastCover = closestCoverPoint;
-            lastCover.SetOccupied(true);
+            lastCover = currentCover;
+
+            currentCover = closestCoverPoint;
+            currentCover.SetOccupied(true);
+
+            return currentCover.transform;
         }
 
-        return lastCover.transform;
+        return null;
     }
     public void FireSingleBullet()
     {
@@ -126,7 +145,7 @@ public class Enemy_Range : Enemy
             return;
 
         base.EnterBattleMode();
-        if (canUseCovers)
+        if (CanGetCover())
         {
             stateMachine.ChangeState(runToCoverState);
             Debug.Log("moving to cover");
