@@ -6,9 +6,8 @@ public class Enemy_Range : Enemy
 {
     [Header("Cover system")]
     public bool canUseCovers = true;
-    public CoverPoint lastCover;
-    public CoverPoint currentCover;
-    public List<Cover> allCovers = new List<Cover>();
+    public CoverPoint lastCover {  get; private set; }
+    public CoverPoint currentCover { get; private set;}
 
     [Header("weapon details")]
     public Enemy_RangeWeaponType weaponType;
@@ -42,7 +41,6 @@ public class Enemy_Range : Enemy
         visuals.SetupLook();
         SetupWeapon();
 
-        allCovers.AddRange(CollectNearByCovers());
     }
 
     protected override void Update()
@@ -87,7 +85,7 @@ public class Enemy_Range : Enemy
     {
         List<CoverPoint> collectedCoverPoints = new List<CoverPoint>();
 
-        foreach (Cover cover in allCovers)
+        foreach (Cover cover in CollectNearByCovers())
         {
             collectedCoverPoints.AddRange(cover.GetValidCoverPoints(transform));
         }
