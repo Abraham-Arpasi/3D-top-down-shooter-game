@@ -34,7 +34,7 @@ public class Cover : MonoBehaviour
             coverPoints.Add(coverPoint);
         }
     }
-
+    // this will check if a cover point will be valid to run to for the enemy.
     public List<CoverPoint> GetValidCoverPoints()
     {
         List<CoverPoint> validCoverPoints = new List<CoverPoint>();
@@ -45,9 +45,12 @@ public class Cover : MonoBehaviour
         }
         return validCoverPoints;
     }
-
+    //this will return invalid if coverpoint is occupied by another enemy or return valid if no enemy is occupieing the cover point.
     private bool IsValidCOverPoint(CoverPoint coverPoint)
     {
+        if (coverPoint.occupied)
+            return false;
 
+        return true;
     }
 }
