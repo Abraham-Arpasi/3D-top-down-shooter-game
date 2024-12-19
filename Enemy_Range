@@ -8,6 +8,10 @@ public class Enemy_Range : Enemy
     [Header("Enemy Perk")]
     public CoverPerk coverPerk;
 
+    [Header("Advance perk")]
+    public float advanceSpeed;
+    public float advanceStoppingDistance;
+
     [Header("Cover system")]
     public float safeDistance;
     public CoverPoint lastCover {  get; private set; }
