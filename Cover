@@ -41,12 +41,13 @@ public class Cover : MonoBehaviour
 
         foreach(CoverPoint coverPoint in coverPoints)
         {
-            validCoverPoints.Add(coverPoint);
+            if(IsValidCoverPoint(coverPoint))
+                validCoverPoints.Add(coverPoint);
         }
         return validCoverPoints;
     }
     //this will return invalid if coverpoint is occupied by another enemy or return valid if no enemy is occupieing the cover point.
-    private bool IsValidCOverPoint(CoverPoint coverPoint)
+    private bool IsValidCoverPoint(CoverPoint coverPoint)
     {
         if (coverPoint.occupied)
             return false;
