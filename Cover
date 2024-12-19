@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Cover : MonoBehaviour
 {
+    private Transform playerTransform;
+
     [Header("Cover points")]
     [SerializeField] private GameObject coverPointPrefab;
     [SerializeField] private List<CoverPoint> coverPoints = new List<CoverPoint>();
@@ -14,6 +16,7 @@ public class Cover : MonoBehaviour
     private void Start()
     {
         GenerateCoverPoints();
+        playerTransform = FindObjectOfType<Player>().transform;
     }
 
     private void GenerateCoverPoints()
@@ -35,23 +38,34 @@ public class Cover : MonoBehaviour
         }
     }
     // this will check if a cover point will be valid to run to for the enemy.
-    public List<CoverPoint> GetValidCoverPoints()
+    public List<CoverPoint> GetValidCoverPoints(Transform enemy)
     {
         List<CoverPoint> validCoverPoints = new List<CoverPoint>();
 
         foreach(CoverPoint coverPoint in coverPoints)
         {
-            if(IsValidCoverPoint(coverPoint))
+            if(IsValidCoverPoint(coverPoint, enemy))
                 validCoverPoints.Add(coverPoint);
         }
         return validCoverPoints;
     }
     //this will return invalid if coverpoint is occupied by another enemy or return valid if no enemy is occupieing the cover point.
-    private bool IsValidCoverPoint(CoverPoint coverPoint)
+    private bool IsValidCoverPoint(CoverPoint coverPoint, Transform enemy)
     {
         if (coverPoint.occupied)
             return false;
 
+        if (IsCoverBehindPlayer(coverPoint, enemy))
+            return false;
+
         return true;
+    }
+    
+    private bool IsCoverBehindPlayer(CoverPoint coverPoint, Transform enemy)
+    {
+        float distanceToPlayer = Vector3.Distance(coverPoint.transform.position, playerTransform.position);
+        float distanceToEnemy = Vector3.Distance(coverPoint.transform.position, enemy.position);
+        //this will return if the player is closer to the enemy.
+        return distanceToPlayer < distanceToEnemy;
     }
 }
