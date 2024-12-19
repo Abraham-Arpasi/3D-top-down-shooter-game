@@ -139,7 +139,7 @@ public class Enemy_Range : Enemy
     {
         anim.SetTrigger("Shoot");
 
-        Vector3 bulletsDirection = ((player.position + Vector3.up) - gunPoint.position).normalized;
+        Vector3 bulletsDirection = (aim.position - gunPoint.position).normalized;
 
         //this aims the enemies gun forward in the direction its looking.
         GameObject newBullet = ObjectPool.instance.GetObject(bulletPrefab);
