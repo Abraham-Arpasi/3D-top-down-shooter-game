@@ -6,6 +6,7 @@ public class Enemy_Range : Enemy
 {
     [Header("Cover system")]
     public bool canUseCovers = true;
+    public float safeDistance;
     public CoverPoint lastCover {  get; private set; }
     public CoverPoint currentCover { get; private set;}
 
@@ -175,5 +176,11 @@ public class Enemy_Range : Enemy
 
 
         gunPoint = visuals.currentWeaponModel.GetComponent<Enemy_RangeWeaponModel>().gunPoint;
+    }
+
+    protected override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+        Gizmos.DrawLine(transform.position, player.transform.position);
     }
 }
