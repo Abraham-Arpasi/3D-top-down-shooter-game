@@ -17,6 +17,7 @@ public class ThrowGrenadeState_Range : EnemyState
         enemy.visuals.EnableWeaponModel(false);
         enemy.visuals.EnableIK(false, false);
         enemy.visuals.EnableSecondaryWeaponModel(true);
+        enemy.visuals.EnableGrenadeModel(true);
     }
 
     public override void Update()
