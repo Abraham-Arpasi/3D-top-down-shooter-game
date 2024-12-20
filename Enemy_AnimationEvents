@@ -21,5 +21,12 @@ public class Enemy_AnimationEvents : MonoBehaviour
     public void StartManualRotation() => enemy.ActivateManualRotation(true);
     public void StopManualRotation() => enemy.ActivateManualRotation(false);
     public void AbilityEvent() => enemy.AbilityTrigger();
+    //this will let us be able to delay the lefthand moving back to weapon.
     public void EnableIK() => enemy.visuals.EnableIK(true, true, 1.5f);
+    //this will help with the smoothness of the gun visuals after throwing grenade.
+    public void EnableWeaponModel()
+    {
+        enemy.visuals.EnableWeaponModel(true);
+        enemy.visuals.EnableSecondaryWeaponModel(false);
+    }
 }
