@@ -5,13 +5,33 @@ using UnityEngine;
 
 public class Enemy_Grenade : MonoBehaviour
 {
+    [SerializeField] private GameObject explosionFx;
     private Rigidbody rb;
+    private float timer;
 
     private void Awake() => rb = GetComponent<Rigidbody>();
 
-    public void SetupGrenade(Vector3 target, float timeToTarget)
+    private void Update()
+    {
+        timer -= Time.deltaTime;
+
+        if (timer < 0)
+            Explode();
+    }
+
+    private void Explode()
+    {
+        GameObject newFx = ObjectPool.instance.GetObject(explosionFx);
+        newFx.transform.position = transform.position;
+
+        ObjectPool.instance.ReturnObject(newFx, 1);
+        ObjectPool.instance.ReturnObject(gameObject);
+    }
+    public void SetupGrenade(Vector3 target, float timeToTarget, float countdown)
     {
         rb.velocity = CalculateLaunchVelocity(target, timeToTarget);
+        //grenade counts down once it hits the ground when going towards its target.
+        timer = countdown + timeToTarget;
     }
     //this will be how the grenade flys through the air.
     private Vector3 CalculateLaunchVelocity(Vector3 target, float timeToTarget)
