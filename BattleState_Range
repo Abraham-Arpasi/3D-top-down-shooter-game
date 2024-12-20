@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThrowGrenadeState_Range : EnemyState
+public class DeadState_Range : EnemyState
 {
-    Enemy_Range enemy;
-    public ThrowGrenadeState_Range(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
+    private Enemy_Range enemy;
+    private bool interactionDisabled;
+    public DeadState_Range(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
     {
         enemy = enemyBase as Enemy_Range;
     }
@@ -13,21 +14,38 @@ public class ThrowGrenadeState_Range : EnemyState
     public override void Enter()
     {
         base.Enter();
+
+        if (enemy.throwGrenadeState.finishedThrowingGrenade == false)
+            enemy.ThrowGrenade();
+
+        //this will turn off the animator and turn on nav Stopped when enemy is dead.
+        enemy.anim.enabled = false;
+        enemy.agent.isStopped = true;
+
+        enemy.ragdoll.RagdollActive(true);
+
+        stateTimer = 2f;
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+
+        DisableInteractionIfShould();
     }
 
     public override void Update()
     {
         base.Update();
-
-        enemy.FaceTarget(enemy.player.position);
-        if (triggerCalled)
-            stateMachine.ChangeState(enemy.battleState);
     }
 
-    public override void AbilityTrigger()
+    private void DisableInteractionIfShould()
     {
-        base.AbilityTrigger();
-
-        enemy.ThrowGrenade();
+        if (stateTimer < 0 && interactionDisabled == false)
+        {
+            interactionDisabled = true;
+            //ragdoll.RagdollActive(false);  //commeting this will make the body sink underthe ground when killed.
+            enemy.ragdoll.CollidersActive(false);
+        }
     }
 }
