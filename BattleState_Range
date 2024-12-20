@@ -13,6 +13,7 @@ public class BattleState_Range : EnemyState
     private float weaponCooldown;
 
     private float coverCheckTimer;
+    private bool firstTimeAttack = true;
     public BattleState_Range(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
     {
         enemy = enemyBase as Enemy_Range;
@@ -21,14 +22,23 @@ public class BattleState_Range : EnemyState
     public override void Enter()
     {
         base.Enter();
+        SetupValuesForFirstAttack();
 
         enemy.agent.isStopped = true;
         enemy.agent.velocity = Vector3.zero;
 
-        bulletsPerAttack = enemy.weaponData.GetBulletsPerAttack();
-        weaponCooldown = enemy.weaponData.GetWeaponCooldown();
 
         enemy.visuals.EnableIK(true);
+    }
+
+    private void SetupValuesForFirstAttack()
+    {
+        if (firstTimeAttack)
+        {
+            firstTimeAttack = false;
+            bulletsPerAttack = enemy.weaponData.GetBulletsPerAttack();
+            weaponCooldown = enemy.weaponData.GetWeaponCooldown();
+        }
     }
 
     public override void Exit()
@@ -55,6 +65,12 @@ public class BattleState_Range : EnemyState
 
         if (WeaponOutOfBullets())
         {
+            if(enemy.IsUnstoppable() && UnstoppableWalkReady())
+            {
+                enemy.advanceDuration = weaponCooldown;
+                stateMachine.ChangeState(enemy.advancePlayerState);
+            }
+
             if (WeaponOnCooldown())
                 AttemptToResetWeapon();
 
@@ -66,6 +82,15 @@ public class BattleState_Range : EnemyState
         {
             Shoot();
         }
+    }
+
+    private bool UnstoppableWalkReady()
+    {
+        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.player.position);
+        bool outOfStoppingDistance = distanceToPlayer > enemy.advanceStoppingDistance;
+        bool unStoppableWalkOnCooldown = Time.time < enemy.weaponData.minWeaponCooldown + enemy.advancePlayerState.lastTimeAdvanced;
+
+        return outOfStoppingDistance && unStoppableWalkOnCooldown == false;
     }
 
     private bool ReadyToLeaveCover()
@@ -95,7 +120,7 @@ public class BattleState_Range : EnemyState
     private bool ReadyToChangeCover()
     {
         bool inDanger = IsPlayerInClearSight() || IsPlayerClose();
-        bool advanceTimeIsOver = Time.time > enemy.advancePlayerState.lastTimeAdvanced + enemy.advanceTime;
+        bool advanceTimeIsOver = Time.time > enemy.advancePlayerState.lastTimeAdvanced + enemy.advanceDuration;
 
         return inDanger && advanceTimeIsOver;
     }
