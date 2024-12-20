@@ -123,7 +123,15 @@ public class Enemy_Range : Enemy
         newGrenade.transform.position = grenadeStartPoint.position;
 
         Enemy_Grenade newGranadeScript = newGrenade.GetComponent<Enemy_Grenade>();
+
+        //this will drop the grenade at the enemies feet when its dead.
+        if(stateMachine.currentState == deadState)
+        {
+            newGranadeScript.SetupGrenade(transform.position, 1, explosionTimer, impactPower);
+        }
+
         newGranadeScript.SetupGrenade(player.transform.position, timeToTarget, explosionTimer, impactPower);
+        return;
     }
 
     protected override void InitializePerk()
