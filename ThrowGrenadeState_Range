@@ -32,6 +32,6 @@ public class ThrowGrenadeState_Range : EnemyState
         base.AbilityTrigger();
 
         enemy.ThrowGrenade();
-        enemy.visuals.EnableIK(true, true, 1.5f);
+    
     }
 }
