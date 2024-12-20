@@ -1,229 +1,182 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.InputSystem.LowLevel;
 
-public class PlayerWeaponVisuals : MonoBehaviour
+//setup which weapons are one handed and which ones are thrown.
+public enum Enemy_MeleeWeaponType { OneHand, Throw, Unarmed}
+public enum Enemy_RangeWeaponType { Pistol, Revolver, Rifle, Shotgun, Sniper}
+public class Enemy_Visuals : MonoBehaviour
 {
-    //setting up player.
-    private Player player;
+    public GameObject currentWeaponModel { get; private set; }
 
-    //set up so we can call animator.
-    private Animator anim;
+    [Header("Corruption")]
+    [SerializeField] private GameObject[] corruptionCrystals;
+    [SerializeField] private int corruptionAmount;
 
-    //creating the weapon model to appear in game.
-    [SerializeField] private WeaponModel[] weaponModels;
-    //this is the weapon model that appears on the characters back.
-    [SerializeField] private BackupWeaponModel[] backupWeaponModels;
+    //created an array for multiple textures of the enemy.
+    [Header("Color")]
+    [SerializeField] private Texture[] colorTextures;
+    [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
-    [Header("Rig info")]
-    //This is what gives weight to certain animations, we need this turned on or off for the reload animation.
-    private Rig rig;
-    [SerializeField] private float rigWeightIncreaseRate;
-    private bool shouldIncrease_RigWeight;
+    [Header("Rig")]
+    [SerializeField] private Transform leftHandIK;
+    [SerializeField] private Transform leftElbowIK;
+    [SerializeField] private Rig rig;
+    [SerializeField] private TwoBoneIKConstraint leftHandIKConstraint;
+    [SerializeField] private MultiAimConstraint weaponAimConstraint;
 
-    [Header("Left Hand IK")]
-    [SerializeField] private Transform leftHandIK_Target;
-    //This will help keep the left hand undercontrol when switching weapons.
-    [SerializeField] private TwoBoneIKConstraint leftHandIK;
-    [SerializeField] private float leftHandIKWeightIncreaseRate;
-    private bool shouldIncrease_LeftHandIKWeight;
-
-
-    private void Start()
-    {
-        anim = GetComponentInChildren<Animator>();
-        rig = GetComponentInChildren<Rig>();
-        player = GetComponent<Player>();
-
-        //this one is GetComponent(s) with an s since there are more than one.
-        weaponModels = GetComponentsInChildren<WeaponModel>(true);
-        backupWeaponModels = GetComponentsInChildren<BackupWeaponModel>(true);
-
-    }
+    private float leftHandTargetWeight;
+    private float weaponAimTargetWeight;
+    private float rigChangeRate;
 
     private void Update()
     {
-        UpdateRigWeight();
-        UpdateLeftHandIKWeight();
+        leftHandIKConstraint.weight = AdjustIKWeight(leftHandIKConstraint.weight, leftHandTargetWeight);
+        weaponAimConstraint.weight = AdjustIKWeight(weaponAimConstraint.weight, weaponAimTargetWeight);
     }
 
-    //created a function for fire animation so we dont need to retype anim over again.
-    public void PlayFireAnimation() => anim.SetTrigger("Fire");
-
-    public WeaponModel CurrentWeaponModel()
+    //this is for the enemy weapon visual of showing his weapon when attacking and then hiding it on his back when passive or chasing.
+    public void EnableWeaponModel(bool active)
     {
-        //this creates local variable which is null.
-        WeaponModel weaponModel = null;
+        currentWeaponModel.gameObject.SetActive(active);
+    }
 
-        //checks if the weapon equipped matches with the weapon model.
-        //creates local variable of a weapontype and equals to the current weapons weapontype.
-        WeaponType weaponType = player.weapon.CurrentWeapon().weaponType;
+    public void EnableWeaponTrail(bool enable)
+    {
+        Enemy_WeaponModel currentWeaponScript = currentWeaponModel.GetComponent<Enemy_WeaponModel>();
+        currentWeaponScript.EnableTrailEffect(enable);
+    }
 
-        for (int i = 0; i < weaponModels.Length; i++)
+    private GameObject[] CollectCorruptionCrystals()
+    {
+        Enemy_CorruptionCrystal[] crystalComponents = GetComponentsInChildren<Enemy_CorruptionCrystal>(true);
+        GameObject[] corruptionCrystals = new GameObject[crystalComponents.Length];
+
+        for (int i = 0; i < crystalComponents.Length; i++)
         {
-            if (weaponModels[i].WeaponType == weaponType)
-                weaponModel = weaponModels[i];
+            corruptionCrystals[i] = crystalComponents[i].gameObject;
         }
 
-        return weaponModel;
+        return corruptionCrystals;
+    }
+    
+    public void SetupLook()
+    {
+        SetupRandomColor();
+        SetupRandomWeapon();
+        SetupRandomCorruption();
     }
 
-    public void PlayReloadAnimation()
+    private void SetupRandomCorruption()
     {
+        List<int> availableIndexs = new List<int>();
+        corruptionCrystals = CollectCorruptionCrystals();
 
-        float reloadSpeed = player.weapon.CurrentWeapon().reloadSpeed;
-
-        anim.SetFloat("ReloadSpeed", reloadSpeed);
-        anim.SetTrigger("Reload");
-        ReduceRigWeight();
-    }
-
-    private void UpdateLeftHandIKWeight()
-    {
-        //just like with reloading, this will change the rig weight for the animation of grab.
-        if (shouldIncrease_LeftHandIKWeight)
+        for(int i = 0; i < corruptionCrystals.Length; i++)
         {
-            leftHandIK.weight += leftHandIKWeightIncreaseRate * Time.deltaTime;
+            availableIndexs.Add(i);
+            corruptionCrystals[i].SetActive(false);
+        }
 
-            if (leftHandIK.weight >= 1)
-                shouldIncrease_LeftHandIKWeight = false;
+        for(int i = 0; i < corruptionAmount; i++)
+        {
+            if (availableIndexs.Count == 0)
+                break;
+
+            int randomIndex = Random.Range(0, availableIndexs.Count);
+            int objectIndex = availableIndexs[randomIndex];
+
+            corruptionCrystals[objectIndex].SetActive(true);
+            availableIndexs.RemoveAt(randomIndex);
         }
     }
 
-    private void UpdateRigWeight()
+    //this randomizes which weapon the enemy is holding.
+    private void SetupRandomWeapon()
     {
-        //This will change the rig weight for the animation of reloading.
-        if (shouldIncrease_RigWeight)
-        {
-            rig.weight += rigWeightIncreaseRate * Time.deltaTime;
+        bool thisEnemyIsMelee = GetComponent<Enemy_Melee>() != null;
+        bool thisEnemyIsRange = GetComponent<Enemy_Range>() != null;
 
-            if (rig.weight >= 1)
+        if (thisEnemyIsMelee)
+        {
+            currentWeaponModel = FindMeleeWeaponModel();
+        }
+
+        if (thisEnemyIsRange)
+        {
+            currentWeaponModel = FindRangeWeaponModel();
+        }
+
+        currentWeaponModel.SetActive(true);
+        OverrideAnimatorControllerIfCan();
+    }
+
+    private GameObject FindRangeWeaponModel()
+    {
+        Enemy_RangeWeaponModel[] weaponModels = GetComponentsInChildren<Enemy_RangeWeaponModel>(true);
+        Enemy_RangeWeaponType weaponType = GetComponent<Enemy_Range>().weaponType;
+
+        foreach (var weaponModel in weaponModels)
+        {
+            if (weaponModel.weaponType == weaponType)
             {
-                shouldIncrease_RigWeight = false;
+                SwitchAnimationLayer(((int)weaponModel.weaponHoldType));
+                SetupLeftHandIK(weaponModel.leftHandTarget, weaponModel.leftElbowTarget);
+                return weaponModel.gameObject;
             }
         }
+
+        Debug.LogWarning("No range weapon model found");
+        return null;
     }
 
-    private void ReduceRigWeight()
+    private GameObject FindMeleeWeaponModel()
     {
-        rig.weight = 0.15f;
-    }
+        Enemy_WeaponModel[] weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);
+        Enemy_MeleeWeaponType weaponType = GetComponent<Enemy_Melee>().weaponType;
 
-    public void PlayWeaponEquipAnimation()
-    {
-        EquipType equipType = CurrentWeaponModel().equipAnimationType;
+        List<Enemy_WeaponModel> filteredWeaponModels = new List<Enemy_WeaponModel>();
 
-        float equipmentSpeed = player.weapon.CurrentWeapon().equipmentSpeed;
-
-        leftHandIK.weight = 0;
-        //the pauseRig function is used to adjust the left hand like it did with reload.
-        ReduceRigWeight();
-        //setting up different types of weapon equips like, side equip and back equip.
-        anim.SetFloat("EquipType", ((float)equipType));
-        anim.SetTrigger("EquipWeapon");
-        anim.SetFloat("EquipSpeed", equipmentSpeed);
-    }
-
-
-    //This will make the rig weight change when reloading animation is finished.
-    public void MaximizeRigWeight() => shouldIncrease_RigWeight = true;
-
-    // this will make the rif weight change when grabbing animation is finished.
-    public void MaximizeLeftHandWeight() => shouldIncrease_LeftHandIKWeight = true;
-
-    //this will switch on the weapon model that the character is holding.
-    public void SwitchOnCurrentWeaponModel()
-    {
-        //this will switch animation layer
-        int animationIndex = ((int)CurrentWeaponModel().holdType);
-
-        SwitchOffWeaponModels();
-
-        SwitchOffBackupWeaponModels();
-
-        //switches on the weapon if character has more than one weapon
-        if(player.weapon.HasOnlyOneWeapon() == false)
-            SwitchOnBackupWeaponModel();
-
-        SwitchAnimationLayer(animationIndex);
-        
-        //this will switch on the model you want to have.
-        CurrentWeaponModel().gameObject.SetActive(true);
-
-        AttachLeftHand();
-    }
-
-    //this will switch all the guns we aren't using off.
-    public void SwitchOffWeaponModels()
-    {
-        //this will switch off all of the guns from the characters hands.
-        for (int i = 0; i < weaponModels.Length; i++)
+        foreach (var weaponModel in weaponModels)
         {
-            weaponModels[i].gameObject.SetActive(false);
+            if (weaponModel.weaponType == weaponType)
+                filteredWeaponModels.Add(weaponModel);
+        }
+        //only sets the weapon the enemy is holding to true;
+        int randomIndex = Random.Range(0, filteredWeaponModels.Count);
+        return filteredWeaponModels[randomIndex].gameObject;
+    }
+
+    private void OverrideAnimatorControllerIfCan()
+    {
+        AnimatorOverrideController overrideController = currentWeaponModel.GetComponent<Enemy_WeaponModel>()?.overrideController;
+
+        if (overrideController != null)
+        {
+            GetComponentInChildren<Animator>().runtimeAnimatorController = overrideController;
         }
     }
 
-    //this will switch off the back weapon.
-    private void SwitchOffBackupWeaponModels()
+    //sets up a random texture for each enemy.
+    private void SetupRandomColor()
     {
-        foreach(BackupWeaponModel backupModel in backupWeaponModels) 
-        {
-            backupModel.Activate(false);
-        }
-    }
-    //this will switch on the back weapon.
-    public void SwitchOnBackupWeaponModel()
-    {
-        //swithces off all models first.
-        SwitchOffBackupWeaponModels();
+        int randomIndex = Random.Range(0, colorTextures.Length);
 
-        //3 local variables that are null.
-        BackupWeaponModel lowHangWeapon = null;
-        BackupWeaponModel backHangWeapon = null;
-        BackupWeaponModel sideHangWeapon = null;
+        Material newMat = new Material(skinnedMeshRenderer.material);
 
-        //this checks if player has the weapon type in the inventory by comparing weapon types.
-        foreach(BackupWeaponModel backupModel in backupWeaponModels)
-        {
-            //this will check if the backupModel is the same as the current weapontype and if so, its to be ignored.
-            if (backupModel.weaponType == player.weapon.CurrentWeapon().weaponType)
-                continue;
+        newMat.mainTexture = colorTextures[randomIndex];
 
-            //checks what type of hangtype it is and assignes that to the backupModel of the character.
-            if (player.weapon.hasWeaponTypeInInventory(backupModel.weaponType) != null)
-            {
-                if(backupModel.HangTypeIs(HangType.LowBackHang))
-                    lowHangWeapon = backupModel;
-
-                if(backupModel.HangTypeIs(HangType.BackHang))
-                    backHangWeapon = backupModel;
-
-                if(backupModel.HangTypeIs(HangType.SideHang))
-                    sideHangWeapon = backupModel;
-            }
-        }
-        //this checks if the local variable is null.
-        lowHangWeapon?.Activate(true);
-        backHangWeapon?.Activate(true);
-        sideHangWeapon?.Activate(true);
+        skinnedMeshRenderer.material = newMat;
     }
 
-    //This function here is what will be used when switching the left hands position when switching weapons.
-    private void AttachLeftHand()
-    {
-        Transform targetTransform = CurrentWeaponModel().holdPoint;
-        
-        leftHandIK_Target.localPosition = targetTransform.localPosition; 
-        leftHandIK_Target.localRotation = targetTransform.localRotation;
-    }
-
-    //This will switch the animation layer between common weapons, shotguns, and snipers.
-    //We use the parameter so we can let it know which animation layer we want to switch on.
     private void SwitchAnimationLayer(int layerIndex)
     {
-        for (int i = 1; i < anim.layerCount; i++)
+        Animator anim = GetComponentInChildren<Animator>();
+
+        for(int i = 1; i < anim.layerCount; i++) 
         {
             anim.SetLayerWeight(i, 0);
         }
@@ -231,5 +184,34 @@ public class PlayerWeaponVisuals : MonoBehaviour
         anim.SetLayerWeight(layerIndex, 1);
     }
 
+    public void EnableIK(bool enable)
+    {
+        rig.weight = enable ? 1 : 0;
+    }
 
+    //added changerate for the speed of the lefthand moving back to the weapon for smoothness.
+    public void EnableIK(bool enableLeftHand, bool enableAim, float changeRate = 10)
+    {
+        rigChangeRate = changeRate;
+        leftHandTargetWeight = enableLeftHand ? 1 : 0;
+        weaponAimTargetWeight = enableAim ? 1 : 0;
+    }
+
+    private void SetupLeftHandIK(Transform leftHandTarget, Transform leftElbowTarget)
+    {
+        leftHandIK.localPosition = leftHandTarget.localPosition;
+        leftHandIK.localRotation = leftHandTarget.localRotation;
+
+        leftElbowIK.localPosition = leftElbowTarget.localPosition;
+        leftElbowIK.localRotation = leftElbowTarget.localRotation;
+    }
+
+    //this is the lefthand moving back to the weapon after throwing the grenade.
+    private float AdjustIKWeight(float currentWeight, float targetWeight)
+    {
+        if (Mathf.Abs(currentWeight - targetWeight) > 0.05f)
+            return Mathf.Lerp(currentWeight, targetWeight, rigChangeRate * Time.deltaTime);
+        else
+            return targetWeight;
+    }
 }
