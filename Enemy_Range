@@ -50,7 +50,7 @@ public class Enemy_Range : Enemy
     public BattleState_Range battleState { get; private set; }
     public RunToCoverState_Range runToCoverState { get; private set; }
     public AdvancePlayerState_Range advancePlayerState { get; private set; }
-    public ThrowGrenadeState_Range throwGrenadeState_Range { get; private set; }
+    public ThrowGrenadeState_Range throwGrenadeState { get; private set; }
     protected override void Awake()
     {
         base.Awake();
