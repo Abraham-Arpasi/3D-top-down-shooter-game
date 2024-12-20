@@ -1,202 +1,196 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using UnityEngine.Animations.Rigging;
+using UnityEngine.InputSystem.LowLevel;
 
-[System.Serializable]
-public struct AttackData_EnemyMelee
+//setup which weapons are one handed and which ones are thrown.
+public enum Enemy_MeleeWeaponType { OneHand, Throw, Unarmed}
+public enum Enemy_RangeWeaponType { Pistol, Revolver, Rifle, Shotgun, Sniper}
+public class Enemy_Visuals : MonoBehaviour
 {
-    public string attackName;
-    public float attackRange;
-    public float moveSpeed;
-    public float attackIndex;
-    [Range(1,2)]
-    public float animationSpeed;
-    public AttackType_Melee attackType;
-}
-public enum AttackType_Melee { Close, Charge }
-public enum EnemyMelee_Type { Regular, Shield, Dodge, AxeThrow}
+    public GameObject currentWeaponModel { get; private set; }
 
-public class Enemy_Melee : Enemy
-{
+    [Header("Corruption")]
+    [SerializeField] private GameObject[] corruptionCrystals;
+    [SerializeField] private int corruptionAmount;
 
-    public IdleState_Melee idleState {  get; private set; }
-    public MoveState_Melee moveState { get; private set; }
-    public RecoveryState_Melee recoveryState { get; private set; }
-    public ChaseState_Melee chaseState { get; private set; }
-    public AttackState_Melee attackState { get; private set; }
+    //created an array for multiple textures of the enemy.
+    [Header("Color")]
+    [SerializeField] private Texture[] colorTextures;
+    [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
-    public DeadState_Melee deadState { get; private set; }
+    [Header("Rig")]
+    [SerializeField] private Transform leftHandIK;
+    [SerializeField] private Transform leftElbowIK;
+    [SerializeField] private Rig rig;
+    [SerializeField] private TwoBoneIKConstraint leftHandIKConstraint;
+    [SerializeField] private MultiAimConstraint weaponAimConstraint;
 
-    public AbilityState_Melee abilityState { get; private set; }
-
-    [Header("Enemy info")]
-    public EnemyMelee_Type meleeType;
-    public Enemy_MeleeWeaponType weaponType;
-
-    [SerializeField] public Transform shieldTransform;
-    public float dodgeCooldown;
-    private float lastTimeDodge = -10;
-
-    [Header("Axe Throw info")]
-    public GameObject axePrefab;
-    public float axeFlySpeed;
-    public float axeAimTimer;
-    public float axeThrowCooldown;
-    private float lastTimeAxeThrown;
-    public Transform axeStartPoint;
-
-    [Header("Attack info")]
-    public AttackData_EnemyMelee attackData;
-    public List<AttackData_EnemyMelee> attackList;
-
-    protected override void Awake()
+    //this is for the enemy weapon visual of showing his weapon when attacking and then hiding it on his back when passive or chasing.
+    public void EnableWeaponModel(bool active)
     {
-        base.Awake();
-
-        idleState = new IdleState_Melee(this, stateMachine, "Idle");
-        moveState = new MoveState_Melee(this, stateMachine, "Move");
-        recoveryState = new RecoveryState_Melee(this, stateMachine, "Recovery");
-        chaseState = new ChaseState_Melee(this, stateMachine, "Chase");
-        attackState = new AttackState_Melee(this, stateMachine, "Attack");
-        deadState = new DeadState_Melee(this, stateMachine, "Idle");
-        abilityState = new AbilityState_Melee(this, stateMachine, "AxeThrow");
+        currentWeaponModel.gameObject.SetActive(active);
     }
 
-    protected override void Start()
+    public void EnableWeaponTrail(bool enable)
     {
-        base.Start();
-
-        stateMachine.Initialize(idleState);
-
-        InitializePerk();
-
-        visuals.SetupLook();
-
-        UpdateAttackData();
+        Enemy_WeaponModel currentWeaponScript = currentWeaponModel.GetComponent<Enemy_WeaponModel>();
+        currentWeaponScript.EnableTrailEffect(enable);
     }
 
-    protected override void Update()
+    private GameObject[] CollectCorruptionCrystals()
     {
-        base.Update();
+        Enemy_CorruptionCrystal[] crystalComponents = GetComponentsInChildren<Enemy_CorruptionCrystal>(true);
+        GameObject[] corruptionCrystals = new GameObject[crystalComponents.Length];
 
-        stateMachine.currentState.Update();
-
-    }
-
-    public override void EnterBattleMode()
-    {
-        if (inBattleMode)
-            return;
-
-        base.EnterBattleMode();
-        stateMachine.ChangeState(recoveryState);
-
-    }
-
-    protected override void InitializePerk()
-    {
-        //this will make sure if we have a throwing type of enemy it will have an throw axe equipped. 
-        if(meleeType == EnemyMelee_Type.AxeThrow)
+        for (int i = 0; i < crystalComponents.Length; i++)
         {
-            weaponType = Enemy_MeleeWeaponType.Throw;
+            corruptionCrystals[i] = crystalComponents[i].gameObject;
         }
-        if(meleeType == EnemyMelee_Type.Shield)
+
+        return corruptionCrystals;
+    }
+    
+    public void SetupLook()
+    {
+        SetupRandomColor();
+        SetupRandomWeapon();
+        SetupRandomCorruption();
+    }
+
+    private void SetupRandomCorruption()
+    {
+        List<int> availableIndexs = new List<int>();
+        corruptionCrystals = CollectCorruptionCrystals();
+
+        for(int i = 0; i < corruptionCrystals.Length; i++)
         {
-            anim.SetFloat("ChaseIndex", 1);
-            shieldTransform.gameObject.SetActive(true);
-            weaponType = Enemy_MeleeWeaponType.OneHand;
+            availableIndexs.Add(i);
+            corruptionCrystals[i].SetActive(false);
         }
-        if(meleeType == EnemyMelee_Type.Dodge)
+
+        for(int i = 0; i < corruptionAmount; i++)
         {
-            weaponType = Enemy_MeleeWeaponType.Unarmed;
+            if (availableIndexs.Count == 0)
+                break;
+
+            int randomIndex = Random.Range(0, availableIndexs.Count);
+            int objectIndex = availableIndexs[randomIndex];
+
+            corruptionCrystals[objectIndex].SetActive(true);
+            availableIndexs.RemoveAt(randomIndex);
         }
     }
 
-    public override void GetHit()
+    //this randomizes which weapon the enemy is holding.
+    private void SetupRandomWeapon()
     {
-        base.GetHit();
+        bool thisEnemyIsMelee = GetComponent<Enemy_Melee>() != null;
+        bool thisEnemyIsRange = GetComponent<Enemy_Range>() != null;
 
-        if(healthPoints <= 0)
+        if (thisEnemyIsMelee)
         {
-            stateMachine.ChangeState(deadState);
+            currentWeaponModel = FindMeleeWeaponModel();
+        }
+
+        if (thisEnemyIsRange)
+        {
+            currentWeaponModel = FindRangeWeaponModel();
+        }
+
+        currentWeaponModel.SetActive(true);
+        OverrideAnimatorControllerIfCan();
+    }
+
+    private GameObject FindRangeWeaponModel()
+    {
+        Enemy_RangeWeaponModel[] weaponModels = GetComponentsInChildren<Enemy_RangeWeaponModel>(true);
+        Enemy_RangeWeaponType weaponType = GetComponent<Enemy_Range>().weaponType;
+
+        foreach (var weaponModel in weaponModels)
+        {
+            if (weaponModel.weaponType == weaponType)
+            {
+                SwitchAnimationLayer(((int)weaponModel.weaponHoldType));
+                SetupLeftHandIK(weaponModel.leftHandTarget, weaponModel.leftElbowTarget);
+                return weaponModel.gameObject;
+            }
+        }
+
+        Debug.LogWarning("No range weapon model found");
+        return null;
+    }
+
+    private GameObject FindMeleeWeaponModel()
+    {
+        Enemy_WeaponModel[] weaponModels = GetComponentsInChildren<Enemy_WeaponModel>(true);
+        Enemy_MeleeWeaponType weaponType = GetComponent<Enemy_Melee>().weaponType;
+
+        List<Enemy_WeaponModel> filteredWeaponModels = new List<Enemy_WeaponModel>();
+
+        foreach (var weaponModel in weaponModels)
+        {
+            if (weaponModel.weaponType == weaponType)
+                filteredWeaponModels.Add(weaponModel);
+        }
+        //only sets the weapon the enemy is holding to true;
+        int randomIndex = Random.Range(0, filteredWeaponModels.Count);
+        return filteredWeaponModels[randomIndex].gameObject;
+    }
+
+    private void OverrideAnimatorControllerIfCan()
+    {
+        AnimatorOverrideController overrideController = currentWeaponModel.GetComponent<Enemy_WeaponModel>()?.overrideController;
+
+        if (overrideController != null)
+        {
+            GetComponentInChildren<Animator>().runtimeAnimatorController = overrideController;
         }
     }
 
-    public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackData.attackRange;
-   
-    public void ActivateDodgeRoll()
+    //sets up a random texture for each enemy.
+    private void SetupRandomColor()
     {
-        if (meleeType != EnemyMelee_Type.Dodge)
-            return;
+        int randomIndex = Random.Range(0, colorTextures.Length);
 
-        if (stateMachine.currentState != chaseState)
-            return;
+        Material newMat = new Material(skinnedMeshRenderer.material);
 
-        if (Vector3.Distance(transform.position, player.position) < 2)
-            return;
+        newMat.mainTexture = colorTextures[randomIndex];
 
-        float dodgeAnimationDiration = GetanimationClipDuration("Dodge Roll");
-
-        if(Time.time > dodgeCooldown + dodgeAnimationDiration + lastTimeDodge)
-        {
-            lastTimeDodge = Time.time;
-            anim.SetTrigger("Dodge");
-        }
-    } 
-
-    public bool canThrowAxe()
-    {
-        if (meleeType != EnemyMelee_Type.AxeThrow)
-            return false;
-
-        if (Time.time > lastTimeAxeThrown + axeThrowCooldown)
-        {
-            lastTimeAxeThrown = Time.deltaTime;
-            return true;
-        }
-        return false;
+        skinnedMeshRenderer.material = newMat;
     }
 
-    private float GetanimationClipDuration(string clipName)
+    private void SwitchAnimationLayer(int layerIndex)
     {
-        AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+        Animator anim = GetComponentInChildren<Animator>();
 
-        foreach(AnimationClip clip in clips)
+        for(int i = 1; i < anim.layerCount; i++) 
         {
-            if (clip.name == clipName)
-                return clip.length;
+            anim.SetLayerWeight(i, 0);
         }
 
-        Debug.Log("no animation found " + clipName);
-        return 0;
-    }
-    public override void AbilityTrigger()
-    {
-        base.AbilityTrigger();
-
-        walkSpeed = walkSpeed * 0.6f;
-        Debug.Log("Create Axe");
-        EnableWeaponModel(false);
+        anim.SetLayerWeight(layerIndex, 1);
     }
 
-    public void UpdateAttackData()
+    public void EnableIK(bool enable)
     {
-        Enemy_WeaponModel currentWeapon = visuals.currentWeaponModel.GetComponent<Enemy_WeaponModel>();
-
-        if (currentWeapon.weaponData != null)
-        {
-            attackList = new List<AttackData_EnemyMelee>(currentWeapon.weaponData.attackData);
-            turnSpeed = currentWeapon.weaponData.turnSpeed;
-        }
+        rig.weight = enable ? 1 : 0;
     }
 
-    protected override void OnDrawGizmos()
+    public void EnableIK(bool enableLeftHand, bool enableAim)
     {
-        base.OnDrawGizmos();
+        leftHandIKConstraint.weight = enableLeftHand ? 1 : 0;
+        weaponAimConstraint.weight = enableAim ? 1 : 0;
+    }
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, attackData.attackRange);
+    private void SetupLeftHandIK(Transform leftHandTarget, Transform leftElbowTarget)
+    {
+        leftHandIK.localPosition = leftHandTarget.localPosition;
+        leftHandIK.localRotation = leftHandTarget.localRotation;
+
+        leftElbowIK.localPosition = leftElbowTarget.localPosition;
+        leftElbowIK.localRotation = leftElbowTarget.localRotation;
     }
 }
-
