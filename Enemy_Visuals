@@ -28,6 +28,27 @@ public class Enemy_Visuals : MonoBehaviour
     [SerializeField] private TwoBoneIKConstraint leftHandIKConstraint;
     [SerializeField] private MultiAimConstraint weaponAimConstraint;
 
+    private float leftHandTargetWeight;
+    private float weaponAimTargetWeight;
+    private float rigChangeRate;
+
+    private void Update()
+    {
+        leftHandIKConstraint.weight = AdjustIKWeight(leftHandIKConstraint.weight, leftHandTargetWeight);
+        weaponAimConstraint.weight = AdjustIKWeight(weaponAimConstraint.weight, weaponAimTargetWeight);
+    }
+
+    //this is for the enemy weapon visual of showing his weapon when attacking and then hiding it on his back when passive or chasing.
+    public void EnableWeaponModel(bool active)
+    {
+        currentWeaponModel.gameObject.SetActive(active);
+    }
+
+    public void EnableSecondaryWeaponModel(bool active)
+    {
+        currentWeaponModel?.gameObject.SetActive(active);
+    }
+
     public void EnableWeaponTrail(bool enable)
     {
         Enemy_WeaponModel currentWeaponScript = currentWeaponModel.GetComponent<Enemy_WeaponModel>();
@@ -76,6 +97,20 @@ public class Enemy_Visuals : MonoBehaviour
             corruptionCrystals[objectIndex].SetActive(true);
             availableIndexs.RemoveAt(randomIndex);
         }
+    }
+
+    private GameObject FindSecondaryWeaponModel()
+    {
+        Enemy_SecondaryRangeWeaponModel[] weaponModels = GetComponentsInChildren<Enemy_SecondaryRangeWeaponModel>(true);
+        Enemy_RangeWeaponType weaponType = GetComponentInParent<Enemy_Range>().weaponType;
+
+        foreach (var weaponModel in weaponModels)
+        {
+            if (weaponModel.weaponType == weaponType)
+                return weaponModel.gameObject;
+        }
+
+        return null;
     }
 
     //this randomizes which weapon the enemy is holding.
@@ -173,10 +208,12 @@ public class Enemy_Visuals : MonoBehaviour
         rig.weight = enable ? 1 : 0;
     }
 
-    public void EnableIK(bool enableLeftHand, bool enableAim)
+    //added changerate for the speed of the lefthand moving back to the weapon for smoothness.
+    public void EnableIK(bool enableLeftHand, bool enableAim, float changeRate = 10)
     {
-        leftHandIKConstraint.weight = enableLeftHand ? 1 : 0;
-        weaponAimConstraint.weight = enableAim ? 1 : 0;
+        rigChangeRate = changeRate;
+        leftHandTargetWeight = enableLeftHand ? 1 : 0;
+        weaponAimTargetWeight = enableAim ? 1 : 0;
     }
 
     private void SetupLeftHandIK(Transform leftHandTarget, Transform leftElbowTarget)
@@ -186,5 +223,14 @@ public class Enemy_Visuals : MonoBehaviour
 
         leftElbowIK.localPosition = leftElbowTarget.localPosition;
         leftElbowIK.localRotation = leftElbowTarget.localRotation;
+    }
+
+    //this is the lefthand moving back to the weapon after throwing the grenade.
+    private float AdjustIKWeight(float currentWeight, float targetWeight)
+    {
+        if (Mathf.Abs(currentWeight - targetWeight) > 0.05f)
+            return Mathf.Lerp(currentWeight, targetWeight, rigChangeRate * Time.deltaTime);
+        else
+            return targetWeight;
     }
 }
