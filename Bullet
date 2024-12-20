@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float ImpactForce;
+    private float ImpactForce;
 
     //This will be for the VFX of the bullet impact.
     [SerializeField] private GameObject bulletImpactFX;
@@ -28,7 +28,7 @@ public class Bullet : MonoBehaviour
         meshRenderer = GetComponent<MeshRenderer>();
         trailRenderer = GetComponent<TrailRenderer>();
     }
-    public void BulletSetup(float flyDistance, float impactForce)
+    public void BulletSetup(float flyDistance = 100, float impactForce = 100)
     {
         this.ImpactForce = impactForce;
 
@@ -83,7 +83,7 @@ public class Bullet : MonoBehaviour
     //creating a collider for the bullet.
     protected virtual void OnCollisionEnter(Collision collision)
     {
-        CreateImpactFx(collision);
+        CreateImpactFx();
         ReturnBulletToPool();
 
         Enemy enemy = collision.gameObject.GetComponentInParent<Enemy>();
@@ -111,18 +111,10 @@ public class Bullet : MonoBehaviour
 
     }
 
-    protected void CreateImpactFx(Collision collision)
+    protected void CreateImpactFx()
     {
-        if (collision.contacts.Length > 0)
-        {
-            //this is the first contact with an object that the bullet hits.
-            ContactPoint contact = collision.contacts[0];
-
-            //this will start the visual effect of the impact effect after bullet hits object.
-            GameObject newImpactFX = ObjectPool.instance.GetObject(bulletImpactFX);
-            newImpactFX.transform.position = contact.point;
-
+            GameObject newImpactFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
             ObjectPool.instance.ReturnObject(newImpactFX, 0.1f);
-        }
+       
     }
 }
