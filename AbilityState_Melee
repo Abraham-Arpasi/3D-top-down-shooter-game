@@ -56,5 +56,6 @@ public class AbilityState_Melee : EnemyState
     public override void AbilityTrigger()
     {
         base.AbilityTrigger();
+        enemy.ThrowAxe();
     }
 }
