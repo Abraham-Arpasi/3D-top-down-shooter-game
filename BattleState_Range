@@ -29,6 +29,8 @@ public class BattleState_Range : EnemyState
 
 
         enemy.visuals.EnableIK(true);
+
+        stateTimer = enemy.attackDelay;
     }
 
     private void SetupValuesForFirstAttack()
@@ -62,6 +64,9 @@ public class BattleState_Range : EnemyState
         }
 
         ChangeCoverIfShould();
+
+        if (stateTimer > 0)
+            return;
 
         if (WeaponOutOfBullets())
         {
