@@ -46,7 +46,7 @@ public class BattleState_Range : EnemyState
             enemy.FaceTarget(enemy.aim.position);
         }
 
-        if(enemy.IsPlayerInAgressionRange() == false)
+        if(enemy.IsPlayerInAgressionRange() == false && ReadyToLeaveCover())
         {
             stateMachine.ChangeState(enemy.advancePlayerState);
         }
@@ -66,6 +66,11 @@ public class BattleState_Range : EnemyState
         {
             Shoot();
         }
+    }
+
+    private bool ReadyToLeaveCover()
+    {
+        return Time.time > enemy.minCoverTime + enemy.runToCoverState.lastTimeTookCover;
     }
 
     private void ChangeCoverIfShould()
