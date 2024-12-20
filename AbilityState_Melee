@@ -19,9 +19,9 @@ public class AbilityState_Melee : EnemyState
     {
         base.Enter();
         //pulls weapon when in ability state.
-        enemy.EnableWeaponModel(true);
+        enemy.visuals.EnableWeaponModel(true);
 
-        moveSpeed = enemy.moveSpeed;
+        moveSpeed = enemy.walkSpeed;
         movementDirection = enemy.transform.position + (enemy.transform.forward * MAX_MOVEMENT_DISTANCE);
     }
 
@@ -29,7 +29,7 @@ public class AbilityState_Melee : EnemyState
     {
         base.Exit();
 
-        enemy.moveSpeed = moveSpeed;
+        enemy.walkSpeed = moveSpeed;
         enemy.anim.SetFloat("RecoveryIndex", 0f);
     }
 
@@ -45,7 +45,7 @@ public class AbilityState_Melee : EnemyState
         if (enemy.ManualMovementActive())
         {
             //imporves the enemies position when attacking to have a better chance of landing an attack.
-            enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, movementDirection, enemy.moveSpeed * Time.deltaTime);
+            enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, movementDirection, enemy.walkSpeed * Time.deltaTime);
         }
 
         if (triggerCalled)
