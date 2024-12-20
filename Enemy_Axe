@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAxe : MonoBehaviour
+public class Enemy_Axe : MonoBehaviour
 {
     [SerializeField] private GameObject impactFx;
     [SerializeField] private Rigidbody rb;
@@ -47,11 +47,10 @@ public class EnemyAxe : MonoBehaviour
 
         if (bullet != null || player != null)
         {
-            GameObject newFx = ObjectPool.instance.GetObject(impactFx);
-            newFx.transform.position = transform.position;
+            GameObject newFx = ObjectPool.instance.GetObject(impactFx, transform);
 
             ObjectPool.instance.ReturnObject(gameObject);
-            ObjectPool.instance.ReturnObject(newFx, 1f);
+            ObjectPool.instance.ReturnObject(newFx, 0.25f);
         }
     }
 }
