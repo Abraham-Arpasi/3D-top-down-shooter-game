@@ -22,6 +22,7 @@ public class Enemy_Range : Enemy
     public CoverPoint currentCover { get; private set;}
 
     [Header("weapon details")]
+    public float attackDelay;
     public Enemy_RangeWeaponType weaponType;
     public Enemy_RangeWeaponData weaponData;
     [Space]
