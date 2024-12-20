@@ -11,6 +11,7 @@ public class Enemy_Range : Enemy
     [Header("Advance perk")]
     public float advanceSpeed;
     public float advanceStoppingDistance;
+    public float advanceTime = 2.5f;
 
     [Header("Cover system")]
     public float safeDistance;
@@ -55,6 +56,7 @@ public class Enemy_Range : Enemy
         base.Start();
 
         playersBody = player.GetComponent<Player>().playerBody;
+        aim.parent = null;
 
         stateMachine.Initialize(idleState);
         visuals.SetupLook();
@@ -198,11 +200,11 @@ public class Enemy_Range : Enemy
 
     public void UpdateAimPosition()
     {
-        float aimSpeed = AimOnPlayer() ? fastAim : slowAim;
+        float aimSpeed = IsAimOnPlayer() ? fastAim : slowAim;
         aim.position = Vector3.MoveTowards(aim.position, playersBody.position, aimSpeed * Time.deltaTime);
     }
 
-    public bool AimOnPlayer()
+    public bool IsAimOnPlayer()
     {
         float distanceAimToPlayer = Vector3.Distance(aim.position, player.position);
 
@@ -216,7 +218,7 @@ public class Enemy_Range : Enemy
         //this will make the enemy ignore the layer that was chosen to ignore in the inspector and have fast or slow aim.
         if (Physics.Raycast(myPosition, directionToPlayer, out RaycastHit hit, Mathf.Infinity, ~whatToIgnore))
         {
-            if(hit.transform == player)
+            if(hit.transform.root == player.root)
             {
                 UpdateAimPosition();
                 return true;
@@ -233,3 +235,4 @@ public class Enemy_Range : Enemy
         */
     }
 }
+
