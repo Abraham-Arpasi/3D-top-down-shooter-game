@@ -17,6 +17,7 @@ public class Enemy_Range : Enemy
     public float timeToTarget = 1.2f;
     public float grenadeCooldown;
     private float lastTimeGrenadeThrown = -10;
+    [SerializeField] private Transform grenadeStartPoint;
 
     [Header("Advance perk")]
     public float advanceSpeed;
@@ -105,7 +106,7 @@ public class Enemy_Range : Enemy
     {
         lastTimeGrenadeThrown = Time.time;
         GameObject newGrenade = ObjectPool.instance.GetObject(grenadePrefab);
-        newGrenade.transform.position = weaponHolder.transform.position;
+        newGrenade.transform.position = grenadeStartPoint.position;
 
         Enemy_Grenade newGranadeScript = newGrenade.GetComponent<Enemy_Grenade>();
         newGranadeScript.SetupGrenade(player.transform.position, timeToTarget);
