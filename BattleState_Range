@@ -56,7 +56,7 @@ public class BattleState_Range : EnemyState
             enemy.FaceTarget(enemy.aim.position);
         }
 
-        if(enemy.IsPlayerInAgressionRange() == false && ReadyToLeaveCover())
+        if(MustAdvancePlayer())
         {
             stateMachine.ChangeState(enemy.advancePlayerState);
         }
@@ -82,6 +82,14 @@ public class BattleState_Range : EnemyState
         {
             Shoot();
         }
+    }
+
+    private bool MustAdvancePlayer()
+    {
+        if (enemy.IsUnstoppable())
+            return false;
+
+        return enemy.IsPlayerInAgressionRange() == false && ReadyToLeaveCover();
     }
 
     private bool UnstoppableWalkReady()
