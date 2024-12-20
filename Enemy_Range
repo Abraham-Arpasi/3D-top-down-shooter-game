@@ -82,6 +82,7 @@ public class Enemy_Range : Enemy
 
         if (IsUnstoppable())
         {
+            advanceSpeed = 1;
             //this will start the rifle walk animation in the advance blend tree.
             anim.SetFloat("AdvanceAnimIndex", 1);
         }
