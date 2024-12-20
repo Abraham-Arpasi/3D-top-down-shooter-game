@@ -13,10 +13,25 @@ public class ThrowGrenadeState_Range : EnemyState
     public override void Enter()
     {
         base.Enter();
+
+        enemy.visuals.EnableWeaponModel(false);
+        enemy.visuals.EnableIK(false, false);
     }
 
     public override void Update()
     {
         base.Update();
+
+        enemy.FaceTarget(enemy.player.position);
+        if (triggerCalled)
+            stateMachine.ChangeState(enemy.battleState);
+    }
+
+    public override void AbilityTrigger()
+    {
+        base.AbilityTrigger();
+
+        enemy.ThrowGrenade();
+        enemy.visuals.EnableIK(true, true, 1.5f);
     }
 }
