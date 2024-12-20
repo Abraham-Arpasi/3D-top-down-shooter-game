@@ -36,6 +36,7 @@ public class Bullet : MonoBehaviour
         cd.enabled = true;
         meshRenderer.enabled = true;
 
+        trailRenderer.Clear();
         trailRenderer.time = .25f;
         startPosition = transform.position;
         this.flyDistance = flyDistance + 0.6f;
