@@ -23,7 +23,11 @@ public class ThrowGrenadeState_Range : EnemyState
     {
         base.Update();
 
-        enemy.FaceTarget(enemy.player.position);
+        Vector3 playerPos = enemy.player.position;
+
+        enemy.FaceTarget(playerPos);
+        enemy.aim.position = playerPos;
+
         if (triggerCalled)
             stateMachine.ChangeState(enemy.battleState);
     }
