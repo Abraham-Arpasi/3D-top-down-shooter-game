@@ -62,7 +62,7 @@ public class BattleState_Range : EnemyState
         }
 
         //enemy can only shoot 10 bullets with a fire rate of 1 bullet per second.
-        if (CanShoot())
+        if (CanShoot() && enemy.IsAimOnPlayer())
         {
             Shoot();
         }
@@ -79,12 +79,20 @@ public class BattleState_Range : EnemyState
         {
             coverCheckTimer = 0.5f; 
 
-            if (IsPlayerInClearSight() || IsPlayerClose())
+            if (ReadyToChangeCover())
             {
                 if (enemy.CanGetCover())
                     stateMachine.ChangeState(enemy.runToCoverState);
             }
         }
+    }
+
+    private bool ReadyToChangeCover()
+    {
+        bool inDanger = IsPlayerInClearSight() || IsPlayerClose();
+        bool advanceTimeIsOver = Time.time > enemy.advancePlayerState.lastTimeAdvanced + enemy.advanceTime;
+
+        return inDanger && advanceTimeIsOver;
     }
 
     private bool IsPlayerClose()
