@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum CoverPerk { Unavailable, CanTakeCover, CanTakeAndChangeCover}
+public enum UnstoppablePerk {  Unavailable, Unstoppable}
 public class Enemy_Range : Enemy
 {
     [Header("Enemy Perk")]
     public CoverPerk coverPerk;
+    public UnstoppablePerk unstoppablePerk;
 
     [Header("Advance perk")]
     public float advanceSpeed;
@@ -71,6 +73,18 @@ public class Enemy_Range : Enemy
 
         stateMachine.currentState.Update();
     }
+
+    protected override void InitializePerk()
+    {
+        base.InitializePerk();
+
+        if (IsUnstoppable())
+        {
+            //this will start the rifle walk animation in the advance blend tree.
+            anim.SetFloat("AdvanceAnimIndex", 1);
+        }
+    }
+
     //only collects covers that the enemy can hide behind in a 30 radius range.
 
     private List<Cover> CollectNearByCovers()
@@ -227,6 +241,8 @@ public class Enemy_Range : Enemy
         }
         return false;
     }
+
+    public bool IsUnstoppable() => unstoppablePerk == UnstoppablePerk.Unstoppable;
 
     protected override void OnDrawGizmos()
     {
