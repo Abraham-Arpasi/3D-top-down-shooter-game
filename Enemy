@@ -68,6 +68,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    protected virtual void InitalizePerk()
+    {
+
+    }
+
     //this will check if enemy should enter battle mode.
     protected bool ShouldEnterBattleMode()
     {
