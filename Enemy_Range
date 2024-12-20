@@ -4,11 +4,17 @@ using UnityEngine;
 
 public enum CoverPerk { Unavailable, CanTakeCover, CanTakeAndChangeCover}
 public enum UnstoppablePerk {  Unavailable, Unstoppable}
+public enum GrenadePerk { Unavailable, CanThrowGrenade }
 public class Enemy_Range : Enemy
 {
     [Header("Enemy Perk")]
     public CoverPerk coverPerk;
     public UnstoppablePerk unstoppablePerk;
+    public GrenadePerk grenadePerk;
+
+    [Header("Grenade Perk")]
+    public float grenadeCooldown;
+    private float lastTimeGrenadeThrown = -10;
 
     [Header("Advance perk")]
     public float advanceSpeed;
@@ -44,6 +50,7 @@ public class Enemy_Range : Enemy
     public BattleState_Range battleState { get; private set; }
     public RunToCoverState_Range runToCoverState { get; private set; }
     public AdvancePlayerState_Range advancePlayerState { get; private set; }
+    public ThrowGrenadeState_Range throwGrenadeState_Range { get; private set; }
     protected override void Awake()
     {
         base.Awake();
@@ -53,6 +60,7 @@ public class Enemy_Range : Enemy
         battleState = new BattleState_Range(this, stateMachine, "Battle");
         runToCoverState = new RunToCoverState_Range(this, stateMachine, "Run");
         advancePlayerState = new AdvancePlayerState_Range(this, stateMachine, "Advance");
+        throwGrenadeState_Range = new ThrowGrenadeState_Range(this, stateMachine, "ThrowGrenade");
     }
 
     protected override void Start()
@@ -75,6 +83,26 @@ public class Enemy_Range : Enemy
         base.Update();
 
         stateMachine.currentState.Update();
+    }
+
+    public bool CanThrowGrenade()
+    {
+        if(grenadePerk == GrenadePerk.Unavailable)
+            return false;
+
+        if(Vector3.Distance(player.transform.position, transform.position) < safeDistance)
+            return false;
+
+        if (Time.time > grenadeCooldown + lastTimeGrenadeThrown)
+            return true;
+
+        return false;
+    }
+
+    public void ThrowGrenade()
+    {
+        lastTimeGrenadeThrown = Time.time;
+        Debug.Log("Throwing Grenade");
     }
 
     protected override void InitializePerk()
