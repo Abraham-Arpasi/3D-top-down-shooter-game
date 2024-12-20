@@ -13,7 +13,7 @@ public class Enemy_Range : Enemy
     [Header("Advance perk")]
     public float advanceSpeed;
     public float advanceStoppingDistance;
-    public float advanceTime = 2.5f;
+    public float advanceDuration = 2.5f;
 
     [Header("Cover system")]
     public float minCoverTime;
@@ -60,6 +60,8 @@ public class Enemy_Range : Enemy
 
         playersBody = player.GetComponent<Player>().playerBody;
         aim.parent = null;
+
+        InitializePerk();
 
         stateMachine.Initialize(idleState);
         visuals.SetupLook();
