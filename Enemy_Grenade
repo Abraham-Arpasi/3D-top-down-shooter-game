@@ -1,18 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Enemy_Grenade : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private Rigidbody rb;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake() => rb = GetComponent<Rigidbody>();
+
+    public void SetupGrenade(Vector3 target, float timeToTarget)
     {
-        
+        rb.velocity = CalculateLaunchVelocity(target, timeToTarget);
+    }
+    //this will be how the grenade flys through the air.
+    private Vector3 CalculateLaunchVelocity(Vector3 target, float timeToTarget)
+    {
+        //direction of grenade.
+        Vector3 direction = target - transform.position;
+        //X and Z direction for the grenade.
+        Vector3 directionXZ = new Vector3(direction.x, 0, direction.z);
+
+        //X and Z velocity for the grenade.
+        Vector3 velocityXZ = directionXZ / timeToTarget;
+
+        //math formula for the Y velocity for the grenade.
+        float velocityY = (direction.y - (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2) / timeToTarget;
+
+        Vector3 launchVelocity = velocityXZ + Vector3.up * velocityY;
+
+        return launchVelocity;
     }
 }
