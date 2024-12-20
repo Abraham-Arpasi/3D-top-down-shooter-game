@@ -11,7 +11,7 @@ public enum Enemy_RangeWeaponType { Pistol, Revolver, Rifle, Shotgun, Sniper}
 public class Enemy_Visuals : MonoBehaviour
 {
     public GameObject currentWeaponModel { get; private set; }
-    public GameObject grenademodel {  get; private set; }
+    public GameObject grenademodel;
 
     [Header("Corruption")]
     [SerializeField] private GameObject[] corruptionCrystals;
