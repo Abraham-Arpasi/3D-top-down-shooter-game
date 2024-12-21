@@ -2,11 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeadState_Range : EnemyState
+public class BattleState_Range : EnemyState
 {
     private Enemy_Range enemy;
-    private bool interactionDisabled;
-    public DeadState_Range(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
+
+    private float lastTimeShot = -10;
+    private int bulletsShot = 0;
+
+    private int bulletsPerAttack;
+    private float weaponCooldown;
+
+    private float coverCheckTimer;
+    private bool firstTimeAttack = true;
+    public BattleState_Range(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
     {
         enemy = enemyBase as Enemy_Range;
     }
@@ -14,38 +22,160 @@ public class DeadState_Range : EnemyState
     public override void Enter()
     {
         base.Enter();
+        SetupValuesForFirstAttack();
 
-        if (enemy.throwGrenadeState.finishedThrowingGrenade == false)
-            enemy.ThrowGrenade();
-
-        //this will turn off the animator and turn on nav Stopped when enemy is dead.
-        enemy.anim.enabled = false;
         enemy.agent.isStopped = true;
+        enemy.agent.velocity = Vector3.zero;
 
-        enemy.ragdoll.RagdollActive(true);
 
-        stateTimer = 2f;
+        enemy.visuals.EnableIK(true);
+
+        stateTimer = enemy.attackDelay;
+    }
+
+    private void SetupValuesForFirstAttack()
+    {
+        if (firstTimeAttack)
+        {
+            firstTimeAttack = false;
+            bulletsPerAttack = enemy.weaponData.GetBulletsPerAttack();
+            weaponCooldown = enemy.weaponData.GetWeaponCooldown();
+        }
     }
 
     public override void Exit()
     {
         base.Exit();
-
-        DisableInteractionIfShould();
+        enemy.visuals.EnableIK(false);
     }
 
     public override void Update()
     {
         base.Update();
+
+        if (enemy.IsSeeingPlayer())
+        {
+            enemy.FaceTarget(enemy.aim.position);
+        }
+
+        if (enemy.CanThrowGrenade())
+            stateMachine.ChangeState(enemy.throwGrenadeState);
+
+        if(MustAdvancePlayer())
+        {
+            stateMachine.ChangeState(enemy.advancePlayerState);
+        }
+
+        ChangeCoverIfShould();
+
+        if (stateTimer > 0)
+            return;
+
+        if (WeaponOutOfBullets())
+        {
+            if(enemy.IsUnstoppable() && UnstoppableWalkReady())
+            {
+                enemy.advanceDuration = weaponCooldown;
+                stateMachine.ChangeState(enemy.advancePlayerState);
+            }
+
+            if (WeaponOnCooldown())
+                AttemptToResetWeapon();
+
+            return;
+        }
+
+        //enemy can only shoot 10 bullets with a fire rate of 1 bullet per second.
+        if (CanShoot() && enemy.IsAimOnPlayer())
+        {
+            Shoot();
+        }
     }
 
-    private void DisableInteractionIfShould()
+    private bool MustAdvancePlayer()
     {
-        if (stateTimer < 0 && interactionDisabled == false)
+        if (enemy.IsUnstoppable())
+            return false;
+
+        return enemy.IsPlayerInAgressionRange() == false && ReadyToLeaveCover();
+    }
+
+    private bool UnstoppableWalkReady()
+    {
+        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.player.position);
+        bool outOfStoppingDistance = distanceToPlayer > enemy.advanceStoppingDistance;
+        bool unStoppableWalkOnCooldown = Time.time < enemy.weaponData.minWeaponCooldown + enemy.advancePlayerState.lastTimeAdvanced;
+
+        return outOfStoppingDistance && unStoppableWalkOnCooldown == false;
+    }
+
+    private bool ReadyToLeaveCover()
+    {
+        return Time.time > enemy.minCoverTime + enemy.runToCoverState.lastTimeTookCover;
+    }
+
+    private void ChangeCoverIfShould()
+    {
+        if (enemy.coverPerk != CoverPerk.CanTakeAndChangeCover)
+            return;
+
+        coverCheckTimer -= Time.deltaTime;
+
+        if(coverCheckTimer < 0)
         {
-            interactionDisabled = true;
-            //ragdoll.RagdollActive(false);  //commeting this will make the body sink underthe ground when killed.
-            enemy.ragdoll.CollidersActive(false);
+            coverCheckTimer = 0.5f; 
+
+            if (ReadyToChangeCover() && ReadyToLeaveCover())
+            {
+                if (enemy.CanGetCover())
+                    stateMachine.ChangeState(enemy.runToCoverState);
+            }
         }
+    }
+
+    private bool ReadyToChangeCover()
+    {
+        bool inDanger = IsPlayerInClearSight() || IsPlayerClose();
+        bool advanceTimeIsOver = Time.time > enemy.advancePlayerState.lastTimeAdvanced + enemy.advanceDuration;
+
+        return inDanger && advanceTimeIsOver;
+    }
+
+    private bool IsPlayerClose()
+    {
+        return Vector3.Distance(enemy.transform.position, enemy.player.transform.position) < enemy.safeDistance;
+    }
+
+    private bool IsPlayerInClearSight()
+    {
+        Vector3 directionToPlayer = enemy.player.transform.position - enemy.transform.position;
+
+        if(Physics.Raycast(enemy.transform.position, directionToPlayer, out RaycastHit hit))
+        {
+            return hit.transform.parent == enemy.player;
+        }
+        return false;
+    }
+
+    private void AttemptToResetWeapon()
+    {
+        bulletsShot = 0;
+        bulletsPerAttack = enemy.weaponData.GetBulletsPerAttack();
+        weaponCooldown = enemy.weaponData.GetWeaponCooldown();
+    }
+
+    private bool WeaponOnCooldown() => Time.time > lastTimeShot + weaponCooldown;
+    private bool WeaponOutOfBullets() => bulletsShot >= bulletsPerAttack;
+
+    private bool CanShoot()
+    {
+        return Time.time > lastTimeShot + 1 / enemy.weaponData.fireRate;
+    }
+
+    private void Shoot()
+    {
+        enemy.FireSingleBullet();
+        lastTimeShot = Time.time;
+        bulletsShot++;
     }
 }
