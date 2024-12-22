@@ -7,6 +7,8 @@ public class Enemy_Boss : Enemy
     public float attackRange;
 
     [Header("Jump Attack")]
+    public float jumpAttackCooldown = 10;
+    private float lastTimeJumped;
     public float travelTimeToTarget = 1;
     public IdleState_Boss idleState { get; private set; }
     public MoveState_Boss moveState { get; private set; }
@@ -33,9 +35,6 @@ public class Enemy_Boss : Enemy
     {
         base.Update();
 
-        if (Input.GetKeyDown(KeyCode.V))
-            stateMachine.ChangeState(jumpAttackState);
-
         stateMachine.currentState.Update();
 
         if(ShouldEnterBattleMode())
@@ -46,6 +45,16 @@ public class Enemy_Boss : Enemy
     {
         base.EnterBattleMode();
         stateMachine.ChangeState(moveState);
+    }
+
+    public bool CanDoJumpAttack()
+    {
+        if(Time.time > lastTimeJumped + jumpAttackCooldown)
+        {
+            lastTimeJumped = Time.time;
+            return true;
+        }
+        return true;
     }
 
     public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackRange;
