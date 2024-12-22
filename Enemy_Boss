@@ -6,6 +6,8 @@ public class Enemy_Boss : Enemy
 {
     public float attackRange;
 
+    [Header("Jump Attack")]
+    public float travelTimeToTarget = 1;
     public IdleState_Boss idleState { get; private set; }
     public MoveState_Boss moveState { get; private set; }
     public AttackState_Boss attackState { get; private set; }
