@@ -11,6 +11,7 @@ public class Enemy_Boss : Enemy
     public IdleState_Boss idleState { get; private set; }
     public MoveState_Boss moveState { get; private set; }
     public AttackState_Boss attackState { get; private set; }
+    public JumpAttackState_Boss jumpAttackState { get; private set; }
     protected override void Awake()
     {
         base.Awake();
@@ -18,6 +19,7 @@ public class Enemy_Boss : Enemy
         idleState = new IdleState_Boss(this, stateMachine, "Idle");
         moveState = new MoveState_Boss(this, stateMachine, "Move");
         attackState = new AttackState_Boss(this, stateMachine, "Attack");
+        jumpAttackState = new JumpAttackState_Boss(this, stateMachine, "JumpAttack");
     }
 
     protected override void Start()
@@ -30,6 +32,9 @@ public class Enemy_Boss : Enemy
     protected override void Update()
     {
         base.Update();
+
+        if (Input.GetKeyDown(KeyCode.V))
+            stateMachine.ChangeState(jumpAttackState);
 
         stateMachine.currentState.Update();
 
