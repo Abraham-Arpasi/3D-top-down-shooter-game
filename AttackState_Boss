@@ -22,9 +22,12 @@ public class AttackState_Boss : EnemyState
     {
         base.Update();
 
-        if (enemy.PlayerInAttackRange())
-            stateMachine.ChangeState(enemy.idleState);
-        else
-            stateMachine.ChangeState(enemy.moveState);
+        if (triggerCalled)
+        {
+            if (enemy.PlayerInAttackRange())
+                stateMachine.ChangeState(enemy.idleState);
+            else
+                stateMachine.ChangeState(enemy.moveState);
+        }
     }
 }
