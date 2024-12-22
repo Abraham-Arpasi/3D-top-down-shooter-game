@@ -41,6 +41,8 @@ public class Enemy_Boss : Enemy
         stateMachine.ChangeState(moveState);
     }
 
+    public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackRange;
+
     protected override void OnDrawGizmos()
     {
         base.OnDrawGizmos();
