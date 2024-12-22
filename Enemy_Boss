@@ -30,5 +30,21 @@ public class Enemy_Boss : Enemy
         base.Update();
 
         stateMachine.currentState.Update();
+
+        if(ShouldEnterBattleMode())
+            EnterBattleMode();
+    }
+
+    public override void EnterBattleMode()
+    {
+        base.EnterBattleMode();
+        stateMachine.ChangeState(moveState);
+    }
+
+    protected override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }
