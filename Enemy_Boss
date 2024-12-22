@@ -10,6 +10,7 @@ public class Enemy_Boss : Enemy
     public float jumpAttackCooldown = 10;
     private float lastTimeJumped;
     public float travelTimeToTarget = 1;
+    public float minJumpDistanceRequired;
     [Space]
     [SerializeField] private LayerMask whatToIgnore;
     public IdleState_Boss idleState { get; private set; }
@@ -51,6 +52,11 @@ public class Enemy_Boss : Enemy
 
     public bool CanDoJumpAttack()
     {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceToPlayer < minJumpDistanceRequired)
+            return false;
+
         if(Time.time > lastTimeJumped + jumpAttackCooldown && IsPlayerInClearSight())
         {
             lastTimeJumped = Time.time;
@@ -91,5 +97,8 @@ public class Enemy_Boss : Enemy
 
             Gizmos.DrawLine(myPos, playerPos);
         }
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, minJumpDistanceRequired);
     }
 }
