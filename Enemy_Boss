@@ -10,6 +10,8 @@ public class Enemy_Boss : Enemy
     public float jumpAttackCooldown = 10;
     private float lastTimeJumped;
     public float travelTimeToTarget = 1;
+    [Space]
+    [SerializeField] private LayerMask whatToIgnore;
     public IdleState_Boss idleState { get; private set; }
     public MoveState_Boss moveState { get; private set; }
     public AttackState_Boss attackState { get; private set; }
@@ -49,11 +51,26 @@ public class Enemy_Boss : Enemy
 
     public bool CanDoJumpAttack()
     {
-        if(Time.time > lastTimeJumped + jumpAttackCooldown)
+        if(Time.time > lastTimeJumped + jumpAttackCooldown && IsPlayerInClearSight())
         {
             lastTimeJumped = Time.time;
             return true;
         }
+        return false;
+    }
+
+    public bool IsPlayerInClearSight()
+    {
+        Vector3 myPos = transform.position + new Vector3(0, 1.5f, 0);
+        Vector3 playerPos = player.position + Vector3.up;
+        Vector3 directionToPlayer = (playerPos - myPos).normalized;
+
+        if (Physics.Raycast(myPos, directionToPlayer, out RaycastHit hit, 100, ~whatToIgnore))
+        {
+            if (hit.transform == player || hit.transform.parent == player)
+                return true;
+        }
+
         return false;
     }
 
@@ -64,5 +81,15 @@ public class Enemy_Boss : Enemy
         base.OnDrawGizmos();
 
         Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        if (player != null)
+        {
+            Vector3 myPos = transform.position + new Vector3(0, 1.5f, 0);
+            Vector3 playerPos = player.position + Vector3.up;
+
+            Gizmos.color = Color.yellow;
+
+            Gizmos.DrawLine(myPos, playerPos);
+        }
     }
 }
