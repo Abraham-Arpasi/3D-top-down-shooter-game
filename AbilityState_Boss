@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityState_Boss : EnemyState
+public class AttackState_Boss : EnemyState
 {
     private Enemy_Boss enemy;
-    public AbilityState_Boss(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
+    public float lastTimeAttacked {  get; private set; }
+    public AttackState_Boss(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
     {
         enemy = enemyBase as Enemy_Boss;
     }
@@ -14,35 +15,27 @@ public class AbilityState_Boss : EnemyState
     {
         base.Enter();
 
-        stateTimer = enemy.flamethrowDuration;
+        enemy.anim.SetFloat("AttackAnimIndex", Random.Range(0, 2));
         enemy.agent.isStopped = true;
-        enemy.agent.velocity = Vector3.zero;
     }
 
     public override void Update()
     {
         base.Update();
 
-        enemy.FaceTarget(enemy.player.position);
-
-        if (stateTimer < 0 && enemy.flameThrowActive)
-            enemy.ActivateFlameThrower(false);
-
         if (triggerCalled)
-            stateMachine.ChangeState(enemy.moveState);
-    }
-
-    public override void AbilityTrigger()
-    {
-        base.AbilityTrigger();
-
-        enemy.ActivateFlameThrower(true);
+        {
+            if (enemy.PlayerInAttackRange())
+                stateMachine.ChangeState(enemy.idleState);
+            else
+                stateMachine.ChangeState(enemy.moveState);
+        }
     }
 
     public override void Exit()
     {
         base.Exit();
 
-        enemy.SetAbilityOnCooldown();
+        lastTimeAttacked = Time.time;
     }
 }
