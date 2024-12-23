@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Enemy_Boss : Enemy
 {
+    [Header("Boss details")]
+    public float actionCooldown = 10;
+
     public float attackRange;
 
     [Header("Ability")]
