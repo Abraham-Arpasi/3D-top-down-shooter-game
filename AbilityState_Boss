@@ -39,4 +39,10 @@ public class AbilityState_Boss : EnemyState
         enemy.ActivateFlameThrower(true);
     }
 
+    public override void Exit()
+    {
+        base.Exit();
+
+        enemy.SetAbilityOnCooldown();
+    }
 }
