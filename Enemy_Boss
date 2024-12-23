@@ -17,6 +17,7 @@ public class Enemy_Boss : Enemy
     public MoveState_Boss moveState { get; private set; }
     public AttackState_Boss attackState { get; private set; }
     public JumpAttackState_Boss jumpAttackState { get; private set; }
+    public AbilityState_Boss abilityState { get; private set; }
     protected override void Awake()
     {
         base.Awake();
@@ -25,11 +26,17 @@ public class Enemy_Boss : Enemy
         moveState = new MoveState_Boss(this, stateMachine, "Move");
         attackState = new AttackState_Boss(this, stateMachine, "Attack");
         jumpAttackState = new JumpAttackState_Boss(this, stateMachine, "JumpAttack");
+        abilityState = new AbilityState_Boss(this, stateMachine, "Ability");
     }
 
     protected override void Start()
     {
         base.Start();
+
+        if(Input.GetKeyDown(KeyCode.V)) 
+        {
+            stateMachine.ChangeState(abilityState);
+        }
 
         stateMachine.Initialize(idleState);
     }
@@ -46,8 +53,8 @@ public class Enemy_Boss : Enemy
 
     public override void EnterBattleMode()
     {
-        base.EnterBattleMode();
-        stateMachine.ChangeState(moveState);
+        //base.EnterBattleMode();
+       // stateMachine.ChangeState(moveState);
     }
 
     public bool CanDoJumpAttack()
@@ -102,3 +109,4 @@ public class Enemy_Boss : Enemy
         Gizmos.DrawWireSphere(transform.position, minJumpDistanceRequired);
     }
 }
+
