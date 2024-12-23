@@ -14,19 +14,18 @@ public class AbilityState_Boss : EnemyState
     {
         base.Enter();
 
-        stateTimer = enemy.flamethrowDuraction;
-    }
-
-    public override void Exit()
-    {
-        base.Exit();
+        stateTimer = enemy.flamethrowDuration;
+        enemy.agent.isStopped = true;
+        enemy.agent.velocity = Vector3.zero;
     }
 
     public override void Update()
     {
         base.Update();
 
-        if (stateTimer < 0)
+        enemy.FaceTarget(enemy.player.position);
+
+        if (stateTimer < 0 && enemy.flameThrowActive)
             enemy.ActivateFlameThrower(false);
 
         if (triggerCalled)
