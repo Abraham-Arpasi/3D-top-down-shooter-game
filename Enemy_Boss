@@ -6,6 +6,9 @@ public class Enemy_Boss : Enemy
 {
     public float attackRange;
 
+    [Header("Ability")]
+    public float flamethrowDuraction;
+
     [Header("Jump Attack")]
     public float jumpAttackCooldown = 10;
     private float lastTimeJumped;
@@ -55,6 +58,15 @@ public class Enemy_Boss : Enemy
     {
         //base.EnterBattleMode();
        // stateMachine.ChangeState(moveState);
+    }
+
+    public void ActivateFlameThrower(bool activate)
+    {
+        if(!activate)
+        {
+            anim.SetTrigger("StopFlameThrower");
+            return;
+        }
     }
 
     public bool CanDoJumpAttack()
@@ -109,4 +121,3 @@ public class Enemy_Boss : Enemy
         Gizmos.DrawWireSphere(transform.position, minJumpDistanceRequired);
     }
 }
-
