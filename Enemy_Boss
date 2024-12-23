@@ -28,6 +28,7 @@ public class Enemy_Boss : Enemy
     public AttackState_Boss attackState { get; private set; }
     public JumpAttackState_Boss jumpAttackState { get; private set; }
     public AbilityState_Boss abilityState { get; private set; }
+    public Enemy_BossVisuals bossVisuals { get; private set; }
     protected override void Awake()
     {
         base.Awake();
@@ -37,6 +38,7 @@ public class Enemy_Boss : Enemy
         attackState = new AttackState_Boss(this, stateMachine, "Attack");
         jumpAttackState = new JumpAttackState_Boss(this, stateMachine, "JumpAttack");
         abilityState = new AbilityState_Boss(this, stateMachine, "Ability");
+        bossVisuals = GetComponent<Enemy_BossVisuals>();
     }
 
     protected override void Start()
