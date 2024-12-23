@@ -15,6 +15,7 @@ public class Enemy_BossVisuals : MonoBehaviour
     private void Awake()
     {
         enemy = GetComponent<Enemy_Boss>();
+        ResetBatteries();
     }
 
     private void Update()
