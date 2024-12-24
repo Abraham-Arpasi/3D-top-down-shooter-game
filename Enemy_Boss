@@ -33,6 +33,7 @@ public class Enemy_Boss : Enemy
     public JumpAttackState_Boss jumpAttackState { get; private set; }
     public AbilityState_Boss abilityState { get; private set; }
     public Enemy_BossVisuals bossVisuals { get; private set; }
+    public DeadState_Boss deadState { get; private set; }
     protected override void Awake()
     {
         base.Awake();
@@ -43,6 +44,7 @@ public class Enemy_Boss : Enemy
         jumpAttackState = new JumpAttackState_Boss(this, stateMachine, "JumpAttack");
         abilityState = new AbilityState_Boss(this, stateMachine, "Ability");
         bossVisuals = GetComponent<Enemy_BossVisuals>();
+        deadState = new DeadState_Boss(this, stateMachine, "Idle");
     }
 
     protected override void Start()
@@ -60,6 +62,14 @@ public class Enemy_Boss : Enemy
 
         if(ShouldEnterBattleMode())
             EnterBattleMode();
+    }
+
+    public override void GetHit()
+    {
+        base.GetHit();
+
+        if (healthPoints <= 0 && stateMachine.currentState != deadState)
+            stateMachine.ChangeState(deadState);
     }
 
     public override void EnterBattleMode()
@@ -172,4 +182,3 @@ public class Enemy_Boss : Enemy
         Gizmos.DrawWireSphere(transform.position, impactRadius);
     }
 }
-
