@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BossWeaponType { Fist, Hammer }
+
 public class Enemy_Boss : Enemy
 {
     [Header("Boss details")]
+    public BossWeaponType bossWeaponType;
     public float actionCooldown = 10;
 
     public float attackRange;
