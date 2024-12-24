@@ -39,6 +39,7 @@ public class AbilityState_Boss : EnemyState
 
         enemy.ActivateFlameThrower(true);
         enemy.bossVisuals.Dischargebatteries();
+        enemy.bossVisuals.EnableWeaponTrail(false);
     }
 
     public override void Exit()
