@@ -1,18 +1,51 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class DeadState_Boss : MonoBehaviour
+public class DeadState_Boss : EnemyState
 {
-    // Start is called before the first frame update
-    void Start()
+    private Enemy_Boss enemy;
+    private bool interactionDisabled;
+    public DeadState_Boss(Enemy enemyBase, EnemyStateMachine stateMachine, string animBoolName) : base(enemyBase, stateMachine, animBoolName)
     {
-        
+        enemy = enemyBase as Enemy_Boss;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Enter()
     {
-        
+        base.Enter();
+
+        enemy.abilityState.DisableFlameThrower();
+
+        interactionDisabled = false;
+
+        //this will turn off the animator and turn on nav Stopped when enemy is dead.
+        enemy.anim.enabled = false;
+        enemy.agent.isStopped = true;
+
+        enemy.ragdoll.RagdollActive(true);
+
+        stateTimer = 2f;
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+    }
+
+    public override void Update()
+    {
+        base.Update();
+    }
+
+    private void DisableInteractionIfShould()
+    {
+        if (stateTimer < 0 && interactionDisabled == false)
+        {
+            interactionDisabled = true;
+            //ragdoll.RagdollActive(false);  //commeting this will make the body sink underthe ground when killed.
+            enemy.ragdoll.CollidersActive(false);
+        }
     }
 }
