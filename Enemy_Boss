@@ -17,6 +17,10 @@ public class Enemy_Boss : Enemy
     public bool flameThrowActive {  get; private set; }
 
     [Header("Jump Attack")]
+    public float impactRadius = 2.5f;
+    public float impactPower = 5;
+    [SerializeField] private float upForceMultiplier = 10;
+
     public float jumpAttackCooldown = 10;
     private float lastTimeJumped;
     public float travelTimeToTarget = 1;
@@ -97,6 +101,19 @@ public class Enemy_Boss : Enemy
 
     public void SetAbilityOnCooldown() => lastTImeUsedAbility = Time.time;
 
+    public void JumpImpact()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, impactRadius);
+
+        foreach (Collider hit in colliders)
+        {
+            Rigidbody rb = hit.GetComponent<Rigidbody>();
+
+            if (rb != null)
+                rb.AddExplosionForce(impactPower, transform.position, impactRadius, upForceMultiplier, ForceMode.Impulse);
+        }
+    }
+
     public bool CanDoJumpAttack()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -150,5 +167,9 @@ public class Enemy_Boss : Enemy
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, minJumpDistanceRequired);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, impactRadius);
     }
 }
+
