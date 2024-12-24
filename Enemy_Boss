@@ -28,6 +28,7 @@ public class Enemy_Boss : Enemy
     private float lastTimeJumped;
     public float travelTimeToTarget = 1;
     public float minJumpDistanceRequired;
+    public Transform impactPoint;
     [Space]
     [SerializeField] private LayerMask whatToIgnore;
     public IdleState_Boss idleState { get; private set; }
@@ -119,7 +120,14 @@ public class Enemy_Boss : Enemy
 
     public void JumpImpact()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, impactRadius);
+        Transform impactPoint = this.impactPoint;
+
+        if (impactPoint == null)
+        {
+            impactPoint = transform;
+        }
+
+        Collider[] colliders = Physics.OverlapSphere(impactPoint.position, impactRadius);
 
         foreach (Collider hit in colliders)
         {
