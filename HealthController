@@ -4,15 +4,27 @@ using UnityEngine;
 
 public class HealthController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public int maxHealth;
+    public int currentHealth;
+   protected virtual void Awake()
     {
-        
+        currentHealth = maxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
+    public virtual void ReduceHealth()
     {
-        
+        currentHealth--;
     }
+
+    public virtual void IncreaseHealth()
+    {
+        currentHealth++;
+
+        if(currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+    }
+
+    public bool ShouldDie() => currentHealth <= 0;
 }
