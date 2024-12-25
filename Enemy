@@ -7,7 +7,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] protected int healthPoints = 20;
+    public int healthPoints = 20;
 
     [Header("Idle Info")]
     public float idleTime;
@@ -34,11 +34,13 @@ public class Enemy : MonoBehaviour
     public EnemyStateMachine stateMachine { get; private set; }
     public Enemy_Visuals visuals { get; private set; }
     public Enemy_Ragdoll ragdoll { get; private set; }
+    public Enemy_Health health { get; private set; }
 
     protected virtual void Awake()
     {
         stateMachine = new EnemyStateMachine();
 
+        health = GetComponent<Enemy_Health>();
         ragdoll = GetComponent<Enemy_Ragdoll>();
         visuals = GetComponent<Enemy_Visuals>();
         agent = GetComponent<NavMeshAgent>();
@@ -94,8 +96,7 @@ public class Enemy : MonoBehaviour
     public virtual void GetHit()
     {
         EnterBattleMode();
-        Debug.Log(gameObject.name + "Enemy hit");
-        healthPoints--;
+        health.ReduceHealth();
     }
 
     public virtual void DeathImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
