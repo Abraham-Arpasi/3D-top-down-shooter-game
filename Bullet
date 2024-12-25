@@ -87,29 +87,37 @@ public class Bullet : MonoBehaviour
         CreateImpactFx();
         ReturnBulletToPool();
 
-        Enemy enemy = collision.gameObject.GetComponentInParent<Enemy>();
+        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+        damageable?.TakeDamage();
+
         Enemy_Shield shield = collision.gameObject.GetComponent<Enemy_Shield>();
 
         //this will reduce the shields durability when it gets hit by bullets.
-        if(shield != null)
+        if (shield != null)
         {
             shield.ReduceDurability();
             return;
         }
+
+        ApplyBulletImpactToEnemy(collision);
+
+        //this will stick to objects that it collides with.
+        //rb.constraints = RigidbodyConstraints.FreezeAll;
+
+    }
+
+    private void ApplyBulletImpactToEnemy(Collision collision)
+    {
+        Enemy enemy = collision.gameObject.GetComponentInParent<Enemy>();
         //this will play the gethit function when enemy gets hit with the bullet.
-        if(enemy != null)
+        if (enemy != null)
         {
             //this will setup impact force on the body part that got hit.
             Vector3 force = rb.velocity.normalized * ImpactForce;
             Rigidbody hitRigidbody = collision.collider.attachedRigidbody;
 
-            enemy.GetHit();
             enemy.DeathImpact(force, collision.contacts[0].point, hitRigidbody);
         }
-
-        //this will stick to objects that it collides with.
-        //rb.constraints = RigidbodyConstraints.FreezeAll;
-
     }
 
     protected void CreateImpactFx()
