@@ -26,15 +26,21 @@ public class AbilityState_Boss : EnemyState
 
         enemy.FaceTarget(enemy.player.position);
 
-        if (stateTimer < 0)
+        if (ShouldDisableFlameThrower())
             DisableFlameThrower();
 
         if (triggerCalled)
             stateMachine.ChangeState(enemy.moveState);
     }
 
+    private bool ShouldDisableFlameThrower() => stateTimer < 0;
+    
+
     public void DisableFlameThrower()
     {
+        if (enemy.bossWeaponType != BossWeaponType.Fist)
+            return;
+
         if (enemy.flameThrowActive == false)
             return;
 
