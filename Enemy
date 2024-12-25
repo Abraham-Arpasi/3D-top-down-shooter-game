@@ -107,9 +107,12 @@ public class Enemy : MonoBehaviour
 
     }
 
-    public virtual void DeathImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
+    public virtual void BulletImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
     {
+        if (health.ShouldDie())
+        {
         StartCoroutine(DeathImpactCoroutine(force, hitPoint, rb));
+        }
     }
 
     private IEnumerator DeathImpactCoroutine(Vector3 force, Vector3 hitPoint, Rigidbody rb)
