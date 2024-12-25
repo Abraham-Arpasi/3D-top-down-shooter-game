@@ -45,9 +45,18 @@ public class AbilityState_Boss : EnemyState
     {
         base.AbilityTrigger();
 
-        enemy.ActivateFlameThrower(true);
-        enemy.bossVisuals.Dischargebatteries();
-        enemy.bossVisuals.EnableWeaponTrail(false);
+        if(enemy.bossWeaponType == BossWeaponType.Fist)
+        {
+            enemy.ActivateFlameThrower(true);
+            enemy.bossVisuals.Dischargebatteries();
+            enemy.bossVisuals.EnableWeaponTrail(false);
+        }
+
+        if(enemy.bossWeaponType == BossWeaponType.Hammer)
+        {
+            enemy.ActivateHammer();
+        }
+
     }
 
     public override void Exit()
