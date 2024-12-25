@@ -13,6 +13,7 @@ public class Enemy_Boss : Enemy
     public float attackRange;
 
     [Header("Ability")]
+    public float minAbilityDistance;
     public float abilityCooldown;
     private float lastTImeUsedAbility;
 
@@ -114,11 +115,16 @@ public class Enemy_Boss : Enemy
     {
         GameObject newActivation = ObjectPool.instance.GetObject(HammerFxPrefab, impactPoint);
 
-        ObjectPool.instance.ReturnObject(newActivation, 1);
+        ObjectPool.instance.ReturnObject(newActivation, 0.1f);
     }
 
     public bool CanDoAbility()
     {
+        bool playerWithinDistance = Vector3.Distance(transform.position, player.position) < minAbilityDistance;
+
+        if (playerWithinDistance == false)
+            return false;
+
         if(Time.time > lastTImeUsedAbility + abilityCooldown)
         {
           // lecture 147. //lastTImeUsedAbility = Time.time;
@@ -206,5 +212,8 @@ public class Enemy_Boss : Enemy
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, impactRadius);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, minAbilityDistance);
     }
 }
