@@ -13,11 +13,16 @@ public class Enemy_Boss : Enemy
     public float attackRange;
 
     [Header("Ability")]
-    public ParticleSystem flameThrower;
     public float abilityCooldown;
     private float lastTImeUsedAbility;
+
+    [Header("FlameThrower")]
+    public ParticleSystem flameThrower;
     public float flamethrowDuration;
     public bool flameThrowActive {  get; private set; }
+
+    [Header("Hammer")]
+    public GameObject HammerFxPrefab;
 
     [Header("Jump Attack")]
     public float impactRadius = 2.5f;
@@ -103,6 +108,13 @@ public class Enemy_Boss : Enemy
 
         flameThrower.Clear();
         flameThrower.Play();
+    }
+
+    public void ActivateHammer()
+    {
+        GameObject newActivation = ObjectPool.instance.GetObject(HammerFxPrefab, impactPoint);
+
+        ObjectPool.instance.ReturnObject(newActivation, 1);
     }
 
     public bool CanDoAbility()
