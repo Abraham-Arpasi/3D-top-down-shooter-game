@@ -44,18 +44,15 @@ public class Enemy_Axe : MonoBehaviour
     }
 
     //this will make the axe disappear if it gets shot or hits the player.
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        IDamageable damagable = other.GetComponent<IDamageable>();
+        IDamageable damagable = collision.gameObject.GetComponent<IDamageable>();
+        damagable?.TakeDamage();
 
-        if(damagable != null)
-        {
+        GameObject newFx = ObjectPool.instance.GetObject(impactFx, transform);
 
-            GameObject newFx = ObjectPool.instance.GetObject(impactFx, transform);
+        ObjectPool.instance.ReturnObject(gameObject);
+        ObjectPool.instance.ReturnObject(newFx, 0.25f);
 
-            ObjectPool.instance.ReturnObject(gameObject);
-            ObjectPool.instance.ReturnObject(newFx, 0.25f);
-        }
-        
     }
 }
