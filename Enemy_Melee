@@ -1,218 +1,202 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-[System.Serializable]
-public struct AttackData_EnemyMelee
+//this will attach a navmeshagent to whatever inherits from the enemy.
+[RequireComponent(typeof(NavMeshAgent))]
+public class Enemy : MonoBehaviour
 {
-    public string attackName;
-    public float attackRange;
-    public float moveSpeed;
-    public float attackIndex;
-    [Range(1,2)]
-    public float animationSpeed;
-    public AttackType_Melee attackType;
-}
-public enum AttackType_Melee { Close, Charge }
-public enum EnemyMelee_Type { Regular, Shield, Dodge, AxeThrow}
-
-public class Enemy_Melee : Enemy
-{
-
-    public IdleState_Melee idleState {  get; private set; }
-    public MoveState_Melee moveState { get; private set; }
-    public RecoveryState_Melee recoveryState { get; private set; }
-    public ChaseState_Melee chaseState { get; private set; }
-    public AttackState_Melee attackState { get; private set; }
-
-    public DeadState_Melee deadState { get; private set; }
-
-    public AbilityState_Melee abilityState { get; private set; }
-
-    [Header("Enemy info")]
-    public EnemyMelee_Type meleeType;
-    public Enemy_MeleeWeaponType weaponType;
-
-    [Header("Shield")]
-    public int shieldDurability;
-    [SerializeField] public Transform shieldTransform;
-
-    [Header("Dodge")]
-    public float dodgeCooldown;
-    private float lastTimeDodge = -10;
-
-    [Header("Axe Throw info")]
-    public GameObject axePrefab;
-    public float axeFlySpeed;
-    public float axeAimTimer;
-    public float axeThrowCooldown;
-    private float lastTimeAxeThrown;
-    public Transform axeStartPoint;
-
-    [Header("Attack info")]
-    public AttackData_EnemyMelee attackData;
-    public List<AttackData_EnemyMelee> attackList;
-    private Enemy_WeaponModel currentWeapon;
-    private bool isAttackReady;
+    public LayerMask whatIsAlly;
+    public LayerMask whatIsPlayer;
     [Space]
-    [SerializeField] private GameObject meleeAttackFx;
+    public int healthPoints = 20;
 
-    protected override void Awake()
+    [Header("Idle Info")]
+    public float idleTime;
+    public float aggresionRange;
+
+    [Header("Move Info")]
+    public float walkSpeed = 1.5f;
+    public float runSpeed = 3;
+    public float turnSpeed;
+    private bool manualMovement;
+    //this will be used for the enemy rotation when attacking.
+    private bool manualRotation;
+    //this will make the patrol points better.
+    private Vector3[] patrolPointsPosition;
+    [SerializeField] private Transform[] patrolPoints;
+    private int currentPatrolIndex;
+
+    public bool inBattleMode { get; private set; }
+    protected bool isMeleeAttackReady;
+
+    public Transform player { get; private set; }
+
+    public Animator anim { get; private set; }
+    public NavMeshAgent agent { get; private set; }
+    public EnemyStateMachine stateMachine { get; private set; }
+    public Enemy_Visuals visuals { get; private set; }
+    public Ragdoll ragdoll { get; private set; }
+    public Enemy_Health health { get; private set; }
+
+    protected virtual void Awake()
     {
-        base.Awake();
+        stateMachine = new EnemyStateMachine();
 
-        idleState = new IdleState_Melee(this, stateMachine, "Idle");
-        moveState = new MoveState_Melee(this, stateMachine, "Move");
-        recoveryState = new RecoveryState_Melee(this, stateMachine, "Recovery");
-        chaseState = new ChaseState_Melee(this, stateMachine, "Chase");
-        attackState = new AttackState_Melee(this, stateMachine, "Attack");
-        deadState = new DeadState_Melee(this, stateMachine, "Idle");
-        abilityState = new AbilityState_Melee(this, stateMachine, "AxeThrow");
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-
-        stateMachine.Initialize(idleState);
-
-        InitializePerk();
-
-        visuals.SetupLook();
-
-        UpdateAttackData();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        stateMachine.currentState.Update();
-        
-        MeleeAttackCheck(currentWeapon.damagePoints, currentWeapon.attackRadius,meleeAttackFx);
-    }
-
-    public void EnableAttackCheck(bool enable) => isAttackReady = enable;
-
-    public override void EnterBattleMode()
-    {
-        if (inBattleMode)
-            return;
-
-        base.EnterBattleMode();
-        stateMachine.ChangeState(recoveryState);
+        health = GetComponent<Enemy_Health>();
+        ragdoll = GetComponent<Ragdoll>();
+        visuals = GetComponent<Enemy_Visuals>();
+        agent = GetComponent<NavMeshAgent>();
+        anim = GetComponentInChildren<Animator>();
+        player = GameObject.Find("Player").GetComponent<Transform>();
 
     }
 
-    protected override void InitializePerk()
+    protected virtual void Start()
     {
-        //this will make sure if we have a throwing type of enemy it will have an throw axe equipped. 
-        if(meleeType == EnemyMelee_Type.AxeThrow)
+        InitializePatrolPoints();
+    }
+
+    //this will make the patrol points better and cleaner.
+    private void InitializePatrolPoints()
+    {
+        patrolPointsPosition = new Vector3[patrolPoints.Length];
+
+        for(int i = 0; i < patrolPoints.Length; i++)
         {
-            weaponType = Enemy_MeleeWeaponType.Throw;
-        }
-        if(meleeType == EnemyMelee_Type.Shield)
-        {
-            anim.SetFloat("ChaseIndex", 1);
-            shieldTransform.gameObject.SetActive(true);
-            weaponType = Enemy_MeleeWeaponType.OneHand;
-        }
-        if(meleeType == EnemyMelee_Type.Dodge)
-        {
-            weaponType = Enemy_MeleeWeaponType.Unarmed;
+            patrolPointsPosition[i] = patrolPoints[i].position;
+            patrolPoints[i].gameObject.SetActive(false);
         }
     }
 
-    public override void Die()
+    protected virtual void Update()
     {
-        base.Die();
-
-        if (stateMachine.currentState != deadState)
-            stateMachine.ChangeState(deadState);
-    }
-
-    public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackData.attackRange;
-   
-    public void ActivateDodgeRoll()
-    {
-        if (meleeType != EnemyMelee_Type.Dodge)
-            return;
-
-        if (stateMachine.currentState != chaseState)
-            return;
-
-        if (Vector3.Distance(transform.position, player.position) < 2)
-            return;
-
-        float dodgeAnimationDiration = GetanimationClipDuration("Dodge Roll");
-
-        if(Time.time > dodgeCooldown + dodgeAnimationDiration + lastTimeDodge)
+        if (ShouldEnterBattleMode())
         {
-            lastTimeDodge = Time.time;
-            anim.SetTrigger("Dodge");
+            EnterBattleMode();
         }
-    } 
-
-    public void ThrowAxe()
-    {
-        GameObject newAxe = ObjectPool.instance.GetObject(axePrefab, axeStartPoint);
-
-        newAxe.GetComponent<Enemy_Axe>().AxeSetup(axeFlySpeed, player, axeAimTimer);
     }
 
-    public bool canThrowAxe()
+    protected virtual void InitializePerk()
     {
-        if (meleeType != EnemyMelee_Type.AxeThrow)
-            return false;
 
-        if (Time.time > lastTimeAxeThrown + axeThrowCooldown)
+    }
+
+    //this will check if enemy should enter battle mode.
+    protected bool ShouldEnterBattleMode()
+    {
+        if(IsPlayerInAgressionRange() && !inBattleMode)
         {
-            lastTimeAxeThrown = Time.deltaTime;
+            EnterBattleMode();
             return true;
         }
         return false;
     }
-
-    private float GetanimationClipDuration(string clipName)
+    public virtual void EnterBattleMode()
     {
-        AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+        inBattleMode = true;
+    }
+    public virtual void GetHit()
+    {
+        health.ReduceHealth();
+        if (health.ShouldDie())
+            Die();
 
-        foreach(AnimationClip clip in clips)
+        EnterBattleMode();
+    }
+
+    public virtual void Die()
+    {
+
+    }
+    public void MeleeAttackCheck(Transform[] damagePoints, float attackCheckRadius, GameObject fx)
+    {
+        if (isMeleeAttackReady == false)
+            return;
+
+        foreach (Transform attackPoint in damagePoints)
         {
-            if (clip.name == clipName)
-                return clip.length;
+            Collider[] detectedHits = Physics.OverlapSphere(attackPoint.position, attackCheckRadius, whatIsPlayer);
+
+            for (int i = 0; i < detectedHits.Length; i++)
+            {
+                IDamageable damagable = detectedHits[i].GetComponent<IDamageable>();
+
+                if (damagable != null)
+                {
+                    damagable?.TakeDamage();
+                    isMeleeAttackReady = false;
+                    GameObject newAttackFx = ObjectPool.instance.GetObject(fx, attackPoint);
+                    ObjectPool.instance.ReturnObject(newAttackFx, 0.1f);
+                    return;
+                }
+            }
         }
-
-        Debug.Log("no animation found " + clipName);
-        return 0;
-    }
-    public override void AbilityTrigger()
-    {
-        base.AbilityTrigger();
-
-        walkSpeed = walkSpeed * 0.6f;
-        Debug.Log("Create Axe");
-        visuals.EnableWeaponModel(false);
     }
 
-    public void UpdateAttackData()
-    {
-        currentWeapon = visuals.currentWeaponModel.GetComponent<Enemy_WeaponModel>();
+    public void EnableMeleeAttackCheck(bool enable) => isMeleeAttackReady = enable;
 
-        if (currentWeapon.weaponData != null)
+    public virtual void BulletImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
+    {
+        if (health.ShouldDie())
         {
-            attackList = new List<AttackData_EnemyMelee>(currentWeapon.weaponData.attackData);
-            turnSpeed = currentWeapon.weaponData.turnSpeed;
+        StartCoroutine(DeathImpactCoroutine(force, hitPoint, rb));
         }
     }
 
-    protected override void OnDrawGizmos()
+    private IEnumerator DeathImpactCoroutine(Vector3 force, Vector3 hitPoint, Rigidbody rb)
     {
-        base.OnDrawGizmos();
+        yield return new WaitForSeconds(0.1f);
+        rb.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
+    }
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, attackData.attackRange);
+    public bool IsPlayerInAgressionRange() => Vector3.Distance(transform.position, player.position) < aggresionRange;
+
+    //this will show the aggresion range of the enemy.
+    protected virtual void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, aggresionRange);
+    }
+
+    public void ActivateManualMovement(bool manualMovement) => this.manualMovement = manualMovement;
+    public bool ManualMovementActive() => manualMovement;
+
+    public void ActivateManualRotation(bool manualRotation) => this.manualRotation = manualRotation;
+    public bool ManualRotationActive() => manualRotation;
+
+    public void AnimationTrigger() => stateMachine.currentState.AnimationTrigger();
+
+    //this will be used for when the enemy has multiple abilities like throwing axes or grenades
+    public virtual void AbilityTrigger()
+    {
+        stateMachine.currentState.AbilityTrigger();
+    }
+    
+    public Vector3 GetPatrolDestination()
+    {
+        Vector3 destination = patrolPointsPosition[currentPatrolIndex];
+        Debug.Log(destination);
+
+        currentPatrolIndex++;
+
+        if(currentPatrolIndex >= patrolPoints.Length)
+            currentPatrolIndex = 0;
+
+        return destination;
+    }
+    //this will have the enemy rotate towards the target.
+    public void FaceTarget(Vector3 target, float turnSpeed = 0)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(target - transform.position);
+
+        Vector3 currentEulerAngels = transform.rotation.eulerAngles;
+
+        if(turnSpeed == 0)
+            turnSpeed = this.turnSpeed;
+
+        float yRotation = Mathf.LerpAngle(currentEulerAngels.y, targetRotation.eulerAngles.y, turnSpeed * Time.deltaTime);
+
+        transform.rotation = Quaternion.Euler(currentEulerAngels.x, yRotation, currentEulerAngels.z);
     }
 }
-
