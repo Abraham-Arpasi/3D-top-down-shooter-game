@@ -50,6 +50,7 @@ public class Enemy_Melee : Enemy
     public AttackData_EnemyMelee attackData;
     public List<AttackData_EnemyMelee> attackList;
     private Enemy_WeaponModel currentWeapon;
+    private bool isAttackReady;
 
     protected override void Awake()
     {
@@ -82,8 +83,34 @@ public class Enemy_Melee : Enemy
         base.Update();
 
         stateMachine.currentState.Update();
-
+        
+        AttackCheck();
     }
+
+    public void AttackCheck()
+    {
+        if (isAttackReady == false)
+            return;
+
+        foreach(Transform attackPoint in currentWeapon.damagePoints)
+        {
+            Collider[] detectedHits = Physics.OverlapSphere(attackPoint.position, currentWeapon.attackRadius, whatIsPlayer);
+     
+            for(int i = 0; i < detectedHits.Length; i++)
+            {
+                IDamageable damagable = detectedHits[i].GetComponent<IDamageable>();
+
+                if (damagable != null)
+                {
+                    damagable?.TakeDamage();
+                    isAttackReady = false;
+                    return;
+                }
+            }
+        }
+    }
+
+    public void EnableAttackCheck(bool enable) => isAttackReady = enable;
 
     public override void EnterBattleMode()
     {
