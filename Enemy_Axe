@@ -42,15 +42,16 @@ public class Enemy_Axe : MonoBehaviour
     //this will make the axe disappear if it gets shot or hits the player.
     private void OnTriggerEnter(Collider other)
     {
-        Bullet bullet = other.GetComponent<Bullet>();
-        Player player = other.GetComponent<Player>();
+        IDamageable damagable = other.GetComponent<IDamageable>();
 
-        if (bullet != null || player != null)
+        if(damagable != null)
         {
+
             GameObject newFx = ObjectPool.instance.GetObject(impactFx, transform);
 
             ObjectPool.instance.ReturnObject(gameObject);
             ObjectPool.instance.ReturnObject(newFx, 0.25f);
         }
+        
     }
 }
