@@ -4,18 +4,42 @@ using UnityEngine;
 
 public class Player_HitBox : HitBox
 {
-    private Player player;
+    [SerializeField] private Player player;
+    
+//private Player player;
     protected override void Awake()
     {
         base.Awake();
 
-        player.GetComponentInParent<Player>();
+        player = GetComponentInParent<Player>();
+
+        if (player == null)
+        {
+            Debug.LogError($"Player component not found in parent hierarchy of {gameObject.name}");
+            Transform current = transform;
+            while (current != null)
+            {
+                Debug.Log($"Parent GameObject: {current.name}");
+                current = current.parent;
+            }
+        }
+        else
+        {
+            Debug.Log($"Player component found on {player.gameObject.name}");
+        }
     }
 
     public override void TakeDamage()
     {
         base.TakeDamage();
 
+        if(player != null) 
+        { 
         player.health.ReduceHealth();
+        }
+        else
+        {
+            Debug.LogError("Player reference is null");
+        }
     }
 }
