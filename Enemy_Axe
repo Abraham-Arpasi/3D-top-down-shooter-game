@@ -35,8 +35,12 @@ public class Enemy_Axe : MonoBehaviour
         }
        
 
-        rb.velocity = direction.normalized * flySpeed;
         transform.forward = rb.velocity;
+    }
+
+    private void FixedUpdate()
+    {
+        rb.velocity = direction.normalized * flySpeed;
     }
 
     //this will make the axe disappear if it gets shot or hits the player.
