@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
 
     public Ragdoll Ragdoll { get; private set; }
 
+    public Animator anim {  get; private set; }
+
     private void Awake()
     {
        
@@ -33,6 +35,7 @@ public class Player : MonoBehaviour
         weaponVisuals = GetComponent<PlayerWeaponVisuals>();
         interaction = GetComponent<PlayerInteraction>();
         health = GetComponent<Player_Health>();
+        anim = GetComponentInChildren<Animator>();
     }
 
     private void OnEnable()
