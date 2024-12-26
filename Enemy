@@ -8,6 +8,8 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public LayerMask whatIsAlly;
+    public LayerMask whatIsPlayer;
+    [Space]
     public int healthPoints = 20;
 
     [Header("Idle Info")]
@@ -27,6 +29,7 @@ public class Enemy : MonoBehaviour
     private int currentPatrolIndex;
 
     public bool inBattleMode { get; private set; }
+    protected bool isMeleeAttackReady;
 
     public Transform player { get; private set; }
 
@@ -34,7 +37,7 @@ public class Enemy : MonoBehaviour
     public NavMeshAgent agent { get; private set; }
     public EnemyStateMachine stateMachine { get; private set; }
     public Enemy_Visuals visuals { get; private set; }
-    public Enemy_Ragdoll ragdoll { get; private set; }
+    public Ragdoll ragdoll { get; private set; }
     public Enemy_Health health { get; private set; }
 
     protected virtual void Awake()
@@ -42,7 +45,7 @@ public class Enemy : MonoBehaviour
         stateMachine = new EnemyStateMachine();
 
         health = GetComponent<Enemy_Health>();
-        ragdoll = GetComponent<Enemy_Ragdoll>();
+        ragdoll = GetComponent<Ragdoll>();
         visuals = GetComponent<Enemy_Visuals>();
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponentInChildren<Animator>();
@@ -106,6 +109,30 @@ public class Enemy : MonoBehaviour
     public virtual void Die()
     {
 
+    }
+    public virtual void MeleeAttackCheck(Transform[] damagePoints, float attackCheckRadius, GameObject fx)
+    {
+        if (isMeleeAttackReady == false)
+            return;
+
+        foreach (Transform attackPoint in damagePoints)
+        {
+            Collider[] detectedHits = Physics.OverlapSphere(attackPoint.position, attackCheckRadius, whatIsPlayer);
+
+            for (int i = 0; i < detectedHits.Length; i++)
+            {
+                IDamageable damagable = detectedHits[i].GetComponent<IDamageable>();
+
+                if (damagable != null)
+                {
+                    damagable?.TakeDamage();
+                    isMeleeAttackReady = false;
+                    GameObject newAttackFx = ObjectPool.instance.GetObject(fx, attackPoint);
+                    ObjectPool.instance.ReturnObject(newAttackFx, 0.1f);
+                    return;
+                }
+            }
+        }
     }
 
     public virtual void BulletImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
