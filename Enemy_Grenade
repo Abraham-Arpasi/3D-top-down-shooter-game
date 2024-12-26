@@ -13,41 +13,66 @@ public class Enemy_Grenade : MonoBehaviour
     private float impactPower;
 
     private LayerMask allyLayerMask;
+    private bool canExplode = true;
     private void Awake() => rb = GetComponent<Rigidbody>();
 
     private void Update()
     {
         timer -= Time.deltaTime;
 
-        if (timer < 0)
+        if (timer < 0 && canExplode)
             Explode();
     }
 
     private void Explode()
     {
-        GameObject newFx = ObjectPool.instance.GetObject(explosionFx, transform);
+        canExplode = false;
 
-        ObjectPool.instance.ReturnObject(newFx, 0.1f);
-        ObjectPool.instance.ReturnObject(gameObject);
+        PlayExplosionFx();
+
+        HashSet<GameObject> uniqueEntities = new HashSet<GameObject>(); 
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, impactRadius);
 
-        foreach(Collider hit in colliders)
+        foreach (Collider hit in colliders)
         {
             if (IsTargetValid(hit) == false)
                 continue;
 
-            IDamageable damagable = hit.GetComponent<IDamageable>();
-            damagable?.TakeDamage();
+            GameObject rootEntity = hit.transform.root.gameObject;
+            if (uniqueEntities.Add(rootEntity) == false)
+                continue;
 
-            Rigidbody rb = hit.GetComponent<Rigidbody>();
+            ApplyDamageTo(hit);
 
-            if (rb != null)
-                rb.AddExplosionForce(impactPower, transform.position, impactRadius, upwardsmultipler, ForceMode.Impulse);
+            ApplyPhysicalForceTo(hit);
         }
     }
+
+    private void ApplyPhysicalForceTo(Collider hit)
+    {
+        Rigidbody rb = hit.GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.AddExplosionForce(impactPower, transform.position, impactRadius, upwardsmultipler, ForceMode.Impulse);
+    }
+
+    private static void ApplyDamageTo(Collider hit)
+    {
+        IDamageable damagable = hit.GetComponent<IDamageable>();
+        damagable?.TakeDamage();
+    }
+
+    private void PlayExplosionFx()
+    {
+        GameObject newFx = ObjectPool.instance.GetObject(explosionFx, transform);
+        ObjectPool.instance.ReturnObject(newFx, 0.1f);
+        ObjectPool.instance.ReturnObject(gameObject);
+    }
+
     public void SetupGrenade(LayerMask allyLayerMask, Vector3 target, float timeToTarget, float countdown, float impactPower)
     {
+        canExplode = true;
+
         this.allyLayerMask = allyLayerMask;
 
         rb.velocity = CalculateLaunchVelocity(target, timeToTarget);
