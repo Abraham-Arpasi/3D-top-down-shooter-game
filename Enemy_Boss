@@ -9,7 +9,6 @@ public class Enemy_Boss : Enemy
     [Header("Boss details")]
     public BossWeaponType bossWeaponType;
     public float actionCooldown = 10;
-
     public float attackRange;
 
     [Header("Ability")]
@@ -37,6 +36,10 @@ public class Enemy_Boss : Enemy
     public Transform impactPoint;
     [Space]
     [SerializeField] private LayerMask whatToIgnore;
+
+    [Header("Attack")]
+    [SerializeField] private Transform[] damagePoints;
+    private float attackRadius;
     public IdleState_Boss idleState { get; private set; }
     public MoveState_Boss moveState { get; private set; }
     public AttackState_Boss attackState { get; private set; }
@@ -207,13 +210,21 @@ public class Enemy_Boss : Enemy
             Gizmos.DrawLine(myPos, playerPos);
         }
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, minJumpDistanceRequired);
-
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, impactRadius);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, minAbilityDistance);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, minJumpDistanceRequired);
+
+        if(damagePoints.Length > 0)
+        {
+            foreach(var damagePoint in damagePoints)
+            {
+                Gizmos.DrawWireSphere(damagePoint.position, attackRange);
+            }
+        }
     }
 }
