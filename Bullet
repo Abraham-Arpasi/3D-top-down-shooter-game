@@ -61,10 +61,10 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    protected void ReturnBulletToPool()
+    protected void ReturnBulletToPool(float delay = 0)
     {
         //this will let the bullet re enter the queue instead of destroying it.
-        ObjectPool.instance.ReturnObject(gameObject);
+        ObjectPool.instance.ReturnObject(gameObject, delay);
     }
 
     protected void DiableBulletIfNeeded()
@@ -93,7 +93,7 @@ public class Bullet : MonoBehaviour
             if ((allyLayerMask.value & (1 << collision.gameObject.layer)) > 0)
             {
                 //this is to help with the recisha when hitting allies.
-                ObjectPool.instance.ReturnObject(gameObject, 10);
+                ReturnBulletToPool(10);
                 return;
             }
         }
