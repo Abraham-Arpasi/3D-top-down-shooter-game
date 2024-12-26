@@ -49,6 +49,9 @@ public class PlayerAim : MonoBehaviour
 
     private void Update()
     {
+        if(player.health.isDead)
+            return;
+
         //simple input to switch on precise aim or switch off.
         if(Input.GetKeyDown(KeyCode.P))
             isAimingPrecisly = !isAimingPrecisly;
