@@ -51,6 +51,8 @@ public class Enemy_Melee : Enemy
     public List<AttackData_EnemyMelee> attackList;
     private Enemy_WeaponModel currentWeapon;
     private bool isAttackReady;
+    [Space]
+    [SerializeField] private GameObject meleeAttackFx;
 
     protected override void Awake()
     {
@@ -104,6 +106,8 @@ public class Enemy_Melee : Enemy
                 {
                     damagable?.TakeDamage();
                     isAttackReady = false;
+                    GameObject newAttackFx = ObjectPool.instance.GetObject(meleeAttackFx, attackPoint);
+                    ObjectPool.instance.ReturnObject(newAttackFx, 0.1f);
                     return;
                 }
             }
