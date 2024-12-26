@@ -49,6 +49,7 @@ public class Enemy_Melee : Enemy
     [Header("Attack info")]
     public AttackData_EnemyMelee attackData;
     public List<AttackData_EnemyMelee> attackList;
+    private Enemy_WeaponModel currentWeapon;
 
     protected override void Awake()
     {
@@ -113,14 +114,12 @@ public class Enemy_Melee : Enemy
         }
     }
 
-    public override void GetHit()
+    public override void Die()
     {
-        base.GetHit();
+        base.Die();
 
-        if(healthPoints <= 0 && stateMachine.currentState != deadState)
-        {
+        if (stateMachine.currentState != deadState)
             stateMachine.ChangeState(deadState);
-        }
     }
 
     public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackData.attackRange;
@@ -189,7 +188,7 @@ public class Enemy_Melee : Enemy
 
     public void UpdateAttackData()
     {
-        Enemy_WeaponModel currentWeapon = visuals.currentWeaponModel.GetComponent<Enemy_WeaponModel>();
+        currentWeapon = visuals.currentWeaponModel.GetComponent<Enemy_WeaponModel>();
 
         if (currentWeapon.weaponData != null)
         {
