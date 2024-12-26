@@ -127,10 +127,10 @@ public class Enemy_Range : Enemy
         //this will drop the grenade at the enemies feet when its dead.
         if(stateMachine.currentState == deadState)
         {
-            newGranadeScript.SetupGrenade(transform.position, 1, explosionTimer, impactPower);
+            newGranadeScript.SetupGrenade(whatIsAlly, transform.position, 1, explosionTimer, impactPower);
         }
 
-        newGranadeScript.SetupGrenade(player.transform.position, timeToTarget, explosionTimer, impactPower);
+        newGranadeScript.SetupGrenade(whatIsAlly, player.transform.position, timeToTarget, explosionTimer, impactPower);
         return;
     }
 
@@ -223,7 +223,7 @@ public class Enemy_Range : Enemy
         GameObject newBullet = ObjectPool.instance.GetObject(bulletPrefab, gunPoint);
         newBullet.transform.rotation = Quaternion.LookRotation(gunPoint.forward);
 
-        newBullet.GetComponent<Bullet>().BulletSetup();
+        newBullet.GetComponent<Bullet>().BulletSetup(whatIsAlly);
 
         Rigidbody rbNewBullet = newBullet.GetComponent<Rigidbody>();
 
