@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_HitBox : MonoBehaviour
+public class Player_HitBox : HitBox
 {
-    // Start is called before the first frame update
-    void Start()
+    private Player player;
+    protected override void Awake()
     {
-        
+        base.Awake();
+
+        player.GetComponentInParent<Player>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void TakeDamage()
     {
-        
+        base.TakeDamage();
+
+        player.health.ReduceHealth();
     }
 }
