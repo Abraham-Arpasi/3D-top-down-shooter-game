@@ -21,6 +21,8 @@ public class Bullet : MonoBehaviour
     private float flyDistance;
     private bool bulletDisabled;
 
+    private LayerMask allyLayerMask;
+
     protected virtual void Awake()
     {
         cd = GetComponent<BoxCollider>();
@@ -28,9 +30,10 @@ public class Bullet : MonoBehaviour
         meshRenderer = GetComponent<MeshRenderer>();
         trailRenderer = GetComponent<TrailRenderer>();
     }
-    public void BulletSetup(float flyDistance = 100, float impactForce = 100)
+    public void BulletSetup(LayerMask allyLayerMask, float flyDistance = 100, float impactForce = 100)
     {
         this.ImpactForce = impactForce;
+        this.allyLayerMask = allyLayerMask;
 
         bulletDisabled = false;
         cd.enabled = true;
@@ -84,6 +87,13 @@ public class Bullet : MonoBehaviour
     //creating a collider for the bullet.
     protected virtual void OnCollisionEnter(Collision collision)
     {
+        if(FriendlyFire() == false)
+        {
+            //Use a bitwise AND to check if the collision layer is in the allyLayerMask.
+            if ((allyLayerMask.value & (1 << collision.gameObject.layer)) > 0)
+                return;
+        }
+
         CreateImpactFx();
         ReturnBulletToPool();
 
@@ -116,7 +126,7 @@ public class Bullet : MonoBehaviour
             Vector3 force = rb.velocity.normalized * ImpactForce;
             Rigidbody hitRigidbody = collision.collider.attachedRigidbody;
 
-            enemy.DeathImpact(force, collision.contacts[0].point, hitRigidbody);
+            enemy.BulletImpact(force, collision.contacts[0].point, hitRigidbody);
         }
     }
 
@@ -126,4 +136,6 @@ public class Bullet : MonoBehaviour
             ObjectPool.instance.ReturnObject(newImpactFX, 0.1f);
        
     }
+
+    private bool FriendlyFire() => GameManager.Instance.friendlyFire;
 }
