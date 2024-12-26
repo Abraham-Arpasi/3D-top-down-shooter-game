@@ -81,6 +81,9 @@ public class PlayerMovement : MonoBehaviour
     //Update is used for player movements.
     private void Update()
     {
+        if (player.health.isDead) 
+            return;
+
         ApplyMovement();
 
         ApplyRotation();
