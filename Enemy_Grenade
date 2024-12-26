@@ -11,6 +11,8 @@ public class Enemy_Grenade : MonoBehaviour
     private Rigidbody rb;
     private float timer;
     private float impactPower;
+
+    private LayerMask allyLayerMask;
     private void Awake() => rb = GetComponent<Rigidbody>();
 
     private void Update()
@@ -32,19 +34,41 @@ public class Enemy_Grenade : MonoBehaviour
 
         foreach(Collider hit in colliders)
         {
+            if (IsTargetValid(hit) == false)
+                continue;
+
+            IDamageable damagable = hit.GetComponent<IDamageable>();
+            damagable?.TakeDamage();
+
             Rigidbody rb = hit.GetComponent<Rigidbody>();
 
             if (rb != null)
                 rb.AddExplosionForce(impactPower, transform.position, impactRadius, upwardsmultipler, ForceMode.Impulse);
         }
     }
-    public void SetupGrenade(Vector3 target, float timeToTarget, float countdown, float impactPower)
+    public void SetupGrenade(LayerMask allyLayerMask, Vector3 target, float timeToTarget, float countdown, float impactPower)
     {
+        this.allyLayerMask = allyLayerMask;
+
         rb.velocity = CalculateLaunchVelocity(target, timeToTarget);
         //grenade counts down once it hits the ground when going towards its target.
         timer = countdown + timeToTarget;
         this.impactPower = impactPower;
     }
+
+    private bool IsTargetValid(Collider collider)
+    {
+        //If fiendly fire is enabled, all colliders are valid targets.
+        if (GameManager.Instance.friendlyFire)
+            return true;
+
+        //if collider is on allylayer, target is not valid.
+        if((allyLayerMask.value & (1 << collider.gameObject.layer)) > 0)
+                return false;
+
+        return true;
+    }
+
     //this will be how the grenade flys through the air.
     private Vector3 CalculateLaunchVelocity(Vector3 target, float timeToTarget)
     {
