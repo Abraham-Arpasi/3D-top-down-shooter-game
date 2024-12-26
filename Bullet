@@ -104,19 +104,7 @@ public class Bullet : MonoBehaviour
         IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
         damageable?.TakeDamage();
 
-        Enemy_Shield shield = collision.gameObject.GetComponent<Enemy_Shield>();
-
-        //this will reduce the shields durability when it gets hit by bullets.
-        if (shield != null)
-        {
-            shield.ReduceDurability();
-            return;
-        }
-
         ApplyBulletImpactToEnemy(collision);
-
-        //this will stick to objects that it collides with.
-        //rb.constraints = RigidbodyConstraints.FreezeAll;
 
     }
 
