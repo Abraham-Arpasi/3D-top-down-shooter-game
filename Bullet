@@ -91,7 +91,11 @@ public class Bullet : MonoBehaviour
         {
             //Use a bitwise AND to check if the collision layer is in the allyLayerMask.
             if ((allyLayerMask.value & (1 << collision.gameObject.layer)) > 0)
+            {
+                //this is to help with the recisha when hitting allies.
+                ObjectPool.instance.ReturnObject(gameObject, 10);
                 return;
+            }
         }
 
         CreateImpactFx();
