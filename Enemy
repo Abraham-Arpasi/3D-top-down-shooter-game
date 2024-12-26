@@ -110,7 +110,7 @@ public class Enemy : MonoBehaviour
     {
 
     }
-    public virtual void MeleeAttackCheck(Transform[] damagePoints, float attackCheckRadius, GameObject fx)
+    public void MeleeAttackCheck(Transform[] damagePoints, float attackCheckRadius, GameObject fx)
     {
         if (isMeleeAttackReady == false)
             return;
@@ -134,6 +134,8 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+
+    public void EnableMeleeAttackCheck(bool enable) => isMeleeAttackReady = enable;
 
     public virtual void BulletImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
     {
