@@ -40,6 +40,7 @@ public class Enemy_Boss : Enemy
     [Header("Attack")]
     [SerializeField] private Transform[] damagePoints;
     [SerializeField] private float attackCheckRadius;
+    [SerializeField] private GameObject meleeAttackFx;
 
     public IdleState_Boss idleState { get; private set; }
     public MoveState_Boss moveState { get; private set; }
@@ -76,6 +77,8 @@ public class Enemy_Boss : Enemy
 
         if(ShouldEnterBattleMode())
             EnterBattleMode();
+
+        MeleeAttackCheck(damagePoints, attackCheckRadius, meleeAttackFx);
     }
 
     public override void Die()
