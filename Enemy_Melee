@@ -1,58 +1,200 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class Enemy_Axe : MonoBehaviour
+//this will attach a navmeshagent to whatever inherits from the enemy.
+[RequireComponent(typeof(NavMeshAgent))]
+public class Enemy : MonoBehaviour
 {
-    [SerializeField] private GameObject impactFx;
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private Transform axeVisuals;
-    [SerializeField] private float rotationSpeed = 1600;
+    public LayerMask whatIsAlly;
+    public LayerMask whatIsPlayer;
+    [Space]
+    public int healthPoints = 20;
 
-    private Transform player;
-    private float flySpeed;
-    private Vector3 direction;
-    private float timer = 1;
+    [Header("Idle Info")]
+    public float idleTime;
+    public float aggresionRange;
 
-    public void AxeSetup(float flySpeed, Transform player, float timer)
+    [Header("Move Info")]
+    public float walkSpeed = 1.5f;
+    public float runSpeed = 3;
+    public float turnSpeed;
+    private bool manualMovement;
+    //this will be used for the enemy rotation when attacking.
+    private bool manualRotation;
+    //this will make the patrol points better.
+    private Vector3[] patrolPointsPosition;
+    [SerializeField] private Transform[] patrolPoints;
+    private int currentPatrolIndex;
+
+    public bool inBattleMode { get; private set; }
+    protected bool isMeleeAttackReady;
+
+    public Transform player { get; private set; }
+
+    public Animator anim { get; private set; }
+    public NavMeshAgent agent { get; private set; }
+    public EnemyStateMachine stateMachine { get; private set; }
+    public Enemy_Visuals visuals { get; private set; }
+    public Ragdoll ragdoll { get; private set; }
+    public Enemy_Health health { get; private set; }
+
+    protected virtual void Awake()
     {
-        this.flySpeed = flySpeed;
-        this.player = player;
-        this.timer = timer;
+        stateMachine = new EnemyStateMachine();
+
+        health = GetComponent<Enemy_Health>();
+        ragdoll = GetComponent<Ragdoll>();
+        visuals = GetComponent<Enemy_Visuals>();
+        agent = GetComponent<NavMeshAgent>();
+        anim = GetComponentInChildren<Animator>();
+        player = GameObject.Find("Player").GetComponent<Transform>();
+
     }
 
-    private void Update()
+    protected virtual void Start()
     {
-        //this is to make the axe spin while in the air.
-        axeVisuals.Rotate(Vector3.right * rotationSpeed * Time.deltaTime);
-        timer -= Time.deltaTime;
-        //this is for the direction of the axe flying in the air towards the player.
-        //added vector3.up since this will make the axe fly above the pivot point of the player that is at its feet.
-        // set the timer to 1 so it flys towards the players direction for 1 second and then continues flying in the direction it was going.
-       if(timer > 0)
+        InitializePatrolPoints();
+    }
+
+    //this will make the patrol points better and cleaner.
+    private void InitializePatrolPoints()
+    {
+        patrolPointsPosition = new Vector3[patrolPoints.Length];
+
+        for(int i = 0; i < patrolPoints.Length; i++)
         {
-            direction = player.position + Vector3.up - transform.position;
+            patrolPointsPosition[i] = patrolPoints[i].position;
+            patrolPoints[i].gameObject.SetActive(false);
         }
-       
-
-        transform.forward = rb.velocity;
     }
 
-    private void FixedUpdate()
+    protected virtual void Update()
     {
-        rb.velocity = direction.normalized * flySpeed;
+        if (ShouldEnterBattleMode())
+        {
+            EnterBattleMode();
+        }
     }
 
-    //this will make the axe disappear if it gets shot or hits the player.
-    private void OnCollisionEnter(Collision collision)
+    protected virtual void InitializePerk()
     {
-        IDamageable damagable = collision.gameObject.GetComponent<IDamageable>();
-        damagable?.TakeDamage();
 
-        GameObject newFx = ObjectPool.instance.GetObject(impactFx, transform);
+    }
 
-        ObjectPool.instance.ReturnObject(gameObject);
-        ObjectPool.instance.ReturnObject(newFx, 0.25f);
+    //this will check if enemy should enter battle mode.
+    protected bool ShouldEnterBattleMode()
+    {
+        if(IsPlayerInAgressionRange() && !inBattleMode)
+        {
+            EnterBattleMode();
+            return true;
+        }
+        return false;
+    }
+    public virtual void EnterBattleMode()
+    {
+        inBattleMode = true;
+    }
+    public virtual void GetHit()
+    {
+        health.ReduceHealth();
+        if (health.ShouldDie())
+            Die();
 
+        EnterBattleMode();
+    }
+
+    public virtual void Die()
+    {
+
+    }
+    public virtual void MeleeAttackCheck(Transform[] damagePoints, float attackCheckRadius, GameObject fx)
+    {
+        if (isMeleeAttackReady == false)
+            return;
+
+        foreach (Transform attackPoint in damagePoints)
+        {
+            Collider[] detectedHits = Physics.OverlapSphere(attackPoint.position, attackCheckRadius, whatIsPlayer);
+
+            for (int i = 0; i < detectedHits.Length; i++)
+            {
+                IDamageable damagable = detectedHits[i].GetComponent<IDamageable>();
+
+                if (damagable != null)
+                {
+                    damagable?.TakeDamage();
+                    isMeleeAttackReady = false;
+                    GameObject newAttackFx = ObjectPool.instance.GetObject(fx, attackPoint);
+                    ObjectPool.instance.ReturnObject(newAttackFx, 0.1f);
+                    return;
+                }
+            }
+        }
+    }
+
+    public virtual void BulletImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
+    {
+        if (health.ShouldDie())
+        {
+        StartCoroutine(DeathImpactCoroutine(force, hitPoint, rb));
+        }
+    }
+
+    private IEnumerator DeathImpactCoroutine(Vector3 force, Vector3 hitPoint, Rigidbody rb)
+    {
+        yield return new WaitForSeconds(0.1f);
+        rb.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
+    }
+
+    public bool IsPlayerInAgressionRange() => Vector3.Distance(transform.position, player.position) < aggresionRange;
+
+    //this will show the aggresion range of the enemy.
+    protected virtual void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, aggresionRange);
+    }
+
+    public void ActivateManualMovement(bool manualMovement) => this.manualMovement = manualMovement;
+    public bool ManualMovementActive() => manualMovement;
+
+    public void ActivateManualRotation(bool manualRotation) => this.manualRotation = manualRotation;
+    public bool ManualRotationActive() => manualRotation;
+
+    public void AnimationTrigger() => stateMachine.currentState.AnimationTrigger();
+
+    //this will be used for when the enemy has multiple abilities like throwing axes or grenades
+    public virtual void AbilityTrigger()
+    {
+        stateMachine.currentState.AbilityTrigger();
+    }
+    
+    public Vector3 GetPatrolDestination()
+    {
+        Vector3 destination = patrolPointsPosition[currentPatrolIndex];
+        Debug.Log(destination);
+
+        currentPatrolIndex++;
+
+        if(currentPatrolIndex >= patrolPoints.Length)
+            currentPatrolIndex = 0;
+
+        return destination;
+    }
+    //this will have the enemy rotate towards the target.
+    public void FaceTarget(Vector3 target, float turnSpeed = 0)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(target - transform.position);
+
+        Vector3 currentEulerAngels = transform.rotation.eulerAngles;
+
+        if(turnSpeed == 0)
+            turnSpeed = this.turnSpeed;
+
+        float yRotation = Mathf.LerpAngle(currentEulerAngels.y, targetRotation.eulerAngles.y, turnSpeed * Time.deltaTime);
+
+        transform.rotation = Quaternion.Euler(currentEulerAngels.x, yRotation, currentEulerAngels.z);
     }
 }
