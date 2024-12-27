@@ -1,63 +1,217 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Axe : MonoBehaviour
+[System.Serializable]
+public struct AttackData_EnemyMelee
 {
-    [SerializeField] private GameObject impactFx;
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private Transform axeVisuals;
-    [SerializeField] private float rotationSpeed = 1600;
+    public string attackName;
+    public float attackRange;
+    public float moveSpeed;
+    public float attackIndex;
+    [Range(1,2)]
+    public float animationSpeed;
+    public AttackType_Melee attackType;
+}
+public enum AttackType_Melee { Close, Charge }
+public enum EnemyMelee_Type { Regular, Shield, Dodge, AxeThrow}
 
-    private Transform player;
-    private float flySpeed;
-    private Vector3 direction;
-    private float timer = 1;
+public class Enemy_Melee : Enemy
+{
 
-    private int damage;
+    public IdleState_Melee idleState {  get; private set; }
+    public MoveState_Melee moveState { get; private set; }
+    public RecoveryState_Melee recoveryState { get; private set; }
+    public ChaseState_Melee chaseState { get; private set; }
+    public AttackState_Melee attackState { get; private set; }
 
-    public void AxeSetup(float flySpeed, Transform player, float timer, int damage)
+    public DeadState_Melee deadState { get; private set; }
+
+    public AbilityState_Melee abilityState { get; private set; }
+
+    [Header("Enemy info")]
+    public EnemyMelee_Type meleeType;
+    public Enemy_MeleeWeaponType weaponType;
+
+    [Header("Shield")]
+    public int shieldDurability;
+    [SerializeField] public Transform shieldTransform;
+
+    [Header("Dodge")]
+    public float dodgeCooldown;
+    private float lastTimeDodge = -10;
+
+    [Header("Axe Throw info")]
+    public int axeDamage;
+    public GameObject axePrefab;
+    public float axeFlySpeed;
+    public float axeAimTimer;
+    public float axeThrowCooldown;
+    private float lastTimeAxeThrown;
+    public Transform axeStartPoint;
+
+    [Header("Attack info")]
+    public AttackData_EnemyMelee attackData;
+    public List<AttackData_EnemyMelee> attackList;
+    private Enemy_WeaponModel currentWeapon;
+    private bool isAttackReady;
+    [Space]
+    [SerializeField] private GameObject meleeAttackFx;
+
+    protected override void Awake()
     {
+        base.Awake();
 
-        this.damage = damage;
-
-        this.flySpeed = flySpeed;
-        this.player = player;
-        this.timer = timer;
+        idleState = new IdleState_Melee(this, stateMachine, "Idle");
+        moveState = new MoveState_Melee(this, stateMachine, "Move");
+        recoveryState = new RecoveryState_Melee(this, stateMachine, "Recovery");
+        chaseState = new ChaseState_Melee(this, stateMachine, "Chase");
+        attackState = new AttackState_Melee(this, stateMachine, "Attack");
+        deadState = new DeadState_Melee(this, stateMachine, "Idle");
+        abilityState = new AbilityState_Melee(this, stateMachine, "AxeThrow");
     }
 
-    private void Update()
+    protected override void Start()
     {
-        //this is to make the axe spin while in the air.
-        axeVisuals.Rotate(Vector3.right * rotationSpeed * Time.deltaTime);
-        timer -= Time.deltaTime;
-        //this is for the direction of the axe flying in the air towards the player.
-        //added vector3.up since this will make the axe fly above the pivot point of the player that is at its feet.
-        // set the timer to 1 so it flys towards the players direction for 1 second and then continues flying in the direction it was going.
-       if(timer > 0)
+        base.Start();
+
+        stateMachine.Initialize(idleState);
+
+        InitializePerk();
+
+        visuals.SetupLook();
+
+        UpdateAttackData();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        stateMachine.currentState.Update();
+        
+        MeleeAttackCheck(currentWeapon.damagePoints, currentWeapon.attackRadius,meleeAttackFx);
+    }
+
+    public override void EnterBattleMode()
+    {
+        if (inBattleMode)
+            return;
+
+        base.EnterBattleMode();
+        stateMachine.ChangeState(recoveryState);
+
+    }
+
+    protected override void InitializePerk()
+    {
+        //this will make sure if we have a throwing type of enemy it will have an throw axe equipped. 
+        if(meleeType == EnemyMelee_Type.AxeThrow)
         {
-            direction = player.position + Vector3.up - transform.position;
+            weaponType = Enemy_MeleeWeaponType.Throw;
         }
-       
-
-        transform.forward = rb.velocity;
+        if(meleeType == EnemyMelee_Type.Shield)
+        {
+            anim.SetFloat("ChaseIndex", 1);
+            shieldTransform.gameObject.SetActive(true);
+            weaponType = Enemy_MeleeWeaponType.OneHand;
+        }
+        if(meleeType == EnemyMelee_Type.Dodge)
+        {
+            weaponType = Enemy_MeleeWeaponType.Unarmed;
+        }
     }
 
-    private void FixedUpdate()
+    public override void Die()
     {
-        rb.velocity = direction.normalized * flySpeed;
+        base.Die();
+
+        if (stateMachine.currentState != deadState)
+            stateMachine.ChangeState(deadState);
     }
 
-    //this will make the axe disappear if it gets shot or hits the player.
-    private void OnCollisionEnter(Collision collision)
+    public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackData.attackRange;
+   
+    public void ActivateDodgeRoll()
     {
-        IDamageable damagable = collision.gameObject.GetComponent<IDamageable>();
-        damagable?.TakeDamage(damage);
+        if (meleeType != EnemyMelee_Type.Dodge)
+            return;
 
-        GameObject newFx = ObjectPool.instance.GetObject(impactFx, transform);
+        if (stateMachine.currentState != chaseState)
+            return;
 
-        ObjectPool.instance.ReturnObject(gameObject);
-        ObjectPool.instance.ReturnObject(newFx, 0.25f);
+        if (Vector3.Distance(transform.position, player.position) < 2)
+            return;
 
+        float dodgeAnimationDiration = GetanimationClipDuration("Dodge Roll");
+
+        if(Time.time > dodgeCooldown + dodgeAnimationDiration + lastTimeDodge)
+        {
+            lastTimeDodge = Time.time;
+            anim.SetTrigger("Dodge");
+        }
+    } 
+
+    public void ThrowAxe()
+    {
+        GameObject newAxe = ObjectPool.instance.GetObject(axePrefab, axeStartPoint);
+
+        newAxe.GetComponent<Enemy_Axe>().AxeSetup(axeFlySpeed, player, axeAimTimer, axeDamage);
+    }
+
+    public bool canThrowAxe()
+    {
+        if (meleeType != EnemyMelee_Type.AxeThrow)
+            return false;
+
+        if (Time.time > lastTimeAxeThrown + axeThrowCooldown)
+        {
+            lastTimeAxeThrown = Time.deltaTime;
+            return true;
+        }
+        return false;
+    }
+
+    private float GetanimationClipDuration(string clipName)
+    {
+        AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+
+        foreach(AnimationClip clip in clips)
+        {
+            if (clip.name == clipName)
+                return clip.length;
+        }
+
+        Debug.Log("no animation found " + clipName);
+        return 0;
+    }
+    public override void AbilityTrigger()
+    {
+        base.AbilityTrigger();
+
+        walkSpeed = walkSpeed * 0.6f;
+        Debug.Log("Create Axe");
+        visuals.EnableWeaponModel(false);
+    }
+
+    public void UpdateAttackData()
+    {
+        currentWeapon = visuals.currentWeaponModel.GetComponent<Enemy_WeaponModel>();
+
+        if (currentWeapon.weaponData != null)
+        {
+            attackList = new List<AttackData_EnemyMelee>(currentWeapon.weaponData.attackData);
+            turnSpeed = currentWeapon.weaponData.turnSpeed;
+        }
+    }
+
+    protected override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, attackData.attackRange);
     }
 }
+
