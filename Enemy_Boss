@@ -17,16 +17,19 @@ public class Enemy_Boss : Enemy
     private float lastTImeUsedAbility;
 
     [Header("FlameThrower")]
+    public int flameDamage;
     public float flameDamageCooldown;
     public ParticleSystem flameThrower;
     public float flamethrowDuration;
     public bool flameThrowActive {  get; private set; }
 
     [Header("Hammer")]
+    public int hammerActiveDamage;
     public GameObject HammerFxPrefab;
     [SerializeField] private float hammerCheckRadius;
 
     [Header("Jump Attack")]
+    public int jumpAttackDamage;
     public float impactRadius = 2.5f;
     public float impactPower = 5;
     [SerializeField] private float upForceMultiplier = 10;
@@ -125,7 +128,7 @@ public class Enemy_Boss : Enemy
         GameObject newActivation = ObjectPool.instance.GetObject(HammerFxPrefab, impactPoint);
         ObjectPool.instance.ReturnObject(newActivation, 0.1f);
 
-        MassDamage(damagePoints[0].position, hammerCheckRadius);
+        MassDamage(damagePoints[0].position, hammerCheckRadius, hammerActiveDamage);
     }
 
     public bool CanDoAbility()
@@ -155,10 +158,10 @@ public class Enemy_Boss : Enemy
             impactPoint = transform;
         }
 
-        MassDamage(impactPoint.position, impactRadius);
+        MassDamage(impactPoint.position, impactRadius, jumpAttackDamage);
     }
 
-    private void MassDamage(Vector3 impactPoint, float impactRadius)
+    private void MassDamage(Vector3 impactPoint, float impactRadius, int damage)
     {
         HashSet<GameObject>uniqueEntities = new HashSet<GameObject>();
         Collider[] colliders = Physics.OverlapSphere(impactPoint, impactRadius, ~whatIsAlly);
@@ -174,7 +177,7 @@ public class Enemy_Boss : Enemy
                 if (uniqueEntities.Add(rootEntity) == false)
                     continue;
 
-                damagable.TakeDamage();
+                damagable.TakeDamage(damage);
             }
 
             ApplyPhysicalForceTo(impactPoint, impactRadius, hit);
