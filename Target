@@ -6,9 +6,5 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Target : MonoBehaviour
 {
-    private void Start()
-    {
-        //this will automatically change the layer of the object to "Enemy".
-        gameObject.layer = LayerMask.NameToLayer("Enemy");
-    }
+  
 }
