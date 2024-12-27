@@ -1,18 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FlameThrow_DamageArea : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Enemy_Boss enemy;
+
+    private void Awake()
     {
-        
+
+        enemy = GetComponentInParent<Enemy_Boss>();
+
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerStay(Collider other)
     {
-        
+        if (enemy.flameThrowActive == false)
+            return;
+
+        IDamageable damagable = other.GetComponent<IDamageable>();
+        damagable?.TakeDamage();
     }
 }
