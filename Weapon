@@ -29,6 +29,8 @@ public class Weapon
     public ShootType shootType;
     public bool burstActive;
 
+    public int bulletDamage;
+
     [Header("Magazine info")]
     //varaibles for the bullets and reload requirements.
     public int bulletsInMagazine;
@@ -75,6 +77,7 @@ public class Weapon
     //this will be seen in the weapon data which can be changed there.
     public Weapon(Weapon_Data weaponData)
     {
+        bulletDamage = weaponData.bulletDamage;
         bulletsInMagazine = weaponData.bulletsInMagazine;
         magazineCapacity = weaponData.magazineCapacity;
         totalReserveAmmo = weaponData.totalReserveAmmo;
