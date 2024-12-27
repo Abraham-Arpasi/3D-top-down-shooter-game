@@ -224,7 +224,7 @@ public class PlayerWeaponController : MonoBehaviour
         //this will be getting the component of the bullet that we just setup the flydistance for.
         //we are calling the method of BulletSetup() and passing the gunDistance value.
         Bullet bulletScript = newBullet.GetComponent<Bullet>();
-        bulletScript.BulletSetup(whatIsAlly, currentWeapon.gunDistance, bulletImpactForce);
+        bulletScript.BulletSetup(whatIsAlly, currentWeapon.bulletDamage, currentWeapon.gunDistance, bulletImpactForce);
 
         //this will apply bullet spread for the weapons if needed.
         Vector3 bulletsDirection = currentWeapon.ApplySpread(BulletDirection());
