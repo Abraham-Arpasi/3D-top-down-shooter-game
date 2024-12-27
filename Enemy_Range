@@ -13,6 +13,7 @@ public class Enemy_Range : Enemy
     public GrenadePerk grenadePerk;
 
     [Header("Grenade Perk")]
+    public int grenadeDamage;
     public GameObject grenadePrefab;
     public float impactPower;
     public float explosionTimer = 1;
@@ -127,10 +128,10 @@ public class Enemy_Range : Enemy
         //this will drop the grenade at the enemies feet when its dead.
         if(stateMachine.currentState == deadState)
         {
-            newGranadeScript.SetupGrenade(whatIsAlly, transform.position, 1, explosionTimer, impactPower);
+            newGranadeScript.SetupGrenade(whatIsAlly, transform.position, 1, explosionTimer, impactPower, grenadeDamage);
         }
 
-        newGranadeScript.SetupGrenade(whatIsAlly, player.transform.position, timeToTarget, explosionTimer, impactPower);
+        newGranadeScript.SetupGrenade(whatIsAlly, player.transform.position, timeToTarget, explosionTimer, impactPower, grenadeDamage);
         return;
     }
 
