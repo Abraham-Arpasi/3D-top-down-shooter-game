@@ -15,27 +15,25 @@ public class Player_HitBox : HitBox
 
         if (player == null)
         {
-            Debug.LogError($"Player component not found in parent hierarchy of {gameObject.name}");
+           // Debug.LogError($"Player component not found in parent hierarchy of {gameObject.name}");
             Transform current = transform;
             while (current != null)
             {
-                Debug.Log($"Parent GameObject: {current.name}");
+              //  Debug.Log($"Parent GameObject: {current.name}");
                 current = current.parent;
             }
         }
         else
         {
-            Debug.Log($"Player component found on {player.gameObject.name}");
+          //  Debug.Log($"Player component found on {player.gameObject.name}");
         }
     }
 
-    public override void TakeDamage()
-    {
-        base.TakeDamage();
-
+    public override void TakeDamage(int damage)
+    { 
         if(player != null) 
         { 
-        player.health.ReduceHealth();
+        player.health.ReduceHealth(damage);
         }
         else
         {
