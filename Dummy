@@ -2,17 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dummy : MonoBehaviour
+public class Dummy : MonoBehaviour, IDamageable
 {
-    // Start is called before the first frame update
-    void Start()
+    public int currentHealth;
+    public int maxHealth = 100;
+
+    [Header("Material")]
+    public MeshRenderer mesh;
+    public Material whiteMaterial;
+    public Material redMaterial;
+
+    [Space]
+    public float refreshCooldown;
+    private float lastTimeDamaged;
+
+    private void Start()
     {
-        
+        Refresh();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (Time.time > refreshCooldown + lastTimeDamaged)
+        {
+            Refresh();
+        }
+    }
+
+    private void Refresh()
+    {
+        currentHealth = maxHealth;
+        mesh.sharedMaterial = whiteMaterial;
+    }
+    
+    public void TakeDamage(int damage)
+    {
+        lastTimeDamaged = Time.time;
+        currentHealth -= damage;
+
+        if (currentHealth < 0)
+            Die();
+    }
+
+    private void Die()
+    {
+        mesh.sharedMaterial = redMaterial;
     }
 }
