@@ -6,12 +6,14 @@ public class FlameThrow_DamageArea : MonoBehaviour
 
     private float damageCooldown;
     private float lastTimeDamaged;
+    private int flameDamage;
 
     private void Awake()
     {
 
         enemy = GetComponentInParent<Enemy_Boss>();
         damageCooldown = enemy.flameDamageCooldown;
+        flameDamage = enemy.flameDamage;
 
     }
 
@@ -27,7 +29,7 @@ public class FlameThrow_DamageArea : MonoBehaviour
 
         if(damagable != null)
         {
-            damagable?.TakeDamage();
+            damagable?.TakeDamage(flameDamage);
             lastTimeDamaged = Time.time;
             damageCooldown = enemy.flameDamageCooldown;
         }
