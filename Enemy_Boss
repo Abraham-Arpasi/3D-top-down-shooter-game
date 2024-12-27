@@ -17,6 +17,7 @@ public class Enemy_Boss : Enemy
     private float lastTImeUsedAbility;
 
     [Header("FlameThrower")]
+    public float flameDamageCooldown;
     public ParticleSystem flameThrower;
     public float flamethrowDuration;
     public bool flameThrowActive {  get; private set; }
