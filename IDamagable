@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//created an interface.
 public interface IDamageable
 {
-    void TakeDamage();
+    void TakeDamage(int damage);
 }
