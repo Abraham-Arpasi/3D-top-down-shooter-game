@@ -31,13 +31,10 @@ public class Player_HitBox : HitBox
 
     public override void TakeDamage(int damage)
     { 
-        if(player != null) 
-        { 
+        int newDamage = Mathf.RoundToInt(damage * damageMultiplier);
+
         player.health.ReduceHealth(damage);
-        }
-        else
-        {
-            Debug.LogError("Player reference is null");
-        }
+        
+        
     }
 }
