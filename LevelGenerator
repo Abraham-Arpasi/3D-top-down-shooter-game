@@ -13,6 +13,10 @@ public class LevelGenerator : MonoBehaviour
     private void GenerateNextLevelPart()
     {
         Transform newPart = Instantiate(ChooseRandomPart());
+        LevelPart levelPartScript = newPart.GetComponent<LevelPart>();
+
+        levelPartScript.SnapAndAlignPartTo(nextSnapPoint);
+        nextSnapPoint = levelPartScript.GetExitPoint();
 
     }
 
