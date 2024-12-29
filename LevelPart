@@ -12,6 +12,13 @@ public class LevelPart : MonoBehaviour
         SnapTo(entrancePoint, targetSnapPoint);
     }
 
+    private void AlignTo(SnapPoint ownSnapPoint, SnapPoint targetSnapPoint)
+    {
+        //Calculate the rotation offset between the level parts current rotation and its own snap points rotation.
+        //this helps in the fine tuning the alignment later.
+        var rotationOffsetr = ownSnapPoint.transform.rotation.eulerAngles.y - transform.rotation.eulerAngles.y;
+    }
+
     private void SnapTo(SnapPoint ownSnapPoint, SnapPoint targetSnapPoint)
     {
         //Calculate the offset between the level part's current position and its own snap points position.
