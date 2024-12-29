@@ -27,7 +27,7 @@ public class LevelPart : MonoBehaviour
     }
 
     public SnapPoint GetEntrancePoint() => GetSnapPointType(SnapPointType.Enter);
-    public SnapPoint GEtExitPoint() => GetSnapPointType(SnapPointType.Exit);
+    public SnapPoint GetExitPoint() => GetSnapPointType(SnapPointType.Exit);
 
    private SnapPoint GetSnapPointType(SnapPointType pointType)
     {
