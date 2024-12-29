@@ -1,18 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Schema;
 using UnityEngine;
 
 public class LevelPart : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void SnapAndAlignPartTo(SnapPoint targetSnapPoint)
     {
-        
+        SnapPoint entrancePoint = GetEntrancePoint();
+
+        SnapTo(entrancePoint, targetSnapPoint);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void SnapTo(SnapPoint ownSnapPoint, SnapPoint targetSnapPoint)
     {
-        
+        //Calculate the offset between the level part's current position and its own snap points position.
+        //this offset represents the distance and direction from the level part's pivot to its snap point.
+        var offset = transform.position - ownSnapPoint.transform.position;
+
+//determine the new position for the level part. its calculated by adding the previously co,puted offset to the targets snap points position.
+//this effectively moves the level part so that its snap point aligns with the target snap points position.
+        var newPosition = targetSnapPoint.transform.position + offset;
+
+        //update the level parts position to the newly calculated position by using snap points.
+        transform.position = newPosition;
+    }
+
+    public SnapPoint GetEntrancePoint() => GetSnapPointType(SnapPointType.Enter);
+    public SnapPoint GEtExitPoint() => GetSnapPointType(SnapPointType.Exit);
+
+   private SnapPoint GetSnapPointType(SnapPointType pointType)
+    {
+        SnapPoint[] snapPoints = GetComponentsInChildren<SnapPoint>();
+        List<SnapPoint> filteredSnapPoints = new List<SnapPoint>();
+
+        //Collect all the snap points of the specified type.
+        foreach (SnapPoint snapPoint in snapPoints)
+        {
+            if(snapPoint.pointType == pointType)
+            {
+                filteredSnapPoints.Add(snapPoint);
+            }
+        }
+
+        //if there are matching snap points, choose one at random.
+        if(filteredSnapPoints.Count > 0)
+        {
+            int randomIndex = Random.Range(0, filteredSnapPoints.Count);
+            return filteredSnapPoints[randomIndex];
+        }
+        //return null if no matching snap points are found.
+        return null;
     }
 }
