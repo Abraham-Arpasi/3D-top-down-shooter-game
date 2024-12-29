@@ -9,8 +9,8 @@ public class LevelPart : MonoBehaviour
     {
         SnapPoint entrancePoint = GetEntrancePoint();
 
-        SnapTo(entrancePoint, targetSnapPoint);
         AlignTo(entrancePoint, targetSnapPoint);
+        SnapTo(entrancePoint, targetSnapPoint);
     }
 
     private void AlignTo(SnapPoint ownSnapPoint, SnapPoint targetSnapPoint)
