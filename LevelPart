@@ -10,6 +10,7 @@ public class LevelPart : MonoBehaviour
         SnapPoint entrancePoint = GetEntrancePoint();
 
         SnapTo(entrancePoint, targetSnapPoint);
+        AlignTo(entrancePoint, targetSnapPoint);
     }
 
     private void AlignTo(SnapPoint ownSnapPoint, SnapPoint targetSnapPoint)
@@ -17,6 +18,18 @@ public class LevelPart : MonoBehaviour
         //Calculate the rotation offset between the level parts current rotation and its own snap points rotation.
         //this helps in the fine tuning the alignment later.
         var rotationOffsetr = ownSnapPoint.transform.rotation.eulerAngles.y - transform.rotation.eulerAngles.y;
+
+        //Set the level parts rotation to mathch the target snap points rotation.
+        //this is the inital stop to align the orientations of the two parts.
+        transform.rotation = targetSnapPoint.transform.rotation;
+
+        //Rotate the level part by 100 degerees around the y axis.
+        //this is necessary because the snap points are facing opposite directions, and this rotation aligns them to face each other correctly.
+        transform.Rotate(0, 180, 0);
+
+        //apply the previously calculated offset.
+        //this step fine tunes the alignment by adjusting the level parts rotation to account for any inital difference in orientation between the level parts own snap point and the main body of the part.
+        transform.Rotate(0, -rotationOffsetr, 0);
     }
 
     private void SnapTo(SnapPoint ownSnapPoint, SnapPoint targetSnapPoint)
