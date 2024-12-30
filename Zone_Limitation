@@ -4,15 +4,45 @@ using UnityEngine;
 
 public class Zone_Limitation : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private ParticleSystem[] lines;
+    private BoxCollider zoneCollider;
+
+    private void Start()
     {
-        
+        zoneCollider = GetComponent<BoxCollider>();
+        lines = GetComponentsInChildren<ParticleSystem>();
+        ActivateWall(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void ActivateWall(bool activate)
     {
-        
+        foreach(var line in lines)
+        {
+            if (activate)
+            {
+                line.Play();
+            }
+            else
+            {
+                line.Stop();
+            }
+        }
+        zoneCollider.isTrigger = !activate;
     }
+
+    IEnumerator WallActivation()
+    {
+        ActivateWall(true);
+
+        yield return new WaitForSeconds(1);
+
+        ActivateWall(false);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        StartCoroutine(WallActivation());
+        Debug.Log("dangerous ");
+    }
+
 }
