@@ -1,20 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
+    private List<Enemy> enemyList;
+
+    [SerializeField] private NavMeshSurface navMeshSurface;
+    [Space]
     [SerializeField] private Transform lastLevelPart;
     [SerializeField] private List<Transform> levelParts;
     private List<Transform> currentLevelParts;
+    private List<Transform> generatedLevelParts = new List<Transform>();
     [SerializeField] private SnapPoint nextSnapPoint;
+    private SnapPoint defaultSnapPoint;
+
     [Space]
+
     [SerializeField] private float generationCooldown;
     private float cooldownTimer;
     private bool generationOver;
     private void Start()
     {
-        currentLevelParts = new List<Transform>(levelParts);
+        enemyList = new List<Enemy>();
+        defaultSnapPoint = nextSnapPoint;
+        InitalizeGeneration();
     }
 
     private void Update()
@@ -24,41 +35,85 @@ public class LevelGenerator : MonoBehaviour
 
         cooldownTimer -= Time.deltaTime;
 
-        if(cooldownTimer < 0)
+        if (cooldownTimer < 0)
         {
-            cooldownTimer = generationCooldown;
-            GenerateNextLevelPart();
+            if (currentLevelParts.Count > 0)
+            {
+                cooldownTimer = generationCooldown;
+                GenerateNextLevelPart();
+            }
+
+            else if (generationOver == false)
+            {
+                FinishGeneration();
+            }
         }
-        else if (generationOver == false)
+    }
+
+    [ContextMenu("Restart generation")]
+    private void InitalizeGeneration()
+    {
+        nextSnapPoint = defaultSnapPoint;
+        generationOver = false;
+        currentLevelParts = new List<Transform>(levelParts);
+        DestroyAllLevelPartsAndEnemies();
+    }
+
+    private void DestroyAllLevelPartsAndEnemies()
+    {
+        foreach(Enemy enemy in enemyList)
         {
-            FinishGeneration();
+            Destroy(enemy.gameObject);
         }
+
+        foreach (Transform t in generatedLevelParts)
+        {
+            Destroy(t.gameObject);
+        }
+
+        generatedLevelParts = new List<Transform>();
+        enemyList = new List<Enemy>();
     }
 
     private void FinishGeneration()
     {
         generationOver = true;
+        GenerateNextLevelPart();
 
-        Transform levelPart = Instantiate(lastLevelPart);
-        LevelPart levelPartScript = levelPart.GetComponent<LevelPart>();
+        navMeshSurface.BuildNavMesh();
 
-        levelPartScript.SnapAndAlignPartTo(nextSnapPoint);
+        foreach(Enemy enemy in enemyList)
+        {
+            enemy.transform.parent = null;
+            enemy.gameObject.SetActive(true);
+        }
     }
 
     [ContextMenu("Create next level part")]
 
     private void GenerateNextLevelPart()
     {
-        Transform newPart = Instantiate(ChooseRandomPart());
+        Transform newPart = null;
+
+        if (generationOver)
+            newPart = Instantiate(lastLevelPart);
+        else
+            newPart = Instantiate(ChooseRandomPart());
+
+        generatedLevelParts.Add(newPart);
+
         LevelPart levelPartScript = newPart.GetComponent<LevelPart>();
 
         levelPartScript.SnapAndAlignPartTo(nextSnapPoint);
 
         if (levelPartScript.IntersectionDetected())
         {
-            Debug.LogWarning("intersection between level parts");
+            InitalizeGeneration();
+            return;
         }
         nextSnapPoint = levelPartScript.GetExitPoint();
+
+        enemyList.AddRange(levelPartScript.MyEnemies());
 
     }
 
