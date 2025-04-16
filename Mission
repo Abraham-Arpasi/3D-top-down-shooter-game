@@ -2,17 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mission : MonoBehaviour
+public abstract class Mission : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string missionName;
+    public string missionDescription;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public abstract void StartMission();
+    public abstract bool MissionCompleted();
+
 }
