@@ -1,0 +1,28 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "New Key Mission", menuName = "Mission/Key Mission")]
+public class Mission_KeyFind : Mission
+{
+    [SerializeField] private GameObject key;
+    public bool keyFound;
+    
+    public override void StartMission()
+    {
+        MissionObject_Key.OnKeyPickedUp += PickUpKey;
+    }
+
+    public override bool MissionCompleted()
+    {
+        return keyFound;
+    }
+
+    private void PickUpKey()
+    {
+        keyFound = true;
+        MissionObject_Key.OnKeyPickedUp -= PickUpKey;
+        Debug.Log("I Picked up a key");
+    }
+   
+}
