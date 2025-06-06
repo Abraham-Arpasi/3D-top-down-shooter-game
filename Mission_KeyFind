@@ -14,6 +14,7 @@ public class Mission_KeyFind : Mission
 
         Enemy enemy = LevelGenerator.instance.GetRandomEnemy();
         enemy.GetComponent<Enemy_DropController>()?.GiveKey(key);
+        enemy.MakeEnemyVIP();
     }
 
     public override bool MissionCompleted()
@@ -29,3 +30,4 @@ public class Mission_KeyFind : Mission
     }
    
 }
+
