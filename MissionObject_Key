@@ -19,5 +19,6 @@ public class MissionObject_Key : MonoBehaviour
             return;
 
         OnKeyPickedUp?.Invoke();
+        Destroy(gameObject);
     }
 }
