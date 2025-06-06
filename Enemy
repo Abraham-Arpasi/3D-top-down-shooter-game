@@ -84,6 +84,17 @@ public class Enemy : MonoBehaviour
 
     }
 
+    public virtual void MakeEnemyVIP()
+    {
+        //increase the health of vip enemies by 25%
+        int additionHealth = Mathf.RoundToInt(health.currentHealth * 1.25f);
+
+        health.currentHealth += additionHealth;
+
+        //incease the height of vip enemies by 25%
+        transform.localScale = transform.localScale * 1.25f;
+    }
+
     //this will check if enemy should enter battle mode.
     protected bool ShouldEnterBattleMode()
     {
