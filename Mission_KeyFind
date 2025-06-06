@@ -11,6 +11,8 @@ public class Mission_KeyFind : Mission
     public override void StartMission()
     {
         MissionObject_Key.OnKeyPickedUp += PickUpKey;
+
+        Enemy enemy = LevelGenerator.instance.GetRandomEnemy();
     }
 
     public override bool MissionCompleted()
