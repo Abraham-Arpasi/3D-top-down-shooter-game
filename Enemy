@@ -117,7 +117,6 @@ public class Enemy : MonoBehaviour
         health.ReduceHealth(damage);
         if (health.ShouldDie())
         {
-            dropController.DropItems();
             Die();
         }
 
@@ -126,7 +125,10 @@ public class Enemy : MonoBehaviour
 
     public virtual void Die()
     {
+        dropController.DropItems();
 
+        MissionObject_HuntTarget huntTarget = GetComponent<MissionObject_HuntTarget>();
+        huntTarget?.InvokeOnTargetKilled();
     }
     public void MeleeAttackCheck(Transform[] damagePoints, float attackCheckRadius, GameObject fx, int damage)
     {
@@ -218,4 +220,3 @@ public class Enemy : MonoBehaviour
         transform.rotation = Quaternion.Euler(currentEulerAngels.x, yRotation, currentEulerAngels.z);
     }
 }
-
