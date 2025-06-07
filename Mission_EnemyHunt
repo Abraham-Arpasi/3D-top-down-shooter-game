@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -18,11 +17,18 @@ public class Mission_EnemyHunt : Mission
 
         List<Enemy> validEnemies = new List<Enemy>();
 
-        foreach (Enemy enemy in LevelGenerator.instance.GetEnemyList())
+        if (enemyType == EnemyType.Random)
+            validEnemies = LevelGenerator.instance.GetEnemyList();
+        else
         {
-            if(enemy.enemyType == enemyType)
-                validEnemies.Add(enemy);
+            foreach (Enemy enemy in LevelGenerator.instance.GetEnemyList())
+            {
+                if (enemy.enemyType == enemyType)
+                    validEnemies.Add(enemy);
+            }
+
         }
+
 
         for (int i = 0; i < amountTokill; i++)
         {
@@ -39,11 +45,11 @@ public class Mission_EnemyHunt : Mission
         return killToGo <= 0;
     }
 
-   private void EliminateTarget()
+    private void EliminateTarget()
     {
         killToGo--;
 
-        if(killToGo <= 0)
+        if (killToGo <= 0)
             MissionObject_HuntTarget.onTargetKilled -= EliminateTarget;
     }
 }
