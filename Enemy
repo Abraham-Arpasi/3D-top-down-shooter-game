@@ -218,3 +218,4 @@ public class Enemy : MonoBehaviour
         transform.rotation = Quaternion.Euler(currentEulerAngels.x, yRotation, currentEulerAngels.z);
     }
 }
+
