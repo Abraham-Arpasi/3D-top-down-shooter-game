@@ -1,146 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.AI.Navigation;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class LevelGenerator : MonoBehaviour
+[CreateAssetMenu(fileName = "New Hunt Mission", menuName = "Mission/Hunt Mission")]
+public class Mission_EnemyHunt : Mission
 {
-    public static LevelGenerator instance;
+    public int amountTokill = 12;
+    public EnemyType enemyType;
 
-    private List<Enemy> enemyList;
-
-    [SerializeField] private NavMeshSurface navMeshSurface;
-    [Space]
-    [SerializeField] private Transform lastLevelPart;
-    [SerializeField] private List<Transform> levelParts;
-    private List<Transform> currentLevelParts;
-    private List<Transform> generatedLevelParts = new List<Transform>();
-    [SerializeField] private SnapPoint nextSnapPoint;
-    private SnapPoint defaultSnapPoint;
-
-    [Space]
-
-    [SerializeField] private float generationCooldown;
-    private float cooldownTimer;
-    private bool generationOver;
-
-    private void Awake()
+    public override void StartMission()
     {
-        instance = this;
-    }
-    private void Start()
-    {
-        enemyList = new List<Enemy>();
-        defaultSnapPoint = nextSnapPoint;
-        InitalizeGeneration();
-    }
+        List<Enemy> validEnemies = new List<Enemy>();
 
-    private void Update()
-    {
-        if (generationOver)
-            return;
-
-        cooldownTimer -= Time.deltaTime;
-
-        if (cooldownTimer < 0)
+        foreach (Enemy enemy in LevelGenerator.instance.GetEnemyList())
         {
-            if (currentLevelParts.Count > 0)
-            {
-                cooldownTimer = generationCooldown;
-                GenerateNextLevelPart();
-            }
-
-            else if (generationOver == false)
-            {
-                FinishGeneration();
-            }
-        }
-    }
-
-    [ContextMenu("Restart generation")]
-    private void InitalizeGeneration()
-    {
-        nextSnapPoint = defaultSnapPoint;
-        generationOver = false;
-        currentLevelParts = new List<Transform>(levelParts);
-        DestroyAllLevelPartsAndEnemies();
-    }
-
-    private void DestroyAllLevelPartsAndEnemies()
-    {
-        foreach(Enemy enemy in enemyList)
-        {
-            Destroy(enemy.gameObject);
+            if(enemy.enemyType == enemyType)
+                validEnemies.Add(enemy);
         }
 
-        foreach (Transform t in generatedLevelParts)
+        for (int i = 0; i < amountTokill; i++)
         {
-            Destroy(t.gameObject);
-        }
+            if (validEnemies.Count <= 0)
+                return;
 
-        generatedLevelParts = new List<Transform>();
-        enemyList = new List<Enemy>();
-    }
-
-    private void FinishGeneration()
-    {
-        generationOver = true;
-        GenerateNextLevelPart();
-
-        navMeshSurface.BuildNavMesh();
-
-        foreach(Enemy enemy in enemyList)
-        {
-            enemy.transform.parent = null;
-            enemy.gameObject.SetActive(true);
+            int randomIndex = Random.Range(0, validEnemies.Count);
+            validEnemies[randomIndex].AddComponent<MissionObject_HuntTarget>();
+            validEnemies.RemoveAt(randomIndex);
         }
     }
-
-    [ContextMenu("Create next level part")]
-
-    private void GenerateNextLevelPart()
+    public override bool MissionCompleted()
     {
-        Transform newPart = null;
-
-        if (generationOver)
-            newPart = Instantiate(lastLevelPart);
-        else
-            newPart = Instantiate(ChooseRandomPart());
-
-        generatedLevelParts.Add(newPart);
-
-        LevelPart levelPartScript = newPart.GetComponent<LevelPart>();
-
-        levelPartScript.SnapAndAlignPartTo(nextSnapPoint);
-
-        if (levelPartScript.IntersectionDetected())
-        {
-            InitalizeGeneration();
-            return;
-        }
-        nextSnapPoint = levelPartScript.GetExitPoint();
-
-        enemyList.AddRange(levelPartScript.MyEnemies());
-
+        throw new System.NotImplementedException();
     }
 
-    private Transform ChooseRandomPart()
-    {
-        int randomIndex = Random.Range(0, currentLevelParts.Count);
-
-        Transform choosenPart = currentLevelParts[randomIndex];
-
-        currentLevelParts.RemoveAt(randomIndex);
-
-        return choosenPart;
-    }
-
-    public Enemy GetRandomEnemy()
-    {
-        int randomIndex = Random.Range(0, enemyList.Count);
-
-        return enemyList[randomIndex];
-    }
-
-    public List<Enemy> GetEnemyList() => enemyList;
+   
 }
