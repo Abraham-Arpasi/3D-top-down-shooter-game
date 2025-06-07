@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum EnemyType { Melee,Range,Boss}
+
 //this will attach a navmeshagent to whatever inherits from the enemy.
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour
 {
+    public EnemyType enemyType;
     public LayerMask whatIsAlly;
     public LayerMask whatIsPlayer;
 
@@ -91,8 +94,8 @@ public class Enemy : MonoBehaviour
 
         health.currentHealth += additionHealth;
 
-        //incease the height of vip enemies by 25%
-        transform.localScale = transform.localScale * 1.25f;
+        //incease the height of vip enemies
+        transform.localScale = transform.localScale * 1.1f;
     }
 
     //this will check if enemy should enter battle mode.
