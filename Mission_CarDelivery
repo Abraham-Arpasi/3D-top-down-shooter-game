@@ -9,6 +9,8 @@ public class Mission_CarDelivery : Mission
     private bool carWasDelivered;
     public override void StartMission()
     {
+        FindObjectOfType<MissionObject_CarDeliveryZone>(true).gameObject.SetActive(true);
+
         carWasDelivered = false;
         MissionObject_CarToDeliver.OnCarDelivery += CarDeliveryCompleted;
 
@@ -32,3 +34,4 @@ public class Mission_CarDelivery : Mission
         MissionObject_CarToDeliver.OnCarDelivery -= CarDeliveryCompleted;
     }
 }
+
