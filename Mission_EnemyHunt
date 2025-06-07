@@ -9,8 +9,13 @@ public class Mission_EnemyHunt : Mission
     public int amountTokill = 12;
     public EnemyType enemyType;
 
+    private int killToGo;
+
     public override void StartMission()
     {
+        killToGo = amountTokill;
+        MissionObject_HuntTarget.onTargetKilled += EliminateTarget;
+
         List<Enemy> validEnemies = new List<Enemy>();
 
         foreach (Enemy enemy in LevelGenerator.instance.GetEnemyList())
@@ -31,8 +36,14 @@ public class Mission_EnemyHunt : Mission
     }
     public override bool MissionCompleted()
     {
-        throw new System.NotImplementedException();
+        return killToGo <= 0;
     }
 
-   
+   private void EliminateTarget()
+    {
+        killToGo--;
+
+        if(killToGo <= 0)
+            MissionObject_HuntTarget.onTargetKilled -= EliminateTarget;
+    }
 }
