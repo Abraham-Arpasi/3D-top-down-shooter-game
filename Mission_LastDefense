@@ -1,0 +1,115 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "New Defense Mission", menuName = "Mission/Defense Mission")]
+
+public class Mission_LastDefense : Mission
+{
+    private bool defenseBegun = false;
+
+    [Header("Cooldown and duration")]
+    public float defenseDuration = 120;
+    private float defenseTimer;
+    public float waveCooldown = 15;
+    private float waveTimer;
+
+    [Header("Respawn details")]
+    public int amountOfRespawnPoints = 2;
+    public List<Transform> respawnPoints;
+    private Vector3 defensePoint;
+    [Space]
+
+    public int enemiesPerWave;
+    public GameObject[] possibleEnemies;
+
+    private void OnEnable()
+    {
+        defenseBegun = false;
+    }
+    public override void StartMission()
+    {
+        defensePoint = FindObjectOfType<MissionEnd_Trigger>().transform.position;
+        respawnPoints = new List<Transform>(ClosestPoints(amountOfRespawnPoints));
+    }
+
+    public override bool MissionCompleted()
+    {
+        if(defenseBegun == false)
+        {
+            StartDefenseEvent();
+            return false;
+        }
+
+        return defenseTimer < 0;
+    }
+
+    public override void UpdateMission()
+    {
+        if (defenseBegun == false)
+            return;
+
+        defenseTimer -= Time.deltaTime;
+        waveTimer -= Time.deltaTime;
+
+        if(waveTimer < 0)
+        {
+            CreateNewEnemies(enemiesPerWave);
+            waveTimer = waveCooldown;
+        }
+    }
+
+    private void StartDefenseEvent()
+    {
+        waveTimer = 0.5f;
+        defenseTimer = defenseDuration;
+        defenseBegun = true;
+    }
+
+    private void CreateNewEnemies(int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            int randomEnemyIndex = Random.Range(0, possibleEnemies.Length);
+            int randomRespawnIndex = Random.Range(0, respawnPoints.Count);
+
+            Transform randomRespawnPoint = respawnPoints[randomRespawnIndex];
+            GameObject randomEnemy = possibleEnemies[randomEnemyIndex];
+
+            randomEnemy.GetComponent<Enemy>().aggresionRange = 100;
+
+            ObjectPool.instance.GetObject(randomEnemy, randomRespawnPoint);
+        }
+    }
+
+    private List<Transform> ClosestPoints(int amount)
+    {
+        List<Transform> closestPoints = new List<Transform>();
+        List<MissionObject_EnemyRespawnPoint> allPoints = new List<MissionObject_EnemyRespawnPoint>(FindObjectsOfType<MissionObject_EnemyRespawnPoint>());
+
+        while(closestPoints.Count < amount && allPoints.Count > 0)
+        {
+            float shortestDistance = float.MaxValue;
+            MissionObject_EnemyRespawnPoint closestPoint = null;
+
+            foreach (var point in allPoints)
+            {
+                float distance = Vector3.Distance(point.transform.position, defensePoint);
+
+                if(distance < shortestDistance)
+                {
+                    shortestDistance = distance;
+                    closestPoint = point;
+                }
+            }
+
+            if(closestPoint != null)
+            {
+                closestPoints.Add(closestPoint.transform);
+                allPoints.Remove(closestPoint);
+            }
+        }
+
+        return closestPoints;
+    }
+}
