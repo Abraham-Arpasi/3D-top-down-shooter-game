@@ -131,6 +131,8 @@ public class PlayerWeaponController : MonoBehaviour
 
         //this will change the camera distance for the character depending on the weapon equipped.
         CameraManager.instance.ChangeCameraDistance(currentWeapon.cameraDistance);
+
+        UpdateWeaponUI();
     }
 
     public void PickupWeapon(Weapon newWeapon)
@@ -157,6 +159,8 @@ public class PlayerWeaponController : MonoBehaviour
 
         weaponSlots.Add(newWeapon);
         player.weaponVisuals.SwitchOnBackupWeaponModel();
+
+        UpdateWeaponUI();
     }
 
     private void DropWeapon()
