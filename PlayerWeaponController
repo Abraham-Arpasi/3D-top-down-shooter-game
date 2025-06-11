@@ -56,6 +56,12 @@ public class PlayerWeaponController : MonoBehaviour
             Shoot();
     }
 
+    public void UpdateWeaponUI()
+    {
+        UI.instance.inGameUI.UpdateWeaponUI(weaponSlots, currentWeapon);
+    }
+
+
     private IEnumerator BurstFire()
     {
         for (int i = 1; i <= currentWeapon.bulletsPerShot; i++)
@@ -211,6 +217,8 @@ public class PlayerWeaponController : MonoBehaviour
     {
         //this will make the bullet count go down in the magazine when firing.
         currentWeapon.bulletsInMagazine--;
+
+        UpdateWeaponUI();
 
         //gets newbullet from the ObjectPool.
         GameObject newBullet = ObjectPool.instance.GetObject(bulletPrefab, GunPoint());
