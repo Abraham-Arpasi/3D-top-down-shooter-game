@@ -44,5 +44,8 @@ using UnityEngine;
     public float gunDistance = 4;
     [Range(4, 12)]
     public float cameraDistance = 6;
+
+    [Header("UI elements")]
+    public Sprite weaponIcon;
     }
 
