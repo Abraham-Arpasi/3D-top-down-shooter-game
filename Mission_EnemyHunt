@@ -13,6 +13,8 @@ public class Mission_EnemyHunt : Mission
     public override void StartMission()
     {
         killToGo = amountTokill;
+        UpdateMissionUI();
+
         MissionObject_HuntTarget.onTargetKilled += EliminateTarget;
 
         List<Enemy> validEnemies = new List<Enemy>();
@@ -48,8 +50,20 @@ public class Mission_EnemyHunt : Mission
     private void EliminateTarget()
     {
         killToGo--;
+        UpdateMissionUI();
 
         if (killToGo <= 0)
+        {
+            UI.instance.inGameUI.UpdateMissionInfo("Get to the evacuation point.", null);
             MissionObject_HuntTarget.onTargetKilled -= EliminateTarget;
+        }
+    }
+
+    private void UpdateMissionUI()
+    {
+        string missionText = "Eliminate " + amountTokill + " enemies";
+        string missionDetails = "Targets left: " + killToGo;
+
+        UI.instance.inGameUI.UpdateMissionInfo(missionText, missionDetails);
     }
 }
