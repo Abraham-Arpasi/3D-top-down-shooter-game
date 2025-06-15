@@ -1,10 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class UI_MissionSelectionButton : UI_Button
 {
+    [SerializeField] private Mission myMission;
+    private TextMeshProUGUI myText => GetComponentInChildren<TextMeshProUGUI>();
+
+    private void onValidation()
+    {
+        gameObject.name = "Button - Select Mission: " + myMission.missionName;
+        myText.text = myMission.missionName;
+    }
+
    public override void Start()
     {
         base.Start();
