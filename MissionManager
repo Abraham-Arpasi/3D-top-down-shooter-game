@@ -23,6 +23,11 @@ public class MissionManager : MonoBehaviour
          currentMission?.UpdateMission();
     }
 
+    public void SelectMission(Mission newMission)
+    {
+        currentMission = newMission;
+    }
+
     private void StartMission() => currentMission.StartMission();
 
     public bool MissionCompleted() => currentMission.MissionCompleted();
