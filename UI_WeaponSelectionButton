@@ -1,0 +1,50 @@
+using JetBrains.Annotations;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class UI_WeaponSelectionButton : UI_Button
+{
+    private UI_WeaponSelection weaponSelectionUI;
+
+    [SerializeField] private Weapon_Data weaponData;
+    [SerializeField] private Image weaponIcon;
+
+    private UI_SelectedWeaponWindow emptySlot;
+
+    private void OnValidate()
+    {
+        gameObject.name = "Button - Select Weapon: " + weaponData.weaponType;
+    }
+
+    public override void Start()
+    {
+        base.Start();
+
+        weaponSelectionUI = GetComponentInParent<UI_WeaponSelection>();
+        weaponIcon.sprite = weaponData.weaponIcon;
+    }
+
+    public override void OnPointerEnter(PointerEventData eventData)
+    {
+        base.OnPointerEnter(eventData);
+
+        emptySlot = weaponSelectionUI.FindEmptySlot();
+        emptySlot?.UpdateSlotInfo(weaponData);
+    }
+
+    public override void OnPointerExit(PointerEventData eventData)
+    {
+        base.OnPointerExit(eventData);
+
+        emptySlot?.UpdateSlotInfo(null);
+        emptySlot = null;
+    }
+
+    public override void OnPointerDown(PointerEventData eventData)
+    {
+        base.OnPointerDown(eventData);
+    }
+}
