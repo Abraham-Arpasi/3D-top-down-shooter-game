@@ -47,5 +47,6 @@ using UnityEngine;
 
     [Header("UI elements")]
     public Sprite weaponIcon;
+    public string weaponInfo;
     }
 
