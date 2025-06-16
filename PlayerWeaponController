@@ -12,7 +12,7 @@ public class PlayerWeaponController : MonoBehaviour
 
     private Player player;
 
-    [SerializeField] private Weapon_Data defaultWeaponData;
+    [SerializeField] private List <Weapon_Data> defaultWeaponData;
     [SerializeField] private Weapon currentWeapon;
 
     //this will be used to help fix the laser aim direction.
@@ -44,7 +44,7 @@ public class PlayerWeaponController : MonoBehaviour
 
         AssignInputEvents();
 
-        Invoke(nameof(EquipStartingWeapon), .1f);
+       // Invoke(nameof(SetDefaultWeapon), .1f);
 
         //this is for the ammo of the weapon that is being held.
         //currentWeapon.bulletsInMagazine = currentWeapon.totalReserveAmmo;
@@ -77,10 +77,15 @@ public class PlayerWeaponController : MonoBehaviour
     }
 
     //adds a starting weapon to the character if he doesn't have one.
-    private void EquipStartingWeapon()
+    public void SetDefaultWeapon(List<Weapon_Data> newWeaponData)
     {
-        //when 0 index is called it will fill the slot with a weapon and constructor will be called automatically.
-        weaponSlots[0] = new Weapon(defaultWeaponData);
+      defaultWeaponData = new List<Weapon_Data>(newWeaponData);
+        weaponSlots.Clear();
+
+        foreach(Weapon_Data weaponData in defaultWeaponData)
+        {
+            PickupWeapon(new Weapon(weaponData));
+        }
 
         EquipWeapon(0);
     }
