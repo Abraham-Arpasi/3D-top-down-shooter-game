@@ -27,6 +27,19 @@ public class UI_WeaponSelection : MonoBehaviour
         }
     }
 
+    public List<Weapon_Data> SelectedWeaponData()
+    {
+        List<Weapon_Data> selectedData = new List<Weapon_Data>();
+
+        foreach(UI_SelectedWeaponWindow weapon in selectedWeapon)
+        {
+            if(weapon.weaponData != null)
+                selectedData.Add(weapon.weaponData);
+        }
+
+        return selectedData;
+    }
+
     public UI_SelectedWeaponWindow FindEmptySlot()
     {
         for (int i = 0; i < selectedWeapon.Length; i++)
