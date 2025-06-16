@@ -1,0 +1,34 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class UI_WeaponSelection : MonoBehaviour
+{
+    public UI_SelectedWeaponWindow[] selectedWeapon;
+
+    private void Start()
+    {
+        selectedWeapon = GetComponentsInChildren<UI_SelectedWeaponWindow>();
+    }
+
+    public UI_SelectedWeaponWindow FindEmptySlot()
+    {
+        for (int i = 0; i < selectedWeapon.Length; i++)
+        {
+            if (selectedWeapon[i].IsEmpty())
+                return selectedWeapon[i];
+        }
+
+        return null;
+    }
+
+    public UI_SelectedWeaponWindow FindSlowWeaponOfType(Weapon_Data weaponData)
+    {
+        for(int i = 0; i < selectedWeapon.Length; i++)
+        {
+            if (selectedWeapon[i].weaponData == weaponData)
+                return selectedWeapon[i];
+        }
+        return null;
+    }
+}
