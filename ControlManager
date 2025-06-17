@@ -1,0 +1,19 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ControlManager : MonoBehaviour
+{
+    public static ControlManager instance;
+    public PlayerControls controls {  get; private set; }
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    private void Start()
+    {
+        controls = GameManager.Instance.player.controls;
+    }
+}
