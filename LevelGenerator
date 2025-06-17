@@ -93,6 +93,8 @@ public class LevelGenerator : MonoBehaviour
             enemy.transform.parent = null;
             enemy.gameObject.SetActive(true);
         }
+
+        MissionManager.instance.StartMission();
     }
 
     [ContextMenu("Create next level part")]
