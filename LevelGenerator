@@ -32,7 +32,6 @@ public class LevelGenerator : MonoBehaviour
     {
         enemyList = new List<Enemy>();
         defaultSnapPoint = nextSnapPoint;
-        InitalizeGeneration();
     }
 
     private void Update()
@@ -58,7 +57,7 @@ public class LevelGenerator : MonoBehaviour
     }
 
     [ContextMenu("Restart generation")]
-    private void InitalizeGeneration()
+    public void InitalizeGeneration()
     {
         nextSnapPoint = defaultSnapPoint;
         generationOver = false;
