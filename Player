@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
 
     public Player_Health health { get; private set; }
 
-    public Ragdoll Ragdoll { get; private set; }
+    public Ragdoll ragdoll { get; private set; }
 
     public Animator anim {  get; private set; }
 
@@ -28,19 +28,23 @@ public class Player : MonoBehaviour
        
         controls = new PlayerControls();
 
-        Ragdoll = GetComponent<Ragdoll>();
+        anim = GetComponentInChildren<Animator>();
+        ragdoll = GetComponent<Ragdoll>();
+        health = GetComponent<Player_Health>();
         aim = GetComponent<PlayerAim>();
         movement = GetComponent<PlayerMovement>();
         weapon = GetComponent<PlayerWeaponController>();
         weaponVisuals = GetComponent<PlayerWeaponVisuals>();
         interaction = GetComponent<PlayerInteraction>();
-        health = GetComponent<Player_Health>();
-        anim = GetComponentInChildren<Animator>();
     }
 
     private void OnEnable()
     {
         controls.Enable();
+
+        controls.Character.UIMissionTooltip.performed += ctx => UI.instance.inGameUI.SwitchMissionToolTip();
+
+        controls.Character.UIPause.performed += ctx => UI.instance.PauseSwitch();
     }
 
     private void OnDisable()
