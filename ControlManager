@@ -17,6 +17,8 @@ public class ControlManager : MonoBehaviour
     {
         controls = GameManager.Instance.player.controls;
         player = GameManager.Instance.player;
+
+        SwitchToCharacterControls();
     }
 
     public void SwitchToCharacterControls()
@@ -33,4 +35,3 @@ public class ControlManager : MonoBehaviour
         player.SetControlsEnabled(false);
     }
 }
-
