@@ -20,6 +20,11 @@ public class UI : MonoBehaviour
         weaponSelection = GetComponentInChildren<UI_WeaponSelection>(true);
     }
 
+    private void Start()
+    {
+        AssignInputsUI();
+    }
+
     public void SwitchTo(GameObject uiToSwitchOn)
     {
         foreach(GameObject go in UIElements)
@@ -53,12 +58,21 @@ public class UI : MonoBehaviour
         if (gamePaused)
         {
             SwitchTo(inGameUI.gameObject);
-            Time.timeScale = 1;
+            ControlManager.instance.SwitchToCharacterControls();
+            TimeManager.instance.ResumeTime();
         }
         else
         {
             SwitchTo(pauseUI);
-            Time.timeScale = 0;
+            ControlManager.instance.SwitchToUIControls();
+            TimeManager.instance.PauseTime();
         }
+    }
+
+    private void AssignInputsUI()
+    {
+        PlayerControls controls = GameManager.Instance.player.controls;
+
+        controls.UI.UIPause.performed += ctx => PauseSwitch();
     }
 }
