@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public void GameStart()
     {
         SetDefaultWeaponsForPlayer();
+        LevelGenerator.instance.InitalizeGeneration();
     }
 
     public void SetDefaultWeaponsForPlayer()
