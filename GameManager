@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,13 +18,19 @@ public class GameManager : MonoBehaviour
         player = FindObjectOfType<Player>();
     }
 
+    //we start selected mission in a levelgenerator script, after we are done with level creation.
     public void GameStart()
     {
         SetDefaultWeaponsForPlayer();
         LevelGenerator.instance.InitalizeGeneration();
     }
 
-    public void SetDefaultWeaponsForPlayer()
+    public void RestartScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void SetDefaultWeaponsForPlayer()
     {
         List<Weapon_Data> newList = UI.instance.weaponSelection.SelectedWeaponData();
         player.weapon.SetDefaultWeapon(newList);
