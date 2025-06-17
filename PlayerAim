@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Transactions;
 using UnityEngine;
 
+//Player_AimController.
 public class PlayerAim : MonoBehaviour
 {
     // set up references to other scripts.
@@ -50,6 +51,9 @@ public class PlayerAim : MonoBehaviour
     private void Update()
     {
         if(player.health.isDead)
+            return;
+
+        if (player.controlsEnabled == false)
             return;
 
         //simple input to switch on precise aim or switch off.
