@@ -23,6 +23,8 @@ public class Player : MonoBehaviour
 
     public Animator anim {  get; private set; }
 
+    public bool controlsEnabled { get; private set; }
+
     private void Awake()
     {
        
@@ -50,5 +52,10 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         controls.Disable();
+    }
+
+    public void SetControlsEnabled(bool enabled)
+    {
+        controlsEnabled = enabled;
     }
 }
