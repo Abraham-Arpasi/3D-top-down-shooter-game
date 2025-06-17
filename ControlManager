@@ -6,6 +6,7 @@ public class ControlManager : MonoBehaviour
 {
     public static ControlManager instance;
     public PlayerControls controls {  get; private set; }
+    private Player player;
 
     private void Awake()
     {
@@ -15,5 +16,21 @@ public class ControlManager : MonoBehaviour
     private void Start()
     {
         controls = GameManager.Instance.player.controls;
+        player = GameManager.Instance.player;
+    }
+
+    public void SwitchToCharacterControls()
+    {
+        controls.UI.Disable();
+        controls.Character.Enable();
+        player.SetControlsEnabled(true);
+    }
+
+    public void SwitchToUIControls()
+    {
+        controls.UI.Enable();
+        controls.Character.Disable();
+        player.SetControlsEnabled(false);
     }
 }
+
