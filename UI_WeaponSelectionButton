@@ -1,50 +1,45 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-public class UI_WeaponSelectionButton : UI_Button
+public class UI_MissionSelectionButton : UI_Button
 {
-    private UI_WeaponSelection weaponSelectionUI;
+    private UI_MissionSelection missionUI;
+    private TextMeshProUGUI myText;
 
-    [SerializeField] private Weapon_Data weaponData;
-    [SerializeField] private Image weaponIcon;
-
-    private UI_SelectedWeaponWindow emptySlot;
+    [SerializeField] private Mission myMission;
 
     private void OnValidate()
     {
-        gameObject.name = "Button - Select Weapon: " + weaponData.weaponType;
+        gameObject.name = "Button - Select Mission: " + myMission.missionName;
     }
 
-    public override void Start()
+   public override void Start()
     {
         base.Start();
 
-        weaponSelectionUI = GetComponentInParent<UI_WeaponSelection>();
-        weaponIcon.sprite = weaponData.weaponIcon;
+        missionUI = GetComponentInParent<UI_MissionSelection>();
+        myText = GetComponentInChildren<TextMeshProUGUI>();
+        myText.text = myMission.missionName;
     }
 
     public override void OnPointerEnter(PointerEventData eventData)
     {
         base.OnPointerEnter(eventData);
-
-        emptySlot = weaponSelectionUI.FindEmptySlot();
-        emptySlot?.UpdateSlotInfo(weaponData);
+        missionUI.UpdateMissionDescription(myMission.missionDescription);
     }
 
     public override void OnPointerExit(PointerEventData eventData)
     {
         base.OnPointerExit(eventData);
-
-        emptySlot?.UpdateSlotInfo(null);
-        emptySlot = null;
+        missionUI.UpdateMissionDescription("Choose a mission");
     }
 
     public override void OnPointerDown(PointerEventData eventData)
     {
         base.OnPointerDown(eventData);
+        MissionManager.instance.SetCurrentMission(myMission);
     }
 }
