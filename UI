@@ -73,7 +73,8 @@ public class UI : MonoBehaviour
 
     public void ShowGameOverUI(string message = "GAME OVER!")
     {
-
+        SwitchTo(gameOverUI.gameObject);
+        gameOverUI.ShowGameOverMessage(message);
     }
 
     private void AssignInputsUI()
