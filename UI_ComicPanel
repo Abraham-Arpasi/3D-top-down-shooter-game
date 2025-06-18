@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,6 +64,21 @@ public class UI_ComicPanel : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        throw new System.NotImplementedException();
+        ShowNextImageOnClick();
     }
+
+    private void ShowNextImageOnClick()
+    {
+        comicPanel[imageIndex].color = Color.white;
+        imageIndex++;
+
+        if (imageIndex >= comicPanel.Length)
+            EnablePlayButton();
+
+        if (comicShowOver)
+            return;
+
+        ShowNextImage();
+    }
+
 }
