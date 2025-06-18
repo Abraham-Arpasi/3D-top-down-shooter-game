@@ -53,6 +53,11 @@ public class UI : MonoBehaviour
         Application.Quit();
     }
 
+    public void StartLevelGeneration()
+    {
+        LevelGenerator.instance.InitalizeGeneration();
+    }
+
     public void RestartTheGame()
     {
         StartCoroutine(ChangeImageAlpha(1, 1f, GameManager.Instance.RestartScene));
