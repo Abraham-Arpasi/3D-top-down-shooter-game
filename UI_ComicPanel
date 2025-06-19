@@ -7,12 +7,12 @@ using UnityEngine.UI;
 
 public class UI_ComicPanel : MonoBehaviour, IPointerDownHandler
 {
-    [SerializeField] private Image[] comicPanel;
-    [SerializeField] private int imageIndex;
-    [SerializeField] private GameObject playButton;
-
     private Image myImage;
-    [SerializeField] private bool comicShowOver;
+    [SerializeField] private Image[] comicPanel;
+    [SerializeField] private GameObject buttonToEnable;
+
+    private bool comicShowOver;
+    private int imageIndex;
 
     private void Start()
     {
@@ -47,18 +47,18 @@ public class UI_ComicPanel : MonoBehaviour, IPointerDownHandler
 
         if(imageIndex >= comicPanel.Length)
         {
-            EnablePlayButton();
+            FinishComicSlides();
         }
 
         //call the completion method if it exists
         onComplete?.Invoke();
     }
 
-    private void EnablePlayButton()
+    private void FinishComicSlides()
     {
         StopAllCoroutines();
         comicShowOver = true;
-        playButton.SetActive(true);
+        buttonToEnable.SetActive(true);
         myImage.raycastTarget = false;
     }
 
@@ -73,7 +73,7 @@ public class UI_ComicPanel : MonoBehaviour, IPointerDownHandler
         imageIndex++;
 
         if (imageIndex >= comicPanel.Length)
-            EnablePlayButton();
+            FinishComicSlides();
 
         if (comicShowOver)
             return;
