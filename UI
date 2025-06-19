@@ -9,12 +9,22 @@ public class UI : MonoBehaviour
     public static UI instance;
 
     public UI_InGame inGameUI { get; private set; }
+    
+    [SerializeField] private GameObject mainMenuUI;
+    [SerializeField] private GameObject Settings;
+    [SerializeField] private GameObject Credits;
+    [SerializeField] private GameObject WeaponSelection;
+    [SerializeField] private GameObject MissionSelection;
+    [SerializeField] private GameObject ComicPanel;
+    [SerializeField] private GameObject VictoryScreen;
+    [SerializeField] private GameObject GameOver;
     public UI_WeaponSelection weaponSelection {  get; private set; }
     public UI_GameOver gameOverUI { get; private set; }
     public GameObject victoryScreenUI;
 
     [SerializeField] private GameObject[] UIElements;
     public GameObject pauseUI;
+
 
     [Header("Fade Image")]
     [SerializeField] private Image fadeImage;
@@ -66,6 +76,16 @@ public class UI : MonoBehaviour
 
     public void PauseSwitch()
     {
+        if (mainMenuUI != null && mainMenuUI.activeSelf || 
+            Settings != null && Settings.activeSelf || 
+            Credits != null && Credits.activeSelf || 
+            WeaponSelection != null && WeaponSelection.activeSelf || 
+            MissionSelection != null && MissionSelection.activeSelf || 
+            ComicPanel != null && ComicPanel.activeSelf || 
+            VictoryScreen != null && VictoryScreen.activeSelf || 
+            GameOver != null && GameOver.activeSelf)
+            return;
+
         bool gamePaused = pauseUI.activeSelf;
 
         if (gamePaused)
@@ -91,7 +111,6 @@ public class UI : MonoBehaviour
     private void AssignInputsUI()
     {
         PlayerControls controls = GameManager.Instance.player.controls;
-
         controls.UI.UIPause.performed += ctx => PauseSwitch();
     }
 
