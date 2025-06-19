@@ -25,6 +25,14 @@ public class GameManager : MonoBehaviour
         LevelGenerator.instance.InitalizeGeneration();
     }
 
+    public void GameCompleted()
+    {
+        UI.instance.ShowVictoryScreenUI();
+        ControlManager.instance.controls.Character.Disable();
+        //this is to make sure the player doesn't die in the last second.
+        player.health.currentHealth += 99999;
+    }
+
     public void RestartScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
