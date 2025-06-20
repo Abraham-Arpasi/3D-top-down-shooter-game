@@ -42,6 +42,12 @@ public class UI : MonoBehaviour
         AssignInputsUI();
 
         StartCoroutine(ChangeImageAlpha(0, 1.5f, null));
+
+        if (GameManager.Instance.quickStart)
+        {
+            LevelGenerator.instance.InitalizeGeneration();
+            StartTheGame();
+        }
     }
 
     public void SwitchTo(GameObject uiToSwitchOn)
@@ -131,12 +137,13 @@ public class UI : MonoBehaviour
 
     private IEnumerator StartGameSequence()
     {
-        StartCoroutine(ChangeImageAlpha(1, 1, null));
+        //StartCoroutine(ChangeImageAlpha(1, 1, null));
+        //yield return new WaitForSeconds(1);
 
-        yield return new WaitForSeconds(1);
+        yield return null;
         SwitchTo(inGameUI.gameObject);
         GameManager.Instance.GameStart();
-        StartCoroutine(ChangeImageAlpha(0, 1, null));
+        StartCoroutine(ChangeImageAlpha(0, 0.1f, null));
     }
 
     private IEnumerator ChangeImageAlpha(float targetAlpha, float duration, System.Action onComplete)
