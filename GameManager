@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Settings")]
     public bool friendlyFire;
+    [Space]
+    public bool quickStart;
 
     private void Awake()
     {
@@ -22,7 +24,8 @@ public class GameManager : MonoBehaviour
     public void GameStart()
     {
         SetDefaultWeaponsForPlayer();
-        LevelGenerator.instance.InitalizeGeneration();
+       // LevelGenerator.instance.InitalizeGeneration();
+
     }
 
     public void GameCompleted()
