@@ -12,26 +12,33 @@ public class Car_Controller : MonoBehaviour
 
     public float speed;
 
-    public float turnSensitivity;
+    [SerializeField] private float turnSensitivity;
     [Header("Car Settings")]
     [SerializeField] private Transform centerOfMass;
 
     [Header("Engine Settings")]
-    public float currentSpeed;
+    [SerializeField] private float currentSpeed;
     [Range(7, 15)]
-    public float maxSpeed;
+    [SerializeField] private float maxSpeed;
     [Range(0.5f, 5)]
-    public float accelerationSpeed;
+    [SerializeField] private float accelerationSpeed;
     [Range(1500, 3000)]
-    public float motorForce = 1500f;
+    [SerializeField] private float motorForce = 1500f;
 
     [Header("Brakes Settings")]
     [Range(4, 10)]
-    public float brakeSensetivity = 5;
+    [SerializeField] private float brakeSensetivity = 5;
     [Range(4000, 10000)]
-    public float brakePower = 5000;
-
+    [SerializeField] private float brakePower = 5000;
     private bool isBraking;
+
+    [Header("Drift Settings")]
+    [Range(0, 1)]
+    [SerializeField] private float frontDriftFactor = 0.5f;
+    [Range(0, 1)]
+    [SerializeField] private float backDriftFactor = 0.5f;
+    [SerializeField] private float driftDuration = 1f;
+    private float driftTimer;
 
     private Car_Wheel[] wheels;
 
@@ -51,6 +58,13 @@ public class Car_Controller : MonoBehaviour
     private void Update()
     {
         speed = rb.velocity.magnitude;
+
+        driftTimer -= Time.deltaTime;
+
+        if(driftTimer < 0)
+        {
+            isBraking = false;
+        }
     }
 
     private void FixedUpdate()
@@ -60,6 +74,11 @@ public class Car_Controller : MonoBehaviour
         ApplySteering();
         ApplyBrakes();
         ApplySpeedLimit();
+
+        if (isBraking)
+            ApplyDrift();
+        else
+            StopDrift();
     }
     private void ApplyDrive()
     {
@@ -105,6 +124,28 @@ public class Car_Controller : MonoBehaviour
         }
     }
 
+    private void ApplyDrift()
+    {
+        foreach (var wheel in wheels)
+        {
+            bool frontWheel = wheel.axelType == AxelType.Front;
+            float driftFactor = frontWheel ? frontDriftFactor : backDriftFactor;
+
+            WheelFrictionCurve sidewaysFriction = wheel.cd.sidewaysFriction;
+
+            sidewaysFriction.stiffness *= (1 - driftFactor);
+            wheel.cd.sidewaysFriction = sidewaysFriction;
+        }
+    }
+
+    private void StopDrift()
+    {
+        foreach (var wheel in wheels)
+        {
+            wheel.RestoreDefaultStiffness();
+        }
+    }
+
     private void ApplyAnimationToWheels()
     {
         foreach (var wheel in wheels)
@@ -136,6 +177,12 @@ public class Car_Controller : MonoBehaviour
         {
             moveInput = 0;
             steerInput = 0;
+        };
+
+        controls.Car.Brake.performed += ctx =>
+        {
+            isBraking = true;
+            driftTimer = driftDuration;
         };
 
         controls.Car.Brake.performed += ctx => isBraking = true;
