@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum DriveType { FrontWheelDrive, RearWheelDrive, AllWheelDrive}
+
+[RequireComponent(typeof(Rigidbody))]
 public class Car_Controller : MonoBehaviour
 {
+    private bool carActive;
     private PlayerControls controls;
     private Rigidbody rb;
     private float moveInput;
@@ -34,7 +37,7 @@ public class Car_Controller : MonoBehaviour
     [SerializeField] private float maxSpeed = 7;
     [Range(0.5f, 5)]
     [SerializeField] private float accelerationSpeed = 2;
-    [Range(1500, 3000)]
+    [Range(1500, 5000)]
     [SerializeField] private float motorForce = 1500f;
 
     [Header("Brakes Settings")]
@@ -88,6 +91,9 @@ public class Car_Controller : MonoBehaviour
 
     private void Update()
     {
+        if (carActive == false)
+            return;
+
         speed = rb.velocity.magnitude;
 
         driftTimer -= Time.deltaTime;
@@ -100,6 +106,9 @@ public class Car_Controller : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (carActive == false)
+            return;
+
         ApplyAnimationToWheels();
         ApplyDrive();
         ApplySteering();
@@ -210,6 +219,11 @@ public class Car_Controller : MonoBehaviour
         }
     }
 
+    public void ActivateCar(bool activate)
+    {
+        carActive = activate;
+    }
+
     private void AssignInputEvents()
     {
         controls.Car.Movement.performed += ctx =>
@@ -235,5 +249,13 @@ public class Car_Controller : MonoBehaviour
 
         controls.Car.Brake.performed += ctx => isBraking = true;
         controls.Car.Brake.canceled += ctx => isBraking = false;
+    }
+
+    [ContextMenu("Focus Camera and enable")]
+
+    public void TextThisCar()
+    {
+        ActivateCar(true);
+        CameraManager.instance.ChangeCameraTarget(transform, 12);
     }
 }
