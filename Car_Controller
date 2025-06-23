@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum DriveType { FrontWheelDrive, RearWheelDrive, AllWheelDrive}
 public class Car_Controller : MonoBehaviour
 {
     private PlayerControls controls;
@@ -12,22 +13,35 @@ public class Car_Controller : MonoBehaviour
 
     public float speed;
 
-    [SerializeField] private float turnSensitivity;
+    [Range(30, 60)]
+    [SerializeField] private float turnSensitivity = 30;
     [Header("Car Settings")]
+    [SerializeField] private DriveType driveType;
     [SerializeField] private Transform centerOfMass;
+    [Range(350, 1000)]
+    [SerializeField] private float carMass = 400;
+    [Range(20, 80)]
+    [SerializeField] private float wheelsMass = 1;
+    [Range(0.5f, 2f)]
+    [SerializeField] private float frontWheelTraction = 1;
+    [Range(0.5f, 2f)]
+    [SerializeField] private float backWheelTraction = 1;
+   
 
     [Header("Engine Settings")]
     [SerializeField] private float currentSpeed;
     [Range(7, 15)]
-    [SerializeField] private float maxSpeed;
+    [SerializeField] private float maxSpeed = 7;
     [Range(0.5f, 5)]
-    [SerializeField] private float accelerationSpeed;
+    [SerializeField] private float accelerationSpeed = 2;
     [Range(1500, 3000)]
     [SerializeField] private float motorForce = 1500f;
 
     [Header("Brakes Settings")]
-    [Range(4, 10)]
-    [SerializeField] private float brakeSensetivity = 5;
+    [Range(0, 10)]
+    [SerializeField] private float frontBrakeSensetivity = 5;
+    [Range(0, 10)]
+    [SerializeField] private float backBrakeSensetivity = 5;
     [Range(4000, 10000)]
     [SerializeField] private float brakePower = 5000;
     private bool isBraking;
@@ -45,14 +59,30 @@ public class Car_Controller : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.centerOfMass = centerOfMass.localPosition;
+        wheels = GetComponentsInChildren<Car_Wheel>();
 
         controls = ControlManager.instance.controls;
         ControlManager.instance.SwitchToCarControls();
 
-        wheels = GetComponentsInChildren<Car_Wheel>();
-
         AssignInputEvents();
+        SetupDefaultValues();
+    }
+
+    private void SetupDefaultValues()
+    {
+        rb.centerOfMass = centerOfMass.localPosition;
+        rb.mass = carMass;
+
+        foreach (var wheel in wheels)
+        {
+            wheel.cd.mass = wheelsMass;
+
+            if (wheel.axelType == AxelType.Front)
+                wheel.SetDefaultStiffness(frontWheelTraction);
+
+            if (wheel.axelType == AxelType.Back)
+                wheel.SetDefaultStiffness(backWheelTraction);
+        }
     }
 
     private void Update()
@@ -88,7 +118,20 @@ public class Car_Controller : MonoBehaviour
 
         foreach(var wheel in wheels)
         {
-            if(wheel.axelType == AxelType.Front)
+            if(driveType == DriveType.FrontWheelDrive)
+            {
+                if(wheel.axelType == AxelType.Front)
+                {
+                   wheel.cd.motorTorque = motorTorqueValue;
+                }
+
+            }
+            else if(driveType == DriveType.RearWheelDrive)
+            {
+                if (wheel.axelType == AxelType.Back)
+                    wheel.cd.motorTorque = motorTorqueValue;
+            }
+            else
             {
                 wheel.cd.motorTorque = motorTorqueValue;
             }
@@ -114,13 +157,16 @@ public class Car_Controller : MonoBehaviour
     }
     private void ApplyBrakes()
     {
-        float newBrakeTorque = brakePower * brakeSensetivity * Time.deltaTime;
-        float currentBrakeTorque = isBraking ? newBrakeTorque : 0;
 
         foreach (var wheel in wheels)
         {
-            if (wheel.axelType == AxelType.Front)
-                wheel.cd.brakeTorque = currentBrakeTorque;
+            bool frontBrakes = wheel.axelType == AxelType.Front;
+            float brakeSensetivity = frontBrakes ? frontBrakeSensetivity : backBrakeSensetivity;
+
+            float newBrakeTorque = brakePower * frontBrakeSensetivity * Time.deltaTime;
+            float currentBrakeTorque = isBraking ? newBrakeTorque : 0;
+
+            wheel.cd.brakeTorque = currentBrakeTorque;
         }
     }
 
