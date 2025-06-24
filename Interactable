@@ -7,8 +7,8 @@ public class Interactable : MonoBehaviour
     protected PlayerWeaponController weaponController;
 
     //makes a glowing material.
-    protected MeshRenderer mesh;
-    protected Material defaultMaterial;
+    [SerializeField] protected MeshRenderer mesh;
+    [SerializeField] protected Material defaultMaterial;
     [SerializeField] private Material highLightMaterial;
 
     private void Start()
