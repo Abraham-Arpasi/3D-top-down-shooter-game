@@ -8,7 +8,7 @@ public enum DriveType { FrontWheelDrive, RearWheelDrive, AllWheelDrive}
 [RequireComponent(typeof(Rigidbody))]
 public class Car_Controller : MonoBehaviour
 {
-    private bool carActive;
+    public bool carActive { get; private set; }
     private PlayerControls controls;
     private Rigidbody rb;
     private float moveInput;
@@ -247,8 +247,9 @@ public class Car_Controller : MonoBehaviour
             driftTimer = driftDuration;
         };
 
-        controls.Car.Brake.performed += ctx => isBraking = true;
         controls.Car.Brake.canceled += ctx => isBraking = false;
+
+        controls.Car.CarExit.performed += ctx => GetComponent<Car_Interaction>().GetOutOfTheCar();
     }
 
     [ContextMenu("Focus Camera and enable")]
