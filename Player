@@ -56,5 +56,6 @@ public class Player : MonoBehaviour
     public void SetControlsEnabled(bool enabled)
     {
         controlsEnabled = enabled;
+        ragdoll.CollidersActive(enabled);
     }
 }
