@@ -71,7 +71,16 @@ public class PlayerAim : MonoBehaviour
 
         UpdateAimVisuals();
     }
+    public Transform GetAimCameraTarget()
+    {
+        cameraTarget.position = player.transform.position;
+        return cameraTarget;
+    }
 
+    public void EnableAimLaser(bool enable)
+    {
+        aimLaser.enabled = enable;
+    }
     private void UpdateAimVisuals()
     {
         //if character is not ready then the laser will not update.
