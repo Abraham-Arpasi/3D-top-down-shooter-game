@@ -18,7 +18,18 @@ public class Car_Interaction : Interactable
     public override void Interaction()
     {
         base.Interaction();
+        GetIntoTheCar();
+    }
 
-        Debug.Log("Got into the car");
+    private void GetIntoTheCar()
+    {
+        ControlManager.instance.SwitchToCarControls();
+        car.ActivateCar(true);
+
+        player.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+        player.transform.parent = transform;
+        player.transform.localPosition = Vector3.up / 2;
+
+        CameraManager.instance.ChangeCameraTarget(transform);
     }
 }
