@@ -20,12 +20,6 @@ public class DeadState_Boss : EnemyState
 
         interactionDisabled = false;
 
-        //this will turn off the animator and turn on nav Stopped when enemy is dead.
-        enemy.anim.enabled = false;
-        enemy.agent.isStopped = true;
-
-        enemy.ragdoll.RagdollActive(true);
-
         stateTimer = 2f;
     }
 
