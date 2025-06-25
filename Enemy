@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public enum EnemyType { Melee,Range,Boss}
+public enum EnemyType { Melee, Range, Boss, Random}
 
 //this will attach a navmeshagent to whatever inherits from the enemy.
 [RequireComponent(typeof(NavMeshAgent))]
@@ -114,13 +114,13 @@ public class Enemy : MonoBehaviour
     }
     public virtual void GetHit(int damage)
     {
+        EnterBattleMode();
         health.ReduceHealth(damage);
         if (health.ShouldDie())
         {
             Die();
         }
 
-        EnterBattleMode();
     }
 
     public virtual void Die()
