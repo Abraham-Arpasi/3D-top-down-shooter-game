@@ -15,11 +15,8 @@ public class DeadState_Range : EnemyState
     {
         base.Enter();
 
-        //this will turn off the animator and turn on nav Stopped when enemy is dead.
-        enemy.anim.enabled = false;
-        enemy.agent.isStopped = true;
-
-        enemy.ragdoll.RagdollActive(true);
+        if (enemy.throwGrenadeState.finishedThrowingGrenade == false)
+            enemy.ThrowGrenade();
 
         stateTimer = 2f;
     }
