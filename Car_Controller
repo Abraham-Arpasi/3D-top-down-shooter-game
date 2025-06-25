@@ -70,6 +70,7 @@ public class Car_Controller : MonoBehaviour
 
         AssignInputEvents();
         SetupDefaultValues();
+        ActivateCar(false);
     }
 
     private void SetupDefaultValues()
@@ -222,6 +223,15 @@ public class Car_Controller : MonoBehaviour
     public void ActivateCar(bool activate)
     {
         carActive = activate;
+
+        if (activate)
+        {
+            rb.constraints = RigidbodyConstraints.None;
+        }
+        else
+        {
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+        }
     }
 
     private void AssignInputEvents()
