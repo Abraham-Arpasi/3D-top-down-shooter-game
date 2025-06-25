@@ -18,6 +18,12 @@ public class Car_Interaction : Interactable
     {
         car = GetComponent<Car_Controller>();
         player = GameManager.Instance.player.transform;
+
+        foreach (var point in exitPoints)
+        {
+            point.GetComponent<MeshRenderer>().enabled = false;
+            point.GetComponent<SphereCollider>().enabled = false;
+        }
     }
 
     public override void Interaction()
