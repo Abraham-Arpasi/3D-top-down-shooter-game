@@ -7,8 +7,8 @@ public class Ragdoll : MonoBehaviour
     [SerializeField] private Transform ragdollParent;
 
     //we are going to collect all the colliders and rigidbodies.
-    [SerializeField] private Collider[] ragdollColliders;
-    [SerializeField] private Rigidbody[] ragdollRigidbodies;
+     private Collider[] ragdollColliders;
+     private Rigidbody[] ragdollRigidbodies;
 
     private void Awake()
     {
@@ -16,6 +16,11 @@ public class Ragdoll : MonoBehaviour
         ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
 
         RagdollActive(false);
+
+        foreach (Rigidbody rb in ragdollRigidbodies)
+        {
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+        }
     }
     //we are going to have all the kinematic in rigidbodies on but when the enemy dies it all turns off.
     public void RagdollActive(bool active)
