@@ -127,6 +127,13 @@ public class Enemy : MonoBehaviour
     {
         dropController.DropItems();
 
+        //this will turn off the animator and turn on nav Stopped when enemy is dead.
+        anim.enabled = false;
+        agent.isStopped = true;
+        agent.enabled = false;
+
+        ragdoll.RagdollActive(true);
+
         MissionObject_HuntTarget huntTarget = GetComponent<MissionObject_HuntTarget>();
         huntTarget?.InvokeOnTargetKilled();
     }
