@@ -6,6 +6,9 @@ using TMPro;
 
 public class UI_InGame : MonoBehaviour
 {
+    [SerializeField] private GameObject characterUI;
+    [SerializeField] private GameObject carUI;
+
     [Header("Health")]
     [SerializeField] private Image healthBar;
 
@@ -13,12 +16,38 @@ public class UI_InGame : MonoBehaviour
     [SerializeField] private UI_WeaponSlot[] weaponSlots_UI;
 
     [Header("Missions")]
+    [SerializeField] private GameObject missionTooltipParent;
+    [SerializeField] private GameObject missionHelpTooltip;
     [SerializeField] private TextMeshProUGUI missionText;
     [SerializeField] private TextMeshProUGUI missionDetails;
+    private bool tooltipActive = true;
+
+    [Header("Car info")]
+    [SerializeField] private Image carHealthBar;
+    [SerializeField] private Text carSpeedText;
 
     private void Awake()
     {
         weaponSlots_UI = GetComponentsInChildren<UI_WeaponSlot>();
+    }
+
+    public void SwitchToCharacterUI()
+    {
+        characterUI.SetActive(true);
+        carUI.SetActive(false);
+    }
+
+    public void SwitchToCarUI()
+    {
+        characterUI.SetActive(false);
+        carUI.SetActive(true);
+    }
+
+    public void SwitchMissionToolTip()
+    {
+        tooltipActive = !tooltipActive;
+        missionTooltipParent.SetActive(tooltipActive);
+        missionHelpTooltip.SetActive(!tooltipActive);
     }
 
     public void UpdateMissionInfo(string missionText, string missionDetails = "")
@@ -46,4 +75,11 @@ public class UI_InGame : MonoBehaviour
     {
         healthBar.fillAmount = currentHealth / maxHealth;
     }
+
+    public void UpdateCarHealthUI(float currentCarHealth, float maxCarHealth)
+    {
+        carHealthBar.fillAmount = currentCarHealth / maxCarHealth;
+    }
+
+    public void UpdateSpeedText(string text) => carSpeedText.text = text;
 }
