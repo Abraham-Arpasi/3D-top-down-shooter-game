@@ -17,6 +17,7 @@ public class Car_Interaction : Interactable
 
     private void Start()
     {
+        carHealthController = GetComponent<Car_HealthController>();
         carController = GetComponent<Car_Controller>();
         player = GameManager.Instance.player.transform;
 
