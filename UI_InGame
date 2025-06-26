@@ -24,7 +24,7 @@ public class UI_InGame : MonoBehaviour
 
     [Header("Car info")]
     [SerializeField] private Image carHealthBar;
-    [SerializeField] private Text carSpeedText;
+    [SerializeField] private TextMeshProUGUI carSpeedText;
 
     private void Awake()
     {
@@ -83,3 +83,4 @@ public class UI_InGame : MonoBehaviour
 
     public void UpdateSpeedText(string text) => carSpeedText.text = text;
 }
+
