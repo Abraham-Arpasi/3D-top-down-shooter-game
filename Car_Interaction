@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Car_Interaction : Interactable
 {
-    private Car_Controller car;
+    private Car_HealthController carHealthController;
+    private Car_Controller carController;
     private Transform player;
 
     private float defaultPlayerScale;
@@ -16,7 +17,7 @@ public class Car_Interaction : Interactable
 
     private void Start()
     {
-        car = GetComponent<Car_Controller>();
+        carController = GetComponent<Car_Controller>();
         player = GameManager.Instance.player.transform;
 
         foreach (var point in exitPoints)
@@ -35,7 +36,8 @@ public class Car_Interaction : Interactable
     private void GetIntoTheCar()
     {
         ControlManager.instance.SwitchToCarControls();
-        car.ActivateCar(true);
+        carHealthController.UpdateCarHealthUI();
+        carController.ActivateCar(true);
 
         defaultPlayerScale = player.localScale.x;
 
@@ -48,10 +50,10 @@ public class Car_Interaction : Interactable
 
     public void GetOutOfTheCar()
     {
-        if (car.carActive == false)
+        if (carController.carActive == false)
             return;
 
-        car.ActivateCar(false);
+        carController.ActivateCar(false);
 
         player.parent = null;
         player.position = GetExitPoints();
