@@ -17,4 +17,7 @@ public class WeaponModel : MonoBehaviour
     //this will move the gun point and left hand when grabing weapons.
     public Transform gunPoint;
     public Transform holdPoint;
+
+    public AudioSource fireSFX;
+    public AudioSource reloadSFX;
 }
