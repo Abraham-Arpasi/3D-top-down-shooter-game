@@ -44,6 +44,9 @@ public class UI_Button : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         targetScale = defaultScale * scaleRate;
 
+        if (pointerEnterSFX != null)
+            pointerEnterSFX.Play();
+
         if(buttonImage != null)
             buttonImage.color = Color.yellow;
 
@@ -59,6 +62,9 @@ public class UI_Button : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public virtual void OnPointerDown(PointerEventData eventData)
     {
         ReturnDefaultLook();
+
+        if(pointerDownSFX != null)
+            pointerDownSFX.Play();
     }
     private void ReturnDefaultLook()
     {
