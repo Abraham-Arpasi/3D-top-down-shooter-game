@@ -228,6 +228,7 @@ public class PlayerWeaponController : MonoBehaviour
         currentWeapon.bulletsInMagazine--;
 
         UpdateWeaponUI();
+        player.weaponVisuals.CurrentWeaponModel().fireSFX.Play();
 
         //gets newbullet from the ObjectPool.
         GameObject newBullet = ObjectPool.instance.GetObject(bulletPrefab, GunPoint());
@@ -255,6 +256,8 @@ public class PlayerWeaponController : MonoBehaviour
     {
         SetWeaponReady(false);
         player.weaponVisuals.PlayReloadAnimation();
+
+        player.weaponVisuals.CurrentWeaponModel().reloadSFX.Play();
     }
 
     public Vector3 BulletDirection()
