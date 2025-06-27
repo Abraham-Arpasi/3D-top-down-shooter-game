@@ -18,11 +18,12 @@ public class PlayerAnimationEvents : MonoBehaviour
     public void ReloadIsOver()
     {
         visualController.MaximizeRigWeight();
+        visualController.CurrentWeaponModel().reloadSFX.Stop();
         weaponController.CurrentWeapon().RefilledBullets();
 
         //this will make the laser reappear when the weapon isn't reloading.
         weaponController.SetWeaponReady(true);
-
+        weaponController.UpdateWeaponUI();
     }
     //this will make the character only be able to shoot once animation is done
     public void ReturnRig()
@@ -33,7 +34,7 @@ public class PlayerAnimationEvents : MonoBehaviour
 
 
     //this will return the rig weight for the other script when the animation is over.
-    public void WeaponGrabIsOver()
+    public void WeaponEquippingIsOver()
     {
         //this will make the laser reappear when the character isn't swapping weapons.
         weaponController.SetWeaponReady(true);
