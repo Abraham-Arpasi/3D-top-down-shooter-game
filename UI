@@ -137,13 +137,18 @@ public class UI : MonoBehaviour
 
     private IEnumerator StartGameSequence()
     {
-        StartCoroutine(ChangeImageAlpha(1, 1, null));
-        yield return new WaitForSeconds(1);
+        bool quickStart = GameManager.Instance.quickStart;
+        if(quickStart == false)
+        {
+            fadeImage.color = Color.black;
+            StartCoroutine(ChangeImageAlpha(1, 1, null));
+            yield return new WaitForSeconds(1);
+        }
 
         yield return null;
         SwitchTo(inGameUI.gameObject);
         GameManager.Instance.GameStart();
-        StartCoroutine(ChangeImageAlpha(0, 0.1f, null));
+        StartCoroutine(ChangeImageAlpha(0, 1f, null));
     }
 
     private IEnumerator ChangeImageAlpha(float targetAlpha, float duration, System.Action onComplete)
