@@ -126,7 +126,7 @@ public class Bullet : MonoBehaviour
 
     protected void CreateImpactFx()
     {
-        GameObject newFx = Instantiate(gameObject);
+        GameObject newFx = Instantiate(bulletImpactFX);
         newFx.transform.position = transform.position;
 
         Destroy(newFx, 0.1f);
