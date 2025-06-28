@@ -26,6 +26,10 @@ public class PlayerMovement : MonoBehaviour
     private float speed;
     private bool isRunning;
 
+    private AudioSource walkSFX;
+    private AudioSource runSFX;
+    private bool canPlayFootsteps;
+
     //This is the variable for setting up for gravity.
     private float verticalVelocity;
 
@@ -43,7 +47,12 @@ public class PlayerMovement : MonoBehaviour
         //gives access to the controls to the action map to the actions.
         //add context because it gives information to the input, ex, button was pressed, held, or released.
         controls.Character.Movement.performed += context => moveInput = context.ReadValue<Vector2>();
-        controls.Character.Movement.canceled += context => moveInput = Vector2.zero;
+        controls.Character.Movement.canceled += context =>
+        {
+            stopFootstepsSFX();
+            moveInput = Vector2.zero;
+
+        };
 
         //what this does is when we enter the run action it returns the running speed.
         controls.Character.Run.performed += context =>
@@ -63,6 +72,11 @@ public class PlayerMovement : MonoBehaviour
     {
         //getting reference from the player script so we dont need a new instance.
         player = GetComponent<Player>();
+
+        //Setting up the audio for walking and running.
+        walkSFX = player.sound.walkSFX;
+        runSFX = player.sound.runSFX;
+        Invoke(nameof(AllowfootstepsSFX), 1f);
 
         // since we made characterController private, we can assign the character Controller component to the player movement script by using a start function.
         characterController = GetComponent<CharacterController>();
@@ -139,12 +153,42 @@ public class PlayerMovement : MonoBehaviour
         //lets the character actual move based of players movement inputs.
         if (movementDirection.magnitude > 0)
         {
+            PlayFootstepsSFX();
+
             //its important to add time.deltaTime because without it, it will register the input once every millisecond the button is pressed (making the character fly off screen).
             //Time.deltaTime is measured by frames and counts per second.(helps keep the speed in check).
             // multiply Time.deltaTime and walkSpeed to get the movement speed you want for the character.
             characterController.Move(movementDirection * Time.deltaTime * speed);
         }
+         
     }
+
+    private void PlayFootstepsSFX()
+    {
+        if (canPlayFootsteps == false)
+            return;
+
+        //changing SFX from walking to running.
+        if (isRunning)
+        {
+            if (runSFX.isPlaying == false)
+                runSFX.Play();
+        }
+        else
+        {
+            if (walkSFX.isPlaying == false)
+                walkSFX.Play();
+        }
+    }
+
+    private void stopFootstepsSFX()
+    {
+        walkSFX.Stop();
+        runSFX.Stop();
+    }
+
+    private void AllowfootstepsSFX() => canPlayFootsteps = true;
+
     //This is where we define gravity.
     private void ApplyGravity()
     {
