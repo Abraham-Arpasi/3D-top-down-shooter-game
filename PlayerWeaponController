@@ -189,7 +189,12 @@ public class PlayerWeaponController : MonoBehaviour
     }
 
     //the bottom two functions will make sure that the laser only appears when the weapon is ready.
-    public void SetWeaponReady(bool ready) => weaponReady = ready;
+    public void SetWeaponReady(bool ready)
+    {
+        weaponReady = ready;
+        if(ready)
+         player.sound.weaponReady.Play();
+    }
     public bool WeaponReady() => weaponReady;
 
 
