@@ -46,11 +46,11 @@ public class Car_Sounds : MonoBehaviour
         if (activate)
         {
             engineStart.Play();
-            AudioManager.instance.SFXDelayAndFade(workingEngine, true, 0.07f, 1, 1);
+            AudioManager.instance.SFXDelayAndFade(workingEngine, true, 0.07f, 1);
         }
         else
         {
-            workingEngine.Stop();
+            AudioManager.instance.SFXDelayAndFade(workingEngine, false, 0f, 0.25f);
             engineOff.Play();
         }
     }
