@@ -20,6 +20,7 @@ public class UI : MonoBehaviour
     [SerializeField] private GameObject GameOver;
     public UI_WeaponSelection weaponSelection {  get; private set; }
     public UI_GameOver gameOverUI { get; private set; }
+    public UI_Settings settingsUI {  get; private set; }
     public GameObject victoryScreenUI;
 
     [SerializeField] private GameObject[] UIElements;
@@ -35,6 +36,7 @@ public class UI : MonoBehaviour
         inGameUI = GetComponentInChildren<UI_InGame>(true);  
         weaponSelection = GetComponentInChildren<UI_WeaponSelection>(true);
         gameOverUI = GetComponentInChildren<UI_GameOver>(true);
+        settingsUI = GetComponentInChildren<UI_Settings>();
     }
 
     private void Start()
@@ -57,7 +59,10 @@ public class UI : MonoBehaviour
             go.SetActive(false);
         }
 
-        uiToSwitchOn.SetActive(true);   
+        uiToSwitchOn.SetActive(true);
+
+        if (uiToSwitchOn == settingsUI.gameObject)
+            settingsUI.LoadSettings();
     }
 
     public void StartTheGame()
