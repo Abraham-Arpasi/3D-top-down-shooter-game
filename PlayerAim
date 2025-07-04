@@ -168,6 +168,11 @@ public class PlayerAim : MonoBehaviour
 
     private void UpdateCameraPosition()
     {
+        bool canMoveCamera = Vector3.Distance(cameraTarget.position, DesiredCameraPosition()) > 1;
+
+        if (canMoveCamera == false)
+            return;
+
         //this will make it so that the  player aims at a leveled position no matter the height.
         cameraTarget.position = Vector3.Lerp(cameraTarget.position, DesiredCameraPosition(), cameraSensitivity * Time.deltaTime);
     }
