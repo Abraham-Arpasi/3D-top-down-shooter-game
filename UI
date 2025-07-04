@@ -21,6 +21,7 @@ public class UI : MonoBehaviour
     public UI_WeaponSelection weaponSelection {  get; private set; }
     public UI_GameOver gameOverUI { get; private set; }
     public UI_Settings settingsUI {  get; private set; }
+
     public GameObject victoryScreenUI;
 
     [SerializeField] private GameObject[] UIElements;
@@ -44,12 +45,13 @@ public class UI : MonoBehaviour
         AssignInputsUI();
 
         StartCoroutine(ChangeImageAlpha(0, 1.5f, null));
-
+        
         if (GameManager.Instance.quickStart)
         {
             LevelGenerator.instance.InitalizeGeneration();
             StartTheGame();
         }
+        
     }
 
     public void SwitchTo(GameObject uiToSwitchOn)
@@ -57,6 +59,12 @@ public class UI : MonoBehaviour
         foreach(GameObject go in UIElements)
         {
             go.SetActive(false);
+        }
+
+        if (uiToSwitchOn == null)
+        {
+            Debug.LogWarning("UI.SwitchTo was called with a null reference.");
+            return;
         }
 
         uiToSwitchOn.SetActive(true);
@@ -95,7 +103,9 @@ public class UI : MonoBehaviour
             ComicPanel != null && ComicPanel.activeSelf || 
             VictoryScreen != null && VictoryScreen.activeSelf || 
             GameOver != null && GameOver.activeSelf)
+        {
             return;
+        }
 
         bool gamePaused = pauseUI.activeSelf;
 
@@ -104,12 +114,14 @@ public class UI : MonoBehaviour
             SwitchTo(inGameUI.gameObject);
             ControlManager.instance.SwitchToCharacterControls();
             TimeManager.instance.ResumeTime();
+            Cursor.visible = false;
         }
         else
         {
             SwitchTo(pauseUI);
             ControlManager.instance.SwitchToUIControls();
             TimeManager.instance.PauseTime();
+            Cursor.visible = false;
         }
     }
 
@@ -142,7 +154,9 @@ public class UI : MonoBehaviour
 
     private IEnumerator StartGameSequence()
     {
+        
         bool quickStart = GameManager.Instance.quickStart;
+        
         if(quickStart == false)
         {
             fadeImage.color = Color.black;
@@ -153,6 +167,7 @@ public class UI : MonoBehaviour
         yield return null;
         SwitchTo(inGameUI.gameObject);
         GameManager.Instance.GameStart();
+
         StartCoroutine(ChangeImageAlpha(0, 1f, null));
     }
 
