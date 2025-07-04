@@ -46,6 +46,8 @@ public class PlayerAim : MonoBehaviour
        
         AssignInputEvents();
 
+        Cursor.visible = false;
+
     }
 
     private void Update()
@@ -56,6 +58,7 @@ public class PlayerAim : MonoBehaviour
         if (player.controlsEnabled == false)
             return;
 
+        /*
         //simple input to switch on precise aim or switch off.
         if(Input.GetKeyDown(KeyCode.P))
             isAimingPrecisly = !isAimingPrecisly;
@@ -63,6 +66,7 @@ public class PlayerAim : MonoBehaviour
         //this will switch the target lock on and off.
         if (Input.GetKeyDown(KeyCode.L))
             isLockingToTarget = !isLockingToTarget;
+        */
 
         //this will set aim position to the level of the character if aim is not precise.
         UpdateAimPosition();
@@ -71,6 +75,13 @@ public class PlayerAim : MonoBehaviour
 
         UpdateAimVisuals();
     }
+
+    private void EnablePreciseAim(bool enable)
+    {
+        isAimingPrecisly = !isAimingPrecisly;
+        Cursor.visible = false;
+    }
+
     public Transform GetAimCameraTarget()
     {
         cameraTarget.position = player.transform.position;
@@ -83,6 +94,9 @@ public class PlayerAim : MonoBehaviour
     }
     private void UpdateAimVisuals()
     {
+        //this is for the player aim viusal to point towards the camera.
+        aim.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+
         //if character is not ready then the laser will not update.
         aimLaser.enabled = player.weapon.WeaponReady();
 
@@ -120,6 +134,7 @@ public class PlayerAim : MonoBehaviour
     }
 
     //this will tell us if we have a target at the moment.
+    /*
     public Transform Target()
     {
         Transform target = null;
@@ -130,6 +145,7 @@ public class PlayerAim : MonoBehaviour
 
         return target;
     }
+    */
 
     private void UpdateCameraPosition()
     {
@@ -139,6 +155,7 @@ public class PlayerAim : MonoBehaviour
 
     private void UpdateAimPosition()
     {
+        /*
         Transform target = Target();
 
         if(target != null && isLockingToTarget)
@@ -155,6 +172,7 @@ public class PlayerAim : MonoBehaviour
 
             return;
         }
+        */
 
         aim.position = GetMouseHitInfo().point;
 
@@ -221,6 +239,9 @@ public class PlayerAim : MonoBehaviour
     private void AssignInputEvents()
     {
         controls = player.controls;
+
+        controls.Character.PreciseAim.performed += Context => EnablePreciseAim(true);
+        controls.Character.PreciseAim.canceled += Context => EnablePreciseAim(false);
 
         controls.Character.Aim.performed += context => mouseInput = context.ReadValue<Vector2>();
         controls.Character.Aim.canceled += context => mouseInput = Vector2.zero;
