@@ -8,6 +8,7 @@ using UnityEngine;
 public class PlayerAim : MonoBehaviour
 {
     // set up references to other scripts.
+    private CameraManager cameraManager;
     private Player player;
     private PlayerControls controls;
 
@@ -15,13 +16,21 @@ public class PlayerAim : MonoBehaviour
     [SerializeField] private LineRenderer aimLaser;
 
     [Header("Aim Info")]
-    [SerializeField] private Transform aim;
+    [SerializeField] private float preciseAimCamDistance = 6;
+    [SerializeField] private float regularAimCamDistance = 7;
+    [SerializeField] private float camChangeRate = 5;
 
+    [Header("Aim setup")]
+    [SerializeField] private Transform aim;
     //this will be for the precise aim of the gun.
     [SerializeField] bool isAimingPrecisly;
+    [SerializeField] private float offsetChangeRate = 6;
+    private float offsetY;
 
-    //this will be for the target lock.
-    [SerializeField] private bool isLockingToTarget;
+    [Header("Aim Layers")]
+    //This mask is for the aim physics detection.
+    [SerializeField] private LayerMask preciseAim;
+    [SerializeField] private LayerMask regularAim;
 
     [Header("Camera info")]
     [SerializeField] private Transform cameraTarget;
@@ -34,14 +43,13 @@ public class PlayerAim : MonoBehaviour
     [Range(3f, 5f)]
     [SerializeField] private float cameraSensitivity = 5f;
 
-    //This mask is for the aim physics detection.
-    [SerializeField] private LayerMask aimLayerMask;
    
     private Vector2 mouseInput;
     private RaycastHit lastKnownMouseHit; 
 
     private void Start()
     {
+        cameraManager = CameraManager.instance;
         player = GetComponent<Player>();
        
         AssignInputEvents();
@@ -80,6 +88,17 @@ public class PlayerAim : MonoBehaviour
     {
         isAimingPrecisly = !isAimingPrecisly;
         Cursor.visible = false;
+
+        if (enable)
+        {
+            cameraManager.ChangeCameraDistance(preciseAimCamDistance, camChangeRate);
+            Time.timeScale = 0.9f;
+        }
+        else
+        {
+            cameraManager.ChangeCameraDistance(regularAimCamDistance, camChangeRate);
+            Time.timeScale = 1;
+        }
     }
 
     public Transform GetAimCameraTarget()
@@ -175,12 +194,19 @@ public class PlayerAim : MonoBehaviour
         */
 
         aim.position = GetMouseHitInfo().point;
+        Vector3 newAimPosition = isAimingPrecisly ? aim.position : transform.position;
+        aim.position = new Vector3(aim.position.x, newAimPosition.y + AdjustedOffsetY(), aim.position.z);
 
-        if (!isAimingPrecisly)
-        {
-            //this will make the aim position be where the mouse is pointing at.
-            aim.position = new Vector3(aim.position.x, transform.position.y + 1, aim.position.z);
-        }
+    }
+
+    private float AdjustedOffsetY()
+    {
+        if (isAimingPrecisly)
+            offsetY = Mathf.Lerp(offsetY, 0, Time.deltaTime * offsetChangeRate * 0.5f);
+        else
+            offsetY = Mathf.Lerp(offsetY, 1, Time.deltaTime * offsetChangeRate);
+
+        return offsetY;
     }
 
     public Transform Aim() => aim;
@@ -226,7 +252,7 @@ public class PlayerAim : MonoBehaviour
         //This is for setting up the character aim.
         Ray ray = Camera.main.ScreenPointToRay(mouseInput);
         //We are going to check if ray hits something.
-        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
+        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, preciseAim))
         {
             //lastKnownMouseHit will make sure that the aim doesn't get messed up if not aiming at the ground or obstacle.
             lastKnownMouseHit = hitInfo;
