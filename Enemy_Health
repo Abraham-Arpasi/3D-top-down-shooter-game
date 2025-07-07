@@ -2,17 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Health : MonoBehaviour
+public class Enemy_Health : HealthController
 {
-    // Start is called before the first frame update
-    void Start()
+    public System.Action onHealthChanged;
+    public bool isInvincible { get; private set; }
+    private bool isVulnerable;
+
+    public int GetMaxHealthValue()
     {
-        
+        return maxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void ReduceHealth(int damage)
     {
-        
+        currentHealth -= damage;
+        onHealthChanged?.Invoke();
+    }
+
+    public virtual void IncreaseHealthBy(int _amount)
+    {
+        currentHealth += _amount;
+
+        if (currentHealth > GetMaxHealthValue())
+            currentHealth = GetMaxHealthValue();
+
+        if (onHealthChanged != null)
+            onHealthChanged();
+    }
+
+
+    public virtual void DecreaseHealthBy(int _damage)
+    {
+
+        if (isVulnerable)
+            _damage = Mathf.RoundToInt(_damage * 1.1f);
+
+        currentHealth -= _damage;
+          
+        if (onHealthChanged != null)
+            onHealthChanged();
     }
 }
