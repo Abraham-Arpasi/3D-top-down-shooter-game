@@ -1,0 +1,51 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UI_HealthBar : MonoBehaviour
+{
+    private Enemy enemy => GetComponentInParent<Enemy>();
+    private Enemy_Health enemyHealth => GetComponentInParent<Enemy_Health>();
+
+    private RectTransform myTransform;
+    private Slider slider;
+
+    private void Start()
+    {
+        myTransform = GetComponent<RectTransform>();
+        slider = GetComponentInChildren<Slider>();
+
+        UpdateHealthUI();
+    }
+    private void Update()
+    {
+        if (Camera.main != null)
+        {
+            Vector3 dirToCamera = myTransform.position - Camera.main.transform.position;
+            dirToCamera.y = 0;
+            if (dirToCamera != Vector3.zero)
+                myTransform.rotation = Quaternion.LookRotation(dirToCamera);
+        }
+    }
+
+    private void OnEnable()
+    {
+        enemyHealth.onHealthChanged += UpdateHealthUI;
+    }
+
+    private void UpdateHealthUI()
+    {
+        slider.maxValue = enemyHealth.GetMaxHealthValue();
+        slider.value = enemyHealth.currentHealth;
+    }
+
+    private void OnDisable()
+    {
+        if (enemyHealth != null)
+            enemyHealth.onHealthChanged -= UpdateHealthUI;
+            
+    }
+
+
+}
