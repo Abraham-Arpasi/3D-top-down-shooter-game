@@ -38,19 +38,43 @@ public class UI_Settings : MonoBehaviour
         audioMixer.SetFloat(bgmParameter, newValue);
     }
 
-    public void LoadValues()
+    public void LoadSettings()
     {
-        sfxSlider.value = PlayerPrefs.GetFloat(sfxParameter, 0.7f);
-        bgmSlider.value = PlayerPrefs.GetFloat(bgmParameter, 0.7f);
+        if (sfxSlider != null)
+        {
+            sfxSlider.value = PlayerPrefs.GetFloat(sfxParameter, 0.7f);
+            SFXSliderValue(sfxSlider.value); // Also update audio mixer
+        }
+        else
+        {
+            float value = PlayerPrefs.GetFloat(sfxParameter, 0.7f);
+            float newValue = Mathf.Log10(value) * sliderMultiplier;
+            audioMixer.SetFloat(sfxParameter, newValue);
+        }
 
-        int friendlyFireInt = PlayerPrefs.GetInt("FriendlyFire", 0);
-        bool newFriendlyFire = false;
+        if (bgmSlider != null)
+        {
+            bgmSlider.value = PlayerPrefs.GetFloat(bgmParameter, 0.7f);
+            BGMSliderValue(bgmSlider.value);
+        }
+        else
+        {
+            float value = PlayerPrefs.GetFloat(bgmParameter, 0.7f);
+            float newValue = Mathf.Log10(value) * sliderMultiplier;
+            audioMixer.SetFloat(bgmParameter, newValue);
+        }
 
-        if(friendlyFireInt == 1)
-            newFriendlyFire = true;
+        //sfxSlider.value = PlayerPrefs.GetFloat(sfxParameter, 0.7f);
+        //bgmSlider.value = PlayerPrefs.GetFloat(bgmParameter, 0.7f);
 
-        GameManager.Instance.friendlyFire = newFriendlyFire;
-        friendlyFireToggle.isOn = newFriendlyFire;
+        //int friendlyFireInt = PlayerPrefs.GetInt("FriendlyFire", 0);
+        //bool newFriendlyFire = false;
+
+       // if(friendlyFireInt == 1)
+         //   newFriendlyFire = true;
+
+        //GameManager.Instance.friendlyFire = newFriendlyFire;
+        //friendlyFireToggle.isOn = newFriendlyFire;
     }
 
     private void OnDisable()
