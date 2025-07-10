@@ -54,7 +54,7 @@ public class PlayerAim : MonoBehaviour
        
         AssignInputEvents();
 
-        Cursor.visible = false;
+        //Cursor.visible = false;
 
     }
 
@@ -87,7 +87,7 @@ public class PlayerAim : MonoBehaviour
     private void EnablePreciseAim(bool enable)
     {
         isAimingPrecisly = !isAimingPrecisly;
-        Cursor.visible = false;
+       // Cursor.visible = false;
 
         if (enable)
         {
