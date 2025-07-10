@@ -44,6 +44,10 @@ public class UI : MonoBehaviour
     {
         AssignInputsUI();
 
+        Settings.SetActive(true);
+        settingsUI.LoadSettings();
+        Settings.SetActive(false);
+
         StartCoroutine(ChangeImageAlpha(0, 1.5f, null));
         
         if (GameManager.Instance.quickStart)
@@ -51,7 +55,8 @@ public class UI : MonoBehaviour
             LevelGenerator.instance.InitalizeGeneration();
             StartTheGame();
         }
-        
+       
+
     }
 
     public void SwitchTo(GameObject uiToSwitchOn)
