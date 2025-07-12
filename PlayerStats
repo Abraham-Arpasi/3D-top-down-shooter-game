@@ -16,6 +16,9 @@ public class PlayerStats : CharacterStats
     public override void TakeDamage(int _damage)
     {
         base.TakeDamage(_damage);
+
+        if (UI.instance != null)
+            UI.instance.RefreshAllStatSlots();
     }
 
     protected override void Die()
@@ -74,5 +77,16 @@ public class PlayerStats : CharacterStats
 
 
         DoMagicalDamage(_targetStats); // remove if you don't want to apply magic hit on primary attack
+    }
+
+    public void IncreaseStatPermanent(StatType statType, int amount)
+    {
+        Stat stat = GetStat(statType);
+        if (stat != null)
+        {
+            stat.AddModifier(amount);
+            if (UI.instance != null)
+                UI.instance.RefreshAllStatSlots();
+        }
     }
 }
