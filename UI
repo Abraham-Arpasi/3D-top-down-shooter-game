@@ -18,6 +18,7 @@ public class UI : MonoBehaviour
     [SerializeField] private GameObject ComicPanel;
     [SerializeField] private GameObject VictoryScreen;
     [SerializeField] private GameObject GameOver;
+    [SerializeField] private GameObject Upgrade;
     public UI_WeaponSelection weaponSelection {  get; private set; }
     public UI_GameOver gameOverUI { get; private set; }
     public UI_Settings settingsUI {  get; private set; }
@@ -116,7 +117,8 @@ public class UI : MonoBehaviour
             MissionSelection != null && MissionSelection.activeSelf || 
             ComicPanel != null && ComicPanel.activeSelf || 
             VictoryScreen != null && VictoryScreen.activeSelf || 
-            GameOver != null && GameOver.activeSelf)
+            GameOver != null && GameOver.activeSelf || 
+            Upgrade != null && Upgrade.activeSelf) 
         {
             return;
         }
@@ -139,6 +141,41 @@ public class UI : MonoBehaviour
         }
     }
 
+    public void UpgradeSwitch()
+    {
+        if (mainMenuUI != null && mainMenuUI.activeSelf ||
+            Settings != null && Settings.activeSelf ||
+            Credits != null && Credits.activeSelf ||
+            WeaponSelection != null && WeaponSelection.activeSelf ||
+            MissionSelection != null && MissionSelection.activeSelf ||
+            ComicPanel != null && ComicPanel.activeSelf ||
+            VictoryScreen != null && VictoryScreen.activeSelf ||
+            GameOver != null && GameOver.activeSelf ||
+            pauseUI != null && pauseUI.activeSelf)
+            
+        {
+            return;
+        }
+
+        bool gamePaused = Upgrade.activeSelf;
+
+        if (gamePaused)
+        {
+            SwitchTo(inGameUI.gameObject);
+            ControlManager.instance.SwitchToCharacterControls();
+            TimeManager.instance.ResumeTime();
+            Cursor.visible = false;
+        }
+        else
+        {
+            SwitchTo(Upgrade);
+            ControlManager.instance.SwitchToUIControls();
+            TimeManager.instance.PauseTime();
+            Cursor.visible = false;
+        }
+
+    }
+
     public void ShowGameOverUI(string message = "GAME OVER!")
     {
         SwitchTo(gameOverUI.gameObject);
@@ -149,6 +186,7 @@ public class UI : MonoBehaviour
     {
         PlayerControls controls = GameManager.Instance.player.controls;
         controls.UI.UIPause.performed += ctx => PauseSwitch();
+        controls.UI.UIUpgrade.performed += ctx => UpgradeSwitch();
     }
 
     public void ShowVictoryScreenUI()
