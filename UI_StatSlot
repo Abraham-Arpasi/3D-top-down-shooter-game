@@ -24,10 +24,14 @@ public class UI_StatSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (statNameText != null)
             statNameText.text = statName;
     }
-    void Start()
+    private IEnumerator Start()
     {
-        UpdateStatValueUI();
+        while (PlayerManager.instance == null || PlayerManager.instance.player == null)
+        {
+            yield return null; // wait one frame
+        }
 
+        UpdateStatValueUI();
         ui = GetComponentInParent<UI>();
     }
 
