@@ -49,6 +49,8 @@ public class Player : MonoBehaviour
         controls.Character.UIMissionTooltip.performed += ctx => UI.instance.inGameUI.SwitchMissionToolTip();
 
         controls.Character.UIPause.performed += ctx => UI.instance.PauseSwitch();
+
+        controls.Character.UIUpgrade.performed += ctx => UI.instance.UpgradeSwitch();
     }
 
     private void OnDisable()
