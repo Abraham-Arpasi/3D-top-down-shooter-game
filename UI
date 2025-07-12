@@ -164,17 +164,25 @@ public class UI : MonoBehaviour
             SwitchTo(inGameUI.gameObject);
             ControlManager.instance.SwitchToCharacterControls();
             TimeManager.instance.ResumeTime();
-            Cursor.visible = false;
         }
         else
         {
             SwitchTo(Upgrade);
+            RefreshAllStatSlots();
             ControlManager.instance.SwitchToUIControls();
             TimeManager.instance.PauseTime();
-            Cursor.visible = false;
         }
 
     }
+    public void RefreshAllStatSlots()
+    {
+        // Assuming your stat slots are children somewhere, e.g., inside Upgrade panel
+        foreach (UI_StatSlot slot in GetComponentsInChildren<UI_StatSlot>(true))
+        {
+            slot.UpdateStatValueUI();
+        }
+    }
+   
 
     public void ShowGameOverUI(string message = "GAME OVER!")
     {
