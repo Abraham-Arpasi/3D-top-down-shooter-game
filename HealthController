@@ -4,41 +4,24 @@ using UnityEngine;
 
 public class HealthController : MonoBehaviour
 {
-    public int maxHealth;
-    public int currentHealth;
-
-    private bool isDead;
+    protected CharacterStats stats;
    protected virtual void Awake()
     {
-        currentHealth = maxHealth;
+        stats = GetComponent<CharacterStats>();
     }
 
     public virtual void ReduceHealth(int damage)
     {
-        currentHealth -= damage;
+        stats.TakeDamage(damage);
     }
 
     public virtual void IncreaseHealth()
     {
-        currentHealth++;
-
-        if(currentHealth > maxHealth)
-        {
-            currentHealth = maxHealth;
-        }
+        stats.IncreaseHealthBy(1);
     }
 
-    public bool ShouldDie()
+    public virtual bool ShouldDie()
     {
-        if (isDead)
-            return false;
-
-        if (currentHealth < 0)
-        {
-            isDead = true;
-            return true;
-        }
-
-        return false;
+        return stats.currentHealth <= 0 && !stats.isDead;
     }
 }
