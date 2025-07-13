@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static Cinemachine.DocumentationSortingAttribute;
 
 public enum EnemyType { Melee, Range, Boss, Random}
 
@@ -28,6 +29,14 @@ public class Enemy : MonoBehaviour
     private Vector3[] patrolPointsPosition;
     [SerializeField] private Transform[] patrolPoints;
     private int currentPatrolIndex;
+
+    [Header("Souls Amount")]
+    public Stat soulsDropAmount;
+
+    [Header("Level details")]
+    [SerializeField] private int level = 1;
+    [Range(0f, 1f)]
+    [SerializeField] private float percantageModifier = .4f;
 
     public bool inBattleMode { get; private set; }
     protected bool isMeleeAttackReady;
@@ -60,6 +69,9 @@ public class Enemy : MonoBehaviour
     protected virtual void Start()
     {
         InitializePatrolPoints();
+
+        soulsDropAmount.SetDefaultValue(100);
+
         audioManager = AudioManager.instance;
     }
 
@@ -85,7 +97,15 @@ public class Enemy : MonoBehaviour
 
     protected virtual void InitializePerk()
     {
+    }
+    private void Modify(Stat _stat)
+    {
+        for (int i = 1; i < level; i++)
+        {
+            float modifier = _stat.GetValue() * percantageModifier;
 
+            _stat.AddModifier(Mathf.RoundToInt(modifier));
+        }
     }
 
     public virtual void MakeEnemyVIP()
@@ -134,6 +154,9 @@ public class Enemy : MonoBehaviour
         agent.enabled = false;
 
         ragdoll.RagdollActive(true);
+
+        PlayerManager.instance.currency += soulsDropAmount.GetValue();
+        FindObjectOfType<UI_Upgrade>().UpdateSoulsImmediately();
 
         MissionObject_HuntTarget huntTarget = GetComponent<MissionObject_HuntTarget>();
         huntTarget?.InvokeOnTargetKilled();
