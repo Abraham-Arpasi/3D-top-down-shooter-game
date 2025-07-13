@@ -1,0 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+
+public class UI_Upgrade : MonoBehaviour
+{
+    [Header("Souls info")]
+    [SerializeField] private TextMeshProUGUI currentSouls;
+    [SerializeField] private float soulsAmount;
+    [SerializeField] private float increaseRate = 100;
+
+    private void Update()
+    {
+        UpdateSoulsUI();
+    }
+    private void UpdateSoulsUI()
+    {
+        if (soulsAmount < PlayerManager.instance.GetCurrency())
+            soulsAmount += Time.deltaTime * increaseRate;
+        else
+            soulsAmount = PlayerManager.instance.GetCurrency();
+
+
+        currentSouls.text = ((int)soulsAmount).ToString();
+    }
+    public void UpdateSoulsImmediately()
+    {
+        soulsAmount = PlayerManager.instance.GetCurrency();
+        currentSouls.text = ((int)soulsAmount).ToString();
+    }
+}
