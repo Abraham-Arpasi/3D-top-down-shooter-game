@@ -1,45 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Enemy_Health : HealthController
 {
     public System.Action onHealthChanged;
     public bool isInvincible { get; private set; }
     private bool isVulnerable;
 
-    public int GetMaxHealthValue()
+    [SerializeField] private int maxHealth = 100;
+    public int currentHealth;
+
+    protected override void Awake()
     {
-        return maxHealth;
+        currentHealth = maxHealth;
     }
+
+    public int GetMaxHealthValue() => maxHealth;
 
     public override void ReduceHealth(int damage)
     {
+        if (isInvincible) return;
+
         currentHealth -= damage;
         onHealthChanged?.Invoke();
     }
 
-    public virtual void IncreaseHealthBy(int _amount)
+    public override void IncreaseHealth()
     {
-        currentHealth += _amount;
+        currentHealth++;
 
-        if (currentHealth > GetMaxHealthValue())
-            currentHealth = GetMaxHealthValue();
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
 
-        if (onHealthChanged != null)
-            onHealthChanged();
+        onHealthChanged?.Invoke();
     }
 
-
-    public virtual void DecreaseHealthBy(int _damage)
+    public override bool ShouldDie()
     {
-
-        if (isVulnerable)
-            _damage = Mathf.RoundToInt(_damage * 1.1f);
-
-        currentHealth -= _damage;
-          
-        if (onHealthChanged != null)
-            onHealthChanged();
+        return currentHealth <= 0;
     }
 }
