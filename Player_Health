@@ -2,25 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_Health : HealthController
+public class Player_Health : MonoBehaviour
 {
     private Player player;
+    private PlayerStats playerStats;
     public bool isDead {  get; private set; }
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
+        playerStats = GetComponent<PlayerStats>();
 
         player = GetComponent<Player>();
     }
-    public override void ReduceHealth(int damage)
+    public void ReduceHealth(int damage)
     {
-        base.ReduceHealth(damage);
+        playerStats.TakeDamage(damage);
 
-        if (ShouldDie())
+        if (playerStats.currentHealth <= 0 && !isDead)
             Die();
 
-        UI.instance.inGameUI.UpdateHealthUI(currentHealth, maxHealth);
+        UI.instance.inGameUI.UpdateHealthUI(playerStats.currentHealth, playerStats.GetMaxHealthValue());
     }
 
     private void Die()
