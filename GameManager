@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public Player player;
 
+    public PlayerStats playerStats;
+
     [Header("Settings")]
     public bool friendlyFire;
     [Space]
@@ -33,7 +35,7 @@ public class GameManager : MonoBehaviour
         UI.instance.ShowVictoryScreenUI();
         ControlManager.instance.controls.Character.Disable();
         //this is to make sure the player doesn't die in the last second.
-        player.health.currentHealth += 99999;
+        playerStats.currentHealth += 99999;
     }
 
     public void RestartScene()
