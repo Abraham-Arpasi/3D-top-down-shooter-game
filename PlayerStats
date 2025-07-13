@@ -11,6 +11,8 @@ public class PlayerStats : CharacterStats
         base.Start();
 
         player = GetComponent<Player>();
+
+        currentHealth = GetMaxHealthValue();
     }
 
     public override void TakeDamage(int _damage)
