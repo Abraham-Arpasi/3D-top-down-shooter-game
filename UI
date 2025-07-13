@@ -25,6 +25,8 @@ public class UI : MonoBehaviour
 
     public GameObject victoryScreenUI;
 
+    private UI_Upgrade upgradeUI;
+
     [SerializeField] private GameObject[] UIElements;
     public GameObject pauseUI;
 
@@ -44,6 +46,8 @@ public class UI : MonoBehaviour
     private void Start()
     {
         AssignInputsUI();
+
+        upgradeUI = FindObjectOfType<UI_Upgrade>();
 
         Settings.SetActive(true);
         settingsUI.LoadSettings();
