@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using static Cinemachine.DocumentationSortingAttribute;
@@ -32,6 +33,10 @@ public class Enemy : MonoBehaviour
 
     [Header("Souls Amount")]
     public Stat soulsDropAmount;
+
+    [Header("Popup Text")]
+    [SerializeField] private GameObject popUpTextPrefab;
+    //[SerializeField] private Transform popUpSpawnPoint;
 
     [Header("Level details")]
     [SerializeField] private int level = 1;
@@ -94,6 +99,18 @@ public class Enemy : MonoBehaviour
             EnterBattleMode();
         }
     }
+    public void CreatePopUpText(string _text)
+    {
+        float randomX = Random.Range(-1, 1);
+        float randomY = Random.Range(1.5f, 3);
+
+        Vector3 positionOffset = new Vector3(randomX, randomY, 0);
+
+        GameObject newText = Instantiate(popUpTextPrefab, transform.position + positionOffset, Quaternion.identity);
+
+        newText.GetComponent<TextMeshPro>().text = _text;
+    }
+
 
     protected virtual void InitializePerk()
     {
