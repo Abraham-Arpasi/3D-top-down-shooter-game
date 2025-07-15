@@ -2,14 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI_Upgrade : MonoBehaviour
 {
+    private UI_StatSlot selectedStatSlot;
+    [SerializeField] private GameObject purchaseButton;
+
     [Header("Souls info")]
     [SerializeField] private TextMeshProUGUI currentSouls;
     [SerializeField] private float soulsAmount;
     [SerializeField] private float increaseRate = 100;
 
+    [Header("Upgrade info")]
+    [SerializeField] private TextMeshProUGUI upgradeText;
+
+    private void Start()
+    {
+        purchaseButton.SetActive(false);
+        Button[] allButtons = GetComponentsInChildren<Button>();
+
+        foreach (Button button in allButtons)
+        {
+            UI_StatSlot statSlot = button.GetComponentInParent<UI_StatSlot>();
+
+            if (statSlot != null)
+            {
+                button.onClick.AddListener(() =>
+                {
+                    selectedStatSlot = statSlot;
+                    string statName = statSlot.name.Replace("Stat - ", "");
+                    int cost = statSlot.UpgradeCost;
+                    ShowUpgradeMessage($"Upgrade {statName} for {cost} souls?");
+                    purchaseButton.SetActive(true);
+                });
+            }
+        }
+        if (purchaseButton != null)
+        {
+            Button btn = purchaseButton.GetComponent<Button>();
+            if (btn != null)
+            {
+                btn.onClick.RemoveAllListeners(); 
+                btn.onClick.AddListener(UpgradeStat);
+            }
+        }
+    }
     private void Update()
     {
         UpdateSoulsUI();
@@ -24,9 +62,46 @@ public class UI_Upgrade : MonoBehaviour
 
         currentSouls.text = ((int)soulsAmount).ToString();
     }
+    public void UpgradeStat()
+    {
+        if (selectedStatSlot == null)
+        {
+            Debug.LogWarning("No stat selected for upgrade.");
+            return;
+        }
+
+        int cost = selectedStatSlot.UpgradeCost;
+        if (PlayerManager.instance.currency >= cost)
+        {
+            PlayerManager.instance.currency -= cost;
+
+            // Upgrade the stat
+            PlayerStats stats = PlayerManager.instance.player.GetComponent<PlayerStats>();
+            Stat stat = stats.GetStat(selectedStatSlot.GetStatType());
+            stat.AddModifier(1);
+
+            // Increase future cost
+            selectedStatSlot.IncreaseUpgradeCost();
+
+            // UI updates
+            selectedStatSlot.UpdateStatValueUI();
+            UpdateSoulsImmediately();
+            purchaseButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            ShowUpgradeMessage("Not enough souls.");
+        }
+    }
     public void UpdateSoulsImmediately()
     {
         soulsAmount = PlayerManager.instance.GetCurrency();
         currentSouls.text = ((int)soulsAmount).ToString();
     }
+    public void ShowUpgradeMessage(string message)
+    {
+        upgradeText.color = Color.white;
+        upgradeText.text = message;
+    }
+   
 }
