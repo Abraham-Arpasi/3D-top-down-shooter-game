@@ -16,6 +16,13 @@ public class UI_StatSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [TextArea]
     [SerializeField] private string statDescription;
 
+    [SerializeField] private int upgradeCost = 50;
+    public int UpgradeCost => upgradeCost;
+
+    public StatType GetStatType()
+    {
+        return statType;
+    }
     private void OnValidate()
     {
         gameObject.name = "Stat - " + statName;
@@ -23,6 +30,10 @@ public class UI_StatSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         if (statNameText != null)
             statNameText.text = statName;
+    }
+    public void IncreaseUpgradeCost()
+    {
+        upgradeCost += 50;
     }
     private IEnumerator Start()
     {
